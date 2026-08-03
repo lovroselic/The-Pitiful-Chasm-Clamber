@@ -1,0 +1,1184 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link href="/CSS/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="/CSS/LaughingStyle.css" rel="stylesheet" type="text/css">
+    <title>MapEditor</title>
+
+</head>
+
+<body>
+    <div id="gameResolutionAlert" class="hide_extraLarge hide_large">
+        <h3>Resolution too low alert!</h3>
+        <p>You are trying to run this game on a device which has insufficient resolution to display the game properly.
+            Just so you know ...</p>
+    </div>
+
+    <!-- copy -->
+    <div id="preload" class="hidden"></div>
+
+    <div class="container my-5 p-5 cool_page">
+        <div id="setup">
+
+            <div id="load"></div>
+
+            <div class="row win">
+                <h1 id="title" class="arcade"></h1>
+                <p class="c64">MapEditor used for building maps for Froggess, Booga and maybe some other
+                    games.</p>
+                <p> Based on TrackBuiler and MazEditor, which get deprecated.</p>
+                <p> Added mask painter.</p>
+            </div>
+
+            <div class="row">
+                <div class="col-4">
+                    <div class="setup_container section" id="selector">
+                        <fieldset>
+                            <legend>
+                                Size & Info:
+                            </legend>
+
+                            <div id="dimensions">
+                                <input type="radio" name="dimensions" value="2D" checked="checked"> 2D
+                                <input type="radio" name="dimensions" value="3D"> 3D <br />
+                            </div>
+
+                            Grid dimensions:
+                            <input name="gridsize" id="horizontalGrid" type="text" size="3" maxlength="3" value="40">
+                            <span> X </span>
+                            <input name="gridsize" id="verticalGrid" type="text" size="2" maxlength="2" value="40">
+
+                            <div class="use_3d">
+                                <span id="depthGridVisibility">
+                                    <span> X </span>
+                                    <input name="gridsize" id="depthGrid" type="text" size="2" maxlength="2" value="3">
+                                </span>
+                            </div>
+
+                            <br />
+                            Grid size (px):
+                            <input name="gridsize" id="gridsize" type="text" size="2" maxlength="2" value="64">
+                            <br />
+                            RoomID:
+                            <input name="roomid" id="roomid" type="text" size="16" maxlength="16" value="1">
+                            <br />
+                            Room name:
+                            <input name="roomname" id="roomname" type="text" size="32" maxlength="64"
+                                value="Generic room name">
+                            <br />
+
+                            Arena border width:
+                            <input name="arenawidth" id="arenawidth" type="number" min="1" max="7" value="2">
+                            <br />
+                            Arena value:
+                            <select id="arena_value"></select>
+
+                            <br /> WIDTH (px) = <span id="ENGINEgameWIDTH"></span> / <span id="spacex"></span>
+                            <br />
+                            HEIGHT (px) =
+                            <span id="ENGINEgameHEIGHT"></span> / <span id="spacey"></span><br />
+
+                            <hr>
+                            <div class="use_savegame">
+                                <label for="checkpoint">SaveGame
+                                    checkpoint</label>
+
+                                <select name="checkpoint" id="checkpoint">
+                                    <option value="0">Neutral</option>
+                                    <option value="1">Block</option>
+                                    <option value="2">Restore</option>
+                                </select>
+                            </div>
+
+                        </fieldset>
+
+
+                        <fieldset>
+                            <legend>
+                                Renderer:
+                            </legend>
+                            <input type="radio" name="renderer" value="block" checked="checked"> Block <br />
+                            <input type="radio" name="renderer" value="block3D"> Block3D <br />
+                            <input type="checkbox" id="corr" value="corr" name="corr"> Draw corridor gridline<br />
+                            <input type="checkbox" id="grid" value="grid" name="grid" checked="checked"> Main grid<br />
+                            <input type="checkbox" id="coord" value="coord" name="coord">
+                            Coordinates
+                            <input type="checkbox" id="all_coord" value="all_coord" name="all_coord">All
+                            <br />
+                            <input type="checkbox" id="mask" value="mask" name="mask" checked="checked"> Show mask<br />
+                        </fieldset>
+
+                        <div id="material_light_row">
+                            <fieldset>
+                                <legend>
+                                    Material
+                                </legend>
+                                <div class="d-flex justify-content-center">
+                                    <select id="materialtype"> </select>
+                                </div>
+                                <div id="material-details"></div>
+                            </fieldset>
+
+                            <fieldset>
+                                <legend>
+                                    Light type
+                                </legend>
+                                <div class="d-flex justify-content-center">
+                                    <select id="lighttype"> </select>
+                                </div>
+                                <div id="light-details"></div>
+                                <div id="light-code"></div>
+                            </fieldset>
+                        </div>
+
+                        <div class="use_entities">
+                            <fieldset>
+                                <legend>
+                                    Connections
+                                </legend>
+                                <div class="d-flex justify-content-center align-items-center">
+                                    <input type="button" id="swap" value="Swap" />
+                                </div>
+
+                                Source GateID: <input name="sgateID" id="sgateID" type="text" size="16" maxlength="16"
+                                    value="1.1"><br />
+                                Target GateID: <input name="tgateID" id="tgateID" type="text" size="16" maxlength="16"
+                                    value="2.1"><br />
+                                <div class="d-flex justify-content-center">
+                                    <select id="gatetype"> </select>
+                                </div>
+                                <div>
+                                    <canvas id="gatecanvas" width="256" height="256"></canvas>
+                                </div>
+                            </fieldset>
+                        </div>
+
+                        <fieldset>
+                            <legend>
+                                Directions
+                            </legend>
+                            <input type="radio" name="directions" value="UP"> UP <br />
+                            <input type="radio" name="directions" value="DOWN"> DOWN <br />
+                            <input type="radio" name="directions" value="LEFT"> LEFT <br />
+                            <input type="radio" name="directions" value="RIGHT"> RIGHT <br />
+                            <input type="radio" name="directions" value="NOWAY" checked="checked"> NOWAY <br />
+                        </fieldset>
+
+                        <fieldset>
+                            <legend>
+                                Version:
+                            </legend>
+                            ENGINE: <span id="engine_version"></span><br>
+                            GRID: <span id="grid_version"></span><br>
+                            MAZE: <span id="maze_version"></span><br>
+                            Prototype LIB: <span id="lib_version"></span><br>
+                            IAM: <span id="iam_version"></span><br>
+                            WebGL: <span id="webgl_version"></span><br>
+                        </fieldset>
+
+                        <div class="use_entities">
+                            <fieldset>
+                                <legend>Shrines</legend>
+                                <div class="d-flex justify-content-center align-items-center">
+                                    <input type="text" id="searchShrines" class="w-75" placeholder="Search shrines ...">
+                                </div>
+                                <div class="d-flex justify-content-center">
+                                    <select id="shrine_type"> </select>
+                                </div>
+                                <div class="m-3">
+                                    <canvas id="shrinecanvas" width="256" height="256"></canvas>
+                                </div>
+                            </fieldset>
+
+                            <fieldset>
+                                <legend>Interaction objects</legend>
+                                <div class="d-flex justify-content-center align-items-center">
+                                    <input type="text" id="searchIO" class="w-75"
+                                        placeholder="Search interaction objects ...">
+                                </div>
+                                <div class="d-flex justify-content-center">
+                                    <select id="interaction_object_type"> </select>
+                                </div>
+                                <div class="d-flex justify-content-center my-2">
+                                    <canvas id="object_canvas" width="48" height="48"></canvas>
+                                </div>
+                            </fieldset>
+                            <fieldset>
+                                <legend>Movable interaction entity</legend>
+                                <div class="d-flex justify-content-center align-items-center">
+                                    <input type="text" id="searchMIE" class="w-75" placeholder="Search mie ...">
+                                </div>
+                                <div class="d-flex justify-content-center">
+                                    <select id="movable_type"> </select>
+                                </div>
+                                <div class="d-flex justify-content-center my-2">
+                                    <canvas id="movable_canvas" width="48" height="48"></canvas>
+                                </div>
+                            </fieldset>
+
+                            <fieldset>
+                                <legend>Interactors</legend>
+                                <div class="d-flex justify-content-center align-items-center">
+                                    <input type="text" id="searchInteractors" class="w-75"
+                                        placeholder="Search interactors ...">
+                                </div>
+                                <div class="d-flex justify-content-center my-2">
+                                    <select id="interactor_type"> </select>
+                                </div>
+                            </fieldset>
+
+                            <fieldset>
+                                <legend>
+                                    Entities
+                                </legend>
+                                <div>
+                                    <div class="d-flex justify-content-center align-items-center">
+                                        <input type="text" id="searchEntity" class="w-75"
+                                            placeholder="Search entities ...">
+                                    </div>
+
+                                    <div class="d-flex justify-content-center">
+                                        <select id="entity_type"> </select>
+                                    </div>
+                                    <div class="d-flex justify-content-center m-3">
+                                        <canvas id="entitycanvas" width="256" height="256"></canvas>
+                                    </div>
+                                </div>
+                            </fieldset>
+                        </div>
+
+                        <div id="show_monsters">
+                            <fieldset>
+                                <legend>
+                                    Monsters
+                                </legend>
+                                <div>
+                                    <div class="d-flex justify-content-center align-items-center">
+                                        <input type="text" id="searchMonster" class="w-75"
+                                            placeholder="Search monster ...">
+                                    </div>
+
+                                    <div class="d-flex justify-content-center">
+                                        <input type="button" id="add_monster_list" value="Add to list" />
+                                        <input type="button" id="clear_list" value="Clear list" class="red_button" />
+                                    </div>
+                                    <div class="d-flex justify-content-center my-3">
+                                        <select id="monster_type"> </select>
+                                    </div>
+                                    <div class="d-flex justify-content-center my-3">
+                                        <textarea id="monster_list" style="width:100%; height: 96px"></textarea>
+                                    </div>
+                                    <div class=" my-3">
+                                        Max spawned: &nbsp;<input name="monsterdef" id="max_spawned" type="text"
+                                            size="2" maxlength="2" value=""><br />
+                                        Kill countdown: &nbsp;<input name="monsterdef" id="kill_countdown" type="text"
+                                            size="2" maxlength="2" value=""><br />
+                                        Kills Required To Stop Spawning: &nbsp;<input name="monsterdef"
+                                            id="killsRequiredToStopSpawning" type="text" size="2" maxlength="2"
+                                            value="99"><br />
+                                        Spawn delay [ms]: &nbsp;<input name="monsterdef" id="spawn_delay" type="text"
+                                            size="4" maxlength="4" value=""><br />
+                                    </div>
+                                </div>
+                            </fieldset>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-4">
+                    <div class="setup_container section" id="paint">
+
+                        <fieldset>
+                            <legend>
+                                On click, paint/set:
+                            </legend>
+                            <input type="radio" name="painter" value="flip" checked="checked"> Flip (Wall
+                            &lt-&gt Space)<br />
+                            <input type="radio" name="painter" value="wall"> Wall
+                            <input type="checkbox" id="ceil_support" value="ceil_support" name="ceil_support"
+                                checked="checked"> Set floor (space) above
+                            <br />
+                            <input type="radio" name="painter" value="space"> Space
+                            <input type="checkbox" id="floor_support" value="floor_support" name="floor_support"
+                                checked="checked"> Set wall bellow
+                            <br />
+
+                            <input type="radio" name="painter" value="trapdoor" disabled> TrapDoor (CCC
+                            disabled)<br />
+                            <input type="radio" name="painter" value="blockwall"> BlockWall<br />
+                            <input type="radio" name="painter" value="pillar"> Pillar<br />
+                            <input type="radio" name="painter" value="hole"> Hole <br />
+                            <input type="radio" name="painter" value="door"> Door (Mask) <br />
+                            <input type="radio" name="painter" value="reserve"> Reserve (Goal) <br />
+                            <hr>
+                            <input type="radio" name="painter" value="fill"> Fill
+                            <select id="fill_value"></select>
+                            <br />
+                            <hr>
+
+                            <div class="use_steps">
+                                <input type="radio" name="painter" value="WALL8"> WALL8 <br />
+                                <input type="radio" name="painter" value="WALL6"> WALL6 <br />
+                                <input type="radio" name="painter" value="WALL4"> WALL4 <br />
+                                <input type="radio" name="painter" value="WALL2"> WALL2 <br />
+                                <hr>
+                            </div>
+
+
+                            <div class="use_decals"><input type="radio" name="painter" value="decal"> Decal <br /></div>
+                            <div class="use_lights"><input type="radio" name="painter" value="light"> Light <br /></div>
+                            <hr>
+
+                            <div class="use_entities">
+                                <input type="radio" name="painter" value="gate"> Gate <br />
+                                <input type="radio" name="painter" value="shrine"> Shrine <br />
+                                <input type="radio" name="painter" value="item_shrine"> Trainer <br />
+                                <input type="radio" name="painter" value="oracle"> Oracle <br />
+                                <input type="radio" name="painter" value="lair"> Lair <br />
+                                <hr>
+                            </div>
+
+                            <div class="use_items">
+                                <input type="radio" name="painter" value="key"> Key <br />
+                                <input type="radio" name="painter" value="scroll"> Scroll <br />
+                                <input type="radio" name="painter" value="potion" disabled> Potion <br />
+                                <input type="radio" name="painter" value="gold"> <span style="color:gold">Gold</span>
+                                <br />
+                                <input type="radio" name="painter" value="skill"> Skill <br />
+                                <hr>
+                                <input type="radio" name="painter" value="container"> Container <br />
+                                <hr>
+                            </div>
+
+
+                            <div class="use_monsters"><input type="radio" name="painter" value="monster"> Monster
+                                <br />
+                                <hr>
+                            </div>
+
+
+                            <input type="radio" name="painter" value="start"> Start position <br />
+                            <hr>
+
+                            <div class="use_masks">
+                                <input type="radio" name="painter" value="maskpaint"> <span style="color: blue;">Mask
+                                    paint</span> <br />
+                                <input type="radio" name="painter" value="deletemask"> <span style="color: red;">Delete
+                                    mask</span> <br />
+                                <hr>
+                                <input type="radio" name="painter" value="maskdecalpaint"> <span
+                                    style="color: blue;">Decal
+                                    Mask
+                                    paint</span> <br />
+                                <input type="radio" name="painter" value="deletemaskdecal"> <span
+                                    style="color: red;">Delete
+                                    mask decal</span> <br />
+                                <hr>
+                            </div>
+
+
+                            <div class="use_entities">
+                                <input type="radio" name="painter" value="fire"> Fire <br />
+                                <div class="d-flex justify-content-center">
+                                    <select id="fire_type"> </select>
+                                </div>
+                                <hr>
+                                <input type="radio" name="painter" value="trigger"> Trigger <br />
+                                <div class="d-flex justify-content-center">
+                                    <select id="trigger_actions"> </select>
+                                </div>
+                                <hr>
+                                <input type="radio" name="painter" value="trap"> Trap <br />
+                                <div>
+                                    <p></p>What: <select id="trap_type"> </select></p>
+                                </div>
+                                <div>
+                                    <p></p>Which: <select id="trap_entity"> </select></p>
+                                </div>
+
+                                <hr>
+                                <input type="radio" name="painter" value="entity"> Entity <br />
+                                <hr>
+                                <input type="radio" name="painter" value="object"> Interaction object <br />
+                                <input type="radio" name="painter" value="movable"> Movable Interaction entity <br />
+                                <input type="radio" name="painter" value="interactor"> Interactor <br />
+
+                            </div>
+
+                            <hr>
+                            <input type="radio" name="painter" value="cleargrid"> <span style="color: red;">Clear grid
+                            </span><br />
+                        </fieldset>
+
+                        <div id="show_lights">
+                            <fieldset>
+                                <legend>
+                                    Lights
+                                </legend>
+                                <div>
+                                    <div class="d-flex justify-content-center align-items-center">
+                                        <input type="text" id="searchLights" class="w-75"
+                                            placeholder="Search lights ...">
+                                    </div>
+                                    <input type="button" id="randlight" value="Random [F8]" />
+                                    <div class="d-flex justify-content-center">
+                                        <select id="light_decal"> </select>
+                                    </div>
+                                    <div class="m-3">
+                                        <canvas id="lightcanvas" width="256" height="256"></canvas>
+                                    </div>
+                                </div>
+                            </fieldset>
+                        </div>
+
+                        <div class="use_items">
+                            <fieldset>
+                                <legend>
+                                    Keys
+                                </legend>
+                                <div>
+                                    <div class="d-flex justify-content-center rounded-1 border border-1 border-primary"
+                                        id="key_selection">
+                                        <select id="key_type"> </select>
+                                    </div>
+                                    <div class="m-3 d-flex justify-content-center">
+                                        <canvas id="keycanvas" width="48" height="48"></canvas>
+                                    </div>
+                                </div>
+                            </fieldset>
+
+                        </div>
+
+                        <div class="use_entities">
+                            <fieldset>
+                                <legend>Trainers</legend>
+                                <div class="d-flex justify-content-center align-items-center">
+                                    <input type="text" id="searchTrainer" class="w-75"
+                                        placeholder="Search trainers ...">
+                                </div>
+                                <div class="d-flex justify-content-center">
+                                    <select id="item_shrine_type"> </select>
+                                </div>
+                                <div class="m-3">
+                                    <canvas id="trainercanvas" width="256" height="256"></canvas>
+                                </div>
+                            </fieldset>
+
+                            <fieldset>
+                                <legend>Oracles</legend>
+                                <div class="d-flex justify-content-center align-items-center">
+                                    <input type="text" id="searchOracle" class="w-75" placeholder="Search oracles ...">
+                                </div>
+                                <div class="d-flex justify-content-center">
+                                    <select id="oracle_type"> </select>
+                                </div>
+                                <div class="m-3">
+                                    <canvas id="oraclecanvas" width="256" height="256"></canvas>
+                                </div>
+                            </fieldset>
+
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <div class="col-4">
+                    <div class="setup_container section" id="selector2">
+                        <div id="show_decals">
+                            <fieldset>
+                                <legend>Wall Pictures
+                                </legend>
+                                <div>
+                                    <div class="d-flex justify-content-center align-items-center">
+                                        <input type="text" id="searchPics" class="w-75" placeholder="Search pics ...">
+                                    </div>
+
+                                    <input type="radio" name="decalusage" value="picture" checked="checked"> Use
+                                    pictures
+                                    <input type="button" id="randpic" value="Random [F8]" />
+                                    <br />
+                                    <div class="d-flex justify-content-center">
+                                        <select id="picture_decal"> </select>
+                                    </div>
+                                    <div class="d-flex justify-content-center m-3">
+                                        <canvas id="picturecanvas" width="256" height="256"></canvas>
+                                    </div>
+                                </div>
+                            </fieldset>
+
+                            <fieldset>
+                                <legend>Crests
+                                </legend>
+                                <div>
+                                    <div class="d-flex justify-content-center align-items-center">
+                                        <input type="text" id="searchDecals" class="w-75"
+                                            placeholder="Search decals ...">
+                                    </div>
+
+                                    <input type="radio" name="decalusage" value="crest"> Use crests
+                                    <input type="button" id="randcrest" value="Random [F8]" />
+                                    <br />
+                                    <div class="d-flex justify-content-center m-3">
+                                        <select id="crest_decal"> </select>
+                                    </div>
+                                    <div class="d-flex justify-content-center">
+                                        <canvas id="crestcanvas" width="256" height="256"></canvas>
+                                    </div>
+                                </div>
+                            </fieldset>
+
+                            <fieldset>
+                                <legend>Textures
+                                </legend>
+                                <div>
+                                    <div class="d-flex justify-content-center align-items-center">
+                                        <input type="text" id="searchDecalTexture" class="w-75"
+                                            placeholder="Search textures ...">
+                                    </div>
+
+                                    <input type="radio" name="decalusage" value="texture"> Use texture
+
+                                    <br />
+                                    <div class="d-flex justify-content-center">
+                                        <select id="texture_decal"> </select>
+                                    </div>
+                                    <div class="d-flex justify-content-center m-3">
+                                        <canvas id="texturecanvas" width="256" height="256"></canvas>
+                                    </div>
+                                </div>
+                            </fieldset>
+
+                            <fieldset>
+                                <legend>
+                                    Trigger & trap decals
+                                </legend>
+                                <div class="d-flex align-items-center">
+                                    <input type="button" id="randtriggerdecal" value="Random" />
+                                    <select id="trigger_decal" class="ms-2"> </select>
+                                </div>
+
+
+                                <div class="d-flex justify-content-center">
+                                    <canvas id="triggercanvas" width="48" height="48"></canvas>
+                                </div>
+                            </fieldset>
+                        </div>
+
+                        <div id="show_mask_paint">
+                            <fieldset>
+                                <legend>Mask elements and decals</legend>
+                                <div>
+                                    <div class="d-flex justify-content-center">
+                                        Rotation: <select id="mask_rotation">
+                                            <option value=0>0</option>
+                                            <option value=90>90</option>
+                                            <option value=180>180</option>
+                                            <option value=270>270</option>
+                                        </select>
+                                    </div>
+                                    <div class="d-flex justify-content-center">
+                                        Flip: <select id="mask_flip">
+                                            <option value="0">None</option>
+                                            <option value="1">Horizontal</option>
+                                            <option value="2">Vertical</option>
+                                        </select>
+                                    </div>
+                                    <div class="d-flex justify-content-center align-items-center">
+                                        <input type="text" id="searchMasks" class="w-75" placeholder="Search masks ...">
+                                    </div>
+                                    <div class="d-flex justify-content-center">
+                                        Element:<select id="mask_element"> </select>
+                                    </div>
+                                    <div class="d-flex justify-content-center m-3">
+                                        <canvas id="maskcanvas" width="64" height="64"></canvas>
+                                    </div>
+
+                                    <!-- mask decals-->
+                                    <div class="d-flex justify-content-center align-items-center">
+                                        <input type="text" id="searchMasksDecals" class="w-75"
+                                            placeholder="Search mask decals ...">
+                                    </div>
+                                    <div class="d-flex justify-content-center align-items-center">
+                                        <input type="button" id="randmaskdecal" value="Random [F8]" />
+                                    </div>
+                                    <div class="d-flex justify-content-center">
+                                        Decals:<select id="mask_decal"> </select>
+                                    </div>
+                                    <div class="d-flex justify-content-center m-3">
+                                        <canvas id="maskdecalcanvas" width="64" height="64" class="border"></canvas>
+                                    </div>
+                                </div>
+                            </fieldset>
+                        </div>
+
+                        <div class="use_items">
+                            <fieldset>
+                                <legend>Scroll</legend>
+                                <div class="d-flex justify-content-center">
+                                    <select id="scroll_type"> </select>
+                                </div>
+                                <div class="d-flex justify-content-center my-2">
+                                    <canvas id="scrollcanvas" width="48" height="48"></canvas>
+                                </div>
+                            </fieldset>
+
+
+                            <fieldset style="color:gold">
+                                <legend>
+                                    Gold
+                                </legend>
+                                <div>
+                                    <div class="d-flex justify-content-center">
+                                        <select id="gold_type"> </select>
+                                    </div>
+                                    <div class="d-flex justify-content-center my-2">
+                                        <canvas id="gold_canvas" width="48" height="48"></canvas>
+                                    </div>
+                                </div>
+                            </fieldset>
+
+                            <fieldset>
+                                <legend>
+                                    Skill
+                                </legend>
+                                <div>
+                                    <div class="d-flex justify-content-center">
+                                        <select id="skill_type"> </select>
+                                    </div>
+                                    <div class="m-3 d-flex justify-content-center">
+                                        <canvas id="skillcanvas" width="96" height="96"></canvas>
+                                    </div>
+                                </div>
+                            </fieldset>
+
+                            <fieldset>
+                                <legend>
+                                    Container
+                                </legend>
+                                <div>
+                                    <div class="d-flex align-items-center">
+                                        <input type="button" id="randcontainer" value="Random Type" />
+                                        <select id="container_type" class="ms-2"> </select>
+                                    </div>
+
+                                    <div class="d-flex justify-content-center align-items-center">
+                                        <input type="text" id="searchContainers" class="w-75"
+                                            placeholder="Search containers ...">
+                                    </div>
+                                    <div class="d-flex justify-content-center m-3">
+                                        <canvas id="containercanvas" width="256" height="256"></canvas>
+                                    </div>
+
+                                    <div class="d-flex justify-content-center align-items-center">
+                                        <input type="text" id="searchItems" class="w-75" placeholder="Search items ...">
+                                    </div>
+
+                                    <div class="d-flex justify-content-center align-items-center my-3">
+                                        <label for="content_type" class="text-center me-2">Contained item:
+                                            <select id="content_type"> </select>
+                                        </label>
+                                    </div>
+
+                                    <div class="d-flex justify-content-center my-2">
+                                        <canvas id="container_item_canvas" width="48" height="48"></canvas>
+                                    </div>
+
+                                    Orientation:<br />
+                                    <input type="radio" name="orientation" value="FIXED" checked="checked"> FIXED <br />
+                                    <input type="radio" name="orientation" value="RANDOM"> RANDOM <br />
+                                </div>
+                            </fieldset>
+
+                            <fieldset>
+                                <legend>Lair
+                                </legend>
+                                <div>
+                                    <div class="d-flex align-items-center">
+                                        <input type="button" id="randlair" value="Random [F7]" />
+                                        <select id="lair_type" class="ms-2"> </select>
+                                    </div>
+
+                                    <div class="d-flex justify-content-center m-3">
+                                        <canvas id="laircanvas" width="256" height="256"></canvas>
+                                    </div>
+                                </div>
+                            </fieldset>
+
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+
+            <hr>
+
+            <!-- unused
+            <div class="row">
+                <div class="col-4"> </div>
+                <div class="col-4"></div>
+                <div class="col-4"></div>
+            </div>-->
+
+            <hr>
+
+            <div class="row" id="noise_row">
+                <div class="col-4">
+                    <fieldset>
+                        <legend>
+                            Direction noise
+                        </legend>
+
+                        Seed:
+                        <input id="dir_seed" type="text" size="10" maxlength="16" value="666"><br />
+                        Amplitude:
+                        <input id="dir_amp" type="text" size="5" maxlength="8" value="3.0"><br />
+                        Wavelength:
+                        <input id="dir_wl" type="text" size="5" maxlength="8" value="32"> <br />
+                        Persistence:
+                        <input id="dir_persist" type="text" size="5" maxlength="8" value="0.5"><br />
+                        Lacunarity:
+                        <input id="dir_lacunarity" type="text" size="5" maxlength="8" value="2.0"><br />
+                        Bias deg:
+                        <input id="dir_bias" type="text" size="5" maxlength="8" value="0.0"><br />
+                        Octaves:
+                        <input id="dir_octaves" type="text" size="3" maxlength="3" value="3"><br />
+                        Smoothing:
+                        <select id="dir_smooth">
+                            <option value="cosine">Cosine</option>
+                            <option value="smoothstep">Smoothstep</option>
+                            <option value="smootherstep" selected>Smootherstep</option>
+                        </select>
+                        <br />
+
+                        <input type="button" id="dir_generate" value="Generate direction noise">
+                        <br />
+
+                        <span id="dir_stats">No direction noise yet.</span>
+
+                    </fieldset>
+                </div>
+                <div class="col-4">
+                    <fieldset>
+                        <legend>
+                            Width noise
+                        </legend>
+
+                        Seed:
+                        <input id="width_seed" type="text" size="10" maxlength="16" value="777"><br />
+
+                        Amplitude:
+                        <input id="width_amp" type="text" size="5" maxlength="8" value="1.5"><br />
+
+                        Wavelength:
+                        <input id="width_wl" type="text" size="5" maxlength="8" value="16"><br />
+
+                        Octaves:
+                        <input id="width_octaves" type="text" size="3" maxlength="3" value="3"><br />
+
+                        Persistence:
+                        <input id="width_persist" type="text" size="5" maxlength="8" value="0.5"><br />
+
+                        Lacunarity:
+                        <input id="width_lacunarity" type="text" size="5" maxlength="8" value="2.0"><br />
+
+                        Bias width:
+                        <input id="width_bias" type="text" size="5" maxlength="8" value="1"><br />
+
+                        Min width:
+                        <input id="width_min" type="text" size="5" maxlength="8" value="0.5"><br />
+
+                        Max width:
+                        <input id="width_max" type="text" size="5" maxlength="8" value="2.0"><br />
+
+                        Smoothing:
+                        <select id="width_smooth">
+                            <option value="cosine">Cosine</option>
+                            <option value="smoothstep">Smoothstep</option>
+                            <option value="smootherstep" selected>Smootherstep</option>
+                        </select>
+                        <br />
+
+                        <input type="button" id="width_generate" value="Generate width noise">
+                        <br />
+
+                        <span id="width_stats">No width noise yet.</span>
+                    </fieldset>
+                </div>
+                <div class="col-4">
+                    <fieldset>
+                        <legend>
+                            Slope noise
+                        </legend>
+
+                        Seed:
+                        <input id="slope_seed" type="text" size="10" maxlength="16" value="888"><br />
+
+                        Amplitude:
+                        <input id="slope_amp" type="text" size="5" maxlength="8" value="18.0"><br />
+
+                        Wavelength:
+                        <input id="slope_wl" type="text" size="5" maxlength="8" value="16"><br />
+
+                        Octaves:
+                        <input id="slope_octaves" type="text" size="3" maxlength="3" value="3"><br />
+
+                        Persistence:
+                        <input id="slope_persist" type="text" size="5" maxlength="8" value="0.65"><br />
+
+                        Lacunarity:
+                        <input id="slope_lacunarity" type="text" size="5" maxlength="8" value="2.0"><br />
+
+                        Bias slope:
+                        <input id="slope_bias" type="text" size="5" maxlength="8" value="18.0"><br />
+
+                        Min slope:
+                        <input id="slope_min" type="text" size="5" maxlength="8" value="3.0"><br />
+
+                        Max slope:
+                        <input id="slope_max" type="text" size="5" maxlength="8" value="45.0"><br />
+
+                        Smoothing:
+                        <select id="slope_smooth">
+                            <option value="cosine">Cosine</option>
+                            <option value="smoothstep">Smoothstep</option>
+                            <option value="smootherstep" selected>Smootherstep</option>
+                        </select>
+                        <br />
+
+                        <input type="button" id="slope_generate" value="Generate slope noise">
+                        <br />
+
+                        <span id="slope_stats">No slope noise yet.</span>
+                    </fieldset>
+                </div>
+            </div>
+
+            <hr>
+
+            <div class="row">
+                <div class="col-4">
+                    <div class="setup_container section" id="texture_row">
+                        <fieldset>
+                            <legend>
+                                Wall Texture
+                            </legend>
+                            <div class="d-flex justify-content-center align-items-center">
+                                <input type="text" id="searchWall" class="w-75" placeholder="Search wall textures ...">
+                            </div>
+                            <div>
+                                <div class="d-flex align-items-center">
+                                    <input type="button" id="randwall" value="Random" />
+                                    <select id="walltexture" class="ms-3"></select>
+                                </div>
+
+                                <div class="m-3">
+                                    <canvas id="wallcanvas" width="320" height="320"></canvas>
+                                </div>
+
+                                <div class="d-flex justify-content-center">
+                                    <p id="wall_resolution"></p>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+
+                <div class="col-4">
+                    <div class="setup_container section" id="floor_row">
+                        <fieldset>
+                            <legend>
+                                Floor Texture
+                            </legend>
+                            <div>
+                                <div class="d-flex justify-content-center align-items-center">
+                                    <input type="text" id="searchFloor" class="w-75"
+                                        placeholder="Search floor textures ...">
+                                </div>
+
+                                <div class="d-flex align-items-center">
+                                    <input type="button" id="randfloor" value="Random" />
+                                    <select id="floortexture" class="ms-3"></select>
+                                </div>
+
+                                <div class="m-3">
+                                    <canvas id="floorcanvas" width="320" height="320"></canvas>
+                                </div>
+                                <div class="d-flex justify-content-center">
+                                    <p id="floor_resolution"></p>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+
+                <div class="col-4">
+                    <div class="setup_container section" id="ceil_row">
+                        <fieldset>
+                            <legend>
+                                Ceiling Texture
+                            </legend>
+                            <div>
+                                <div class="d-flex justify-content-center align-items-center">
+                                    <input type="text" id="searchCeil" class="w-75"
+                                        placeholder="Search ceiling textures ...">
+                                </div>
+
+                                <div class="d-flex align-items-center">
+                                    <input type="button" id="randceil" value="Random" />
+                                    <select id="ceiltexture" class="ms-3"></select>
+                                </div>
+
+                                <div class="m-3">
+                                    <canvas id="ceilcanvas" width="320" height="320"></canvas>
+                                </div>
+                                <div class="d-flex justify-content-center">
+                                    <p id="ceil_resolution"></p>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row" id="panorama_row">
+            <div class="col-4">
+                <div class="setup_container section">
+                    <fieldset>
+                        <legend>
+                            Front panorama
+                        </legend>
+                        <div>
+                            <div class="d-flex justify-content-center align-items-center">
+                                <input type="text" id="searchFrontPanorama" class="w-75"
+                                    placeholder="Search front panorama ...">
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <input type="button" id="randFrontPanorama" value="Random" />
+                                <select id="frontPanorama" class="ms-3"></select>
+                            </div>
+                            <div class="m-3">
+                                <canvas id="frontPanoramaCanvas" width="320" height="320"></canvas>
+                            </div>
+                            <div class="d-flex justify-content-center">
+                                <p id="frontPanorama_resolution"></p>
+                            </div>
+
+                        </div>
+                </div>
+            </div>
+
+            <div class="col-4">
+                <div class="setup_container section">
+                    <fieldset>
+                        <legend>
+                            Left panorama
+                        </legend>
+                        <div>
+                            <div class="d-flex justify-content-center align-items-center">
+                                <input type="text" id="searchLeftPanorama" class="w-75"
+                                    placeholder="Search left panorama ...">
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <input type="button" id="randLeftPanorama" value="Random" />
+                                <select id="leftPanorama" class="ms-3"></select>
+                            </div>
+                            <div class="m-3">
+                                <canvas id="leftPanoramaCanvas" width="320" height="320"></canvas>
+                            </div>
+                            <div class="d-flex justify-content-center">
+                                <p id="leftPanorama_resolution"></p>
+                            </div>
+
+                        </div>
+                </div>
+            </div>
+
+            <div class="col-4">
+                <div class="setup_container section">
+                    <fieldset>
+                        <legend>
+                            Right panorama
+                        </legend>
+                        <div>
+                            <div class="d-flex justify-content-center align-items-center">
+                                <input type="text" id="searchRightPanorama" class="w-75"
+                                    placeholder="Search right panorama ...">
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <input type="button" id="randRightPanorama" value="Random" />
+                                <select id="rightPanorama" class="ms-3"></select>
+                            </div>
+                            <div class="m-3">
+                                <canvas id="rightPanoramaCanvas" width="320" height="320"></canvas>
+                            </div>
+                            <div class="d-flex justify-content-center">
+                                <p id="rightPanorama_resolution"></p>
+                            </div>
+                        </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="row" id="panorama_row_2">
+            <div class="col-4">
+                <div class="setup_container section">
+                    <fieldset>
+                        <legend>
+                            Back panorama
+                        </legend>
+                        <div>
+                            <div class="d-flex justify-content-center align-items-center">
+                                <input type="text" id="searchBackPanorama" class="w-75" placeholder="Back">
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <input type="button" id="randBackPanorama" value="Random" />
+                                <select id="backPanorama" class="ms-3"></select>
+                            </div>
+                            <div class="m-3">
+                                <canvas id="backPanoramaCanvas" width="320" height="320"></canvas>
+                            </div>
+                            <div class="d-flex justify-content-center">
+                                <p id="backPanorama_resolution"></p>
+                            </div>
+                        </div>
+
+                    </fieldset>
+                </div>
+            </div>
+
+            <div class="col-4">
+                <div class="setup_container section">
+                    <fieldset>
+                        <legend>
+                            Arch panorama
+                        </legend>
+                        <div>
+                            <div class="d-flex justify-content-center align-items-center">
+                                <input type="text" id="searchArchPanorama" class="w-75"
+                                    placeholder="... search arch panorama">
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <input type="button" id="randArchPanorama" value="Random" />
+                                <select id="archPanorama" class="ms-3"></select>
+                            </div>
+                            <div class="m-3">
+                                <canvas id="archPanoramaCanvas" width="320" height="320"></canvas>
+                            </div>
+                            <div class="d-flex justify-content-center">
+                                <p id="archPanorama_resolution"></p>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+            </div>
+
+            <div class="col-4">
+                <div class="setup_container section">
+                    <fieldset>
+                        <legend>
+                            Sky panorama
+                        </legend>
+                        <div>
+                            <div class="d-flex justify-content-center align-items-center">
+                                <input type="text" id="searchSkyPanorama" class="w-75"
+                                    placeholder="... search sky panorama">
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <input type="button" id="randSkyPanorama" value="Random" />
+                                <select id="skyPanorama" class="ms-3"></select>
+                            </div>
+                            <div class="m-3">
+                                <canvas id="skyPanoramaCanvas" width="320" height="320"></canvas>
+                            </div>
+                            <div class="d-flex justify-content-center">
+                                <p id="skyPanorama_resolution"></p>
+                            </div>
+                        </div>
+
+                    </fieldset>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="setup_container section">
+                <fieldset>
+                    <legend>
+                        Export:
+                    </legend>
+                    <textarea id="exp" style="width: 1200px; height: 256px;">
+
+3 : {
+name: "See the Flea?",
+data: '{"width":"40","height":"40","map":"BEAA15EE2AA4EAA4EE2AA2EAA21EE2AA6EE2AEAA4EAA8EAA2EAEAA4EAA4EBAEAA3EAA2EBAA2EAA5EE3AA2EAA3EE3AEAA2EAA6EAA2EE2AEAA2EAA9EE2AEE2AA7EAEAA4EE2AA3EAA7EAA7EE3AA3EAA9EAA8BAA16EAEAA9EAA5EE6AA30EAA5EAA3EAA9EAA3EAEAA2EAA7EAA2EAA3EE2AA6EAEAA9EE3AA2EE2AA2EAA3EAEAA3EAA5EAA2EE2AA2EAEAA14EAA2EAEAA2EAEAA2EAA10EE2AA2EE7AA4EAA2EAA9EAA2BAA2EE4AA2EE3AA20EAEAEE2AA7EAEE2AA35EE3AEAA29EAEE3AA3EAA2EAA9EE2AA14EAA6EAA10EAA53EAA27EAA7EE2AA7EAA17EE2AA4EE2AA4EAA16EAA4EAA15EAA8EAA8䁁AA118EE2ABB2EBABEE2BB41E$BB30EBB10EBB2EBEBEE2BEE2BB7EBB2EE2BB5EBB2EE2BEBB7EE4BB2EE2BEE2BB2EBB3EE3BEE2BB2EABEE2BB2EE3BB2EE2AEE2BEE6BEE8BEAEE2BB3EE3BB2EBEBB2EBB2EE2BB9EE2BEBB2EE6BEE2BB2EE2BB5EE2BEE2BEE2BB7EE2BB8EE28BEBB5EBB4EAEE4BB3EE3BB2EBB8ABB4ABB9EBB5ABB15ABB18EE2ABEBB4EBB7ABB4EABB2ABB31ABB4EABEBB7EBB7EE2BAA59EAA41EAA5EE2AA22EBEE7AA7EAA2EE26AEE2AEAA2"}',
+wall: "CaveWallBooga_217",
+start: '[1537,1]',
+monsters: '[[125,"DinoDragon"],[156,"DinoDragon"],[379,"DinoDragon"],[980,"DinoDragon"],[1552,"CarniPlant"],[1526,"CarniPlant"]]',
+doors: '[1523,1482,1441,1529,1490,1451,1401,1411,1413,1493,1534,1541,1502,1462,1422,1383,1343,1304,1264,1266,1306,1387,1428,1347,1468,1509,1549,1555,1516,1477,1437,1398,257,262,223,184,145,134,175,216,1325,1365,1366,1367,1327,1287,1005,1006,1007,1047,1045,1085,1125,1165,1205,1245,1285,1087,1127,1167,1207,1247,1132,1131,1091,1093,1133,732,731,771,811,851,891,971,1011,1051,813,853,893,973,1013,1053,1336,1376,1377,1378,1056,1096,1136,1176,1216,1256,1296,1057,1058,1098,1138,1178,1218,1258,1298,1338,784,824,864,904,944,1024,1064,1104,1105,785,786,826,866,906,946,986,1026,1066,1106,911,951,991,1031,1071,1111,1151,1191,1231,1271,1311,1351,1391,1392,1393,1353,1313,1273,1233,1193,1153,1113,1073,1033,993,953,913,912,1361,1321,1241,1201,1161,1121,1081,1041,1001,961,958,998,1038,1078,1118,1158,1198,1238,1278,1318,1358,173,213,253,293,333,334,335,336,337,338,339,340,341,343,342,344,345,346,186,226,266,306,1179,1219,1259,1135,1175,1215,850,890,930,931,934,933,773,733,168,170,208,209,210,189,230,231,191,229,1281,1128,1168,1288,1328,1248,787,827,867,943,1023,983,918,121,82,43,76,117,158,238,276,317,358,201,243,282,321,452,492,493,494,454,797,464,504,505,506,466,548,588,628,432,472,512,741,617,632,672,936,938,977,894,532,533,534,1092,984,1230,1107]',
+mask: '[[1529,0,5,0],[1490,0,5,0],[1451,0,5,0],[1523,0,5,1],[1482,0,5,1],[1441,0,5,1],[1411,0,15,1],[1401,0,15,0],[1493,90,0,0],[1534,90,0,0],[1549,90,0,0],[1468,90,0,0],[1555,180,16,0],[1502,180,16,0],[1541,180,16,0],[1428,0,15,0],[1422,0,15,1],[1509,90,4,1],[1462,270,4,0],[1387,270,16,0],[1383,270,16,2],[1398,270,16,2],[1516,0,43,2],[1477,0,43,2],[1437,180,35,2],[1264,180,35,2],[1347,0,35,0],[1306,270,25,0],[1266,0,15,0],[1343,0,15,1],[1304,90,25,1],[1219,0,15,0],[1098,0,44,0],[1096,0,44,1],[1056,0,40,1],[1057,0,40,1],[1058,0,40,1],[1138,270,39,1],[1178,270,16,0],[1298,0,36,0],[1258,270,42,0],[1376,0,32,2],[1377,180,32,0],[1296,0,35,1],[1336,90,25,1],[1256,90,25,1],[1175,0,35,1],[1216,0,35,1],[1136,270,20,0],[257,0,20,0],[262,0,20,1],[216,0,0,1],[223,0,0,0],[184,0,5,0],[175,0,5,1],[134,0,1,1],[145,0,1,1],[186,90,1,1],[173,270,1,0],[226,270,17,0],[213,90,17,1],[266,270,41,1],[253,90,41,0],[306,90,20,0],[293,90,16,0],[334,180,20,0],[345,180,20,1],[335,0,41,1],[344,90,23,2],[343,90,23,0],[342,0,41,0],[336,0,41,0],[337,90,8,0],[341,0,12,0],[340,0,17,1],[338,180,20,1],[339,0,39,1],[1053,270,25,0],[1051,90,25,1],[1011,0,14,1],[1013,0,35,0],[971,270,4,0],[931,270,0,0],[890,270,0,0],[973,270,25,0],[851,90,25,1],[933,270,17,1],[733,270,24,1],[731,90,24,0],[771,90,17,0],[773,270,17,1],[811,270,2,1],[853,180,25,1],[813,270,13,1],[168,0,28,1],[170,270,17,1],[209,0,6,0],[191,0,15,0],[189,0,15,1],[230,180,2,0],[1281,0,15,0],[1161,0,15,0],[1041,0,15,0],[1361,270,25,0],[1241,270,25,0],[1121,270,25,0],[1001,270,25,0],[1321,270,39,0],[1201,270,39,0],[1081,270,39,0],[961,270,39,0],[1325,0,35,1],[1205,0,35,1],[1045,0,35,1],[1285,90,25,1],[1165,90,25,1],[1245,270,4,0],[1125,270,4,0],[1366,180,4,0],[1327,180,0,0],[1288,180,0,0],[1128,0,23,0],[1168,90,20,0],[1247,0,20,0],[1207,90,20,0],[1087,90,20,0],[1047,270,41,1],[1064,0,14,1],[1105,0,17,1],[1024,0,25,1],[1066,270,25,0],[943,0,40,0],[944,0,40,0],[827,0,15,0],[824,0,15,1],[866,0,42,1],[946,0,14,0],[864,90,39,0],[904,90,39,0],[906,270,39,1],[986,270,39,1],[1026,270,11,1],[1318,0,15,1],[1198,0,15,1],[1078,0,15,1],[958,0,15,1],[1278,90,25,1],[1158,90,25,1],[1038,90,25,1],[918,90,25,1],[1358,90,39,1],[1238,90,39,1],[1118,90,39,1],[998,90,39,1],[1351,90,31,1],[1353,270,31,0],[1392,0,4,2],[1313,0,25,2],[1311,180,25,0],[1233,0,35,0],[1191,90,25,1],[1193,270,25,0],[1273,270,39,0],[1271,90,39,1],[1113,90,0,1],[953,90,0,1],[951,270,0,0],[1031,270,0,0],[1111,270,0,0],[1033,0,14,0],[1071,180,25,0],[991,180,25,0],[1073,270,25,0],[1153,270,39,0],[1151,90,39,0],[993,270,39,0],[911,0,40,0],[912,0,40,0],[913,0,40,0],[76,270,0,0],[117,270,0,0],[158,270,0,0],[276,270,0,0],[317,270,0,0],[358,270,0,0],[43,90,0,1],[82,90,0,1],[121,90,0,1],[243,90,0,1],[282,90,0,1],[321,90,0,1],[201,0,0,1],[238,0,0,0],[881,90,0,1],[721,90,0,1],[601,90,0,1],[441,90,0,1],[841,180,25,1],[681,180,25,1],[561,180,25,1],[401,180,25,1],[361,270,39,1],[481,270,39,1],[521,270,39,1],[641,270,39,1],[761,270,39,1],[801,270,39,1],[766,270,17,1],[764,90,17,0],[806,0,9,0],[804,0,9,1],[844,270,20,1],[846,90,20,0],[885,180,1,0],[329,0,35,0],[327,0,35,1],[452,270,20,1],[454,90,20,0],[500,0,15,0],[498,0,15,1],[349,0,15,1],[351,90,0,1],[797,90,31,1],[798,0,21,1],[678,270,0,0],[518,270,0,0],[638,180,25,0],[478,180,25,0],[758,180,25,0],[438,270,4,0],[558,270,4,0],[598,270,4,0],[718,270,4,0],[878,270,4,0],[464,270,0,0],[466,0,16,0],[505,180,6,2],[472,0,35,0],[511,0,35,0],[631,0,36,0],[670,270,0,0],[629,270,0,0],[588,270,0,0],[549,180,16,0],[591,0,15,0],[551,270,25,0],[431,270,25,0],[509,270,0,0],[469,180,25,0],[391,270,39,0],[389,270,39,2],[429,270,39,2],[741,0,15,0],[617,0,15,1],[778,0,35,1],[780,0,35,0],[620,0,35,0],[819,0,4,2],[700,0,25,2],[580,0,25,2],[578,270,25,2],[738,270,25,2],[658,0,0,2],[660,90,39,2],[540,90,39,2],[698,270,39,2],[538,270,39,2],[409,180,34,0],[489,0,15,0],[609,0,15,0],[407,270,0,0],[527,270,0,0],[647,270,0,0],[648,90,0,1],[367,90,25,1],[487,90,25,1],[607,90,25,1],[569,270,25,0],[449,270,25,0],[369,270,25,0],[529,270,39,0],[447,90,39,1],[567,90,39,1],[45,0,17,1],[46,0,17,0],[47,0,17,1],[48,0,17,0],[74,0,17,0],[73,0,17,1],[72,0,17,0],[71,0,17,1],[49,0,39,1],[50,0,39,1],[51,0,39,1],[52,0,39,1],[53,0,39,1],[70,0,39,1],[69,0,39,1],[68,0,39,1],[67,0,39,1],[66,0,39,1],[65,0,39,1],[64,0,39,1],[54,0,39,1],[55,0,39,1],[63,0,39,1],[56,180,20,0],[61,180,20,0],[62,180,20,1],[57,180,20,1],[59,0,13,1],[632,0,40,1],[671,0,24,0],[672,0,12,0],[936,0,0,2],[938,270,0,2],[977,0,4,2],[894,90,17,2],[534,0,14,0],[532,0,14,1],[1338,90,0,1],[1413,270,17,1],[1091,0,17,1],[1093,0,17,0],[1092,0,12,0],[983,0,17,1],[984,0,46,1],[1231,0,24,1],[1230,0,17,1],[1107,0,17,0],[1106,0,12,0]]',
+maskdecals: '[[260,0,41,1],[361,0,18,0],[413,0,31,0],[459,0,35,0],[198,0,27,0],[299,0,63,0],[398,0,15,0],[255,0,19,0],[853,0,3,0],[310,0,53,0],[258,0,48,0],[390,0,23,0],[785,0,36,0],[151,0,14,0],[478,0,49,0],[550,0,22,0],[67,0,17,0],[718,0,28,0],[288,0,38,0],[129,0,37,0],[261,0,32,0],[578,0,30,0],[448,0,19,0],[1535,0,37,0],[660,0,29,0],[918,0,8,0],[946,0,59,0],[841,0,35,0],[1217,0,60,0],[699,0,20,0],[912,0,51,0],[1118,0,24,0],[757,0,40,0],[798,0,62,0],[1224,0,4,0],[725,0,31,0],[487,0,40,0],[897,0,35,0],[1372,0,37,0],[1382,0,33,0],[1388,0,36,0],[1307,0,54,0],[1311,0,58,0],[1158,0,33,0],[465,0,61,0],[641,0,18,0],[1006,0,31,0],[1344,0,63,0],[1398,0,50,0],[1241,0,40,0],[1001,0,47,0],[1193,0,46,0],[944,0,31,0],[865,0,20,0],[54,0,17,0],[174,0,62,0],[149,0,48,0],[236,0,46,0],[203,0,30,0],[242,0,60,0],[561,0,33,0],[1361,0,32,0],[1085,0,27,0],[1245,0,11,0],[845,0,62,0],[1285,0,30,0],[1088,0,6,0],[850,0,54,0],[692,0,36,0],[551,0,29,0],[432,0,31,0],[425,0,46,0],[1298,0,57,0],[1057,0,47,0],[598,0,24,0],[973,0,4,0],[1051,0,6,0],[1179,0,50,0],[738,0,48,0],[1278,0,5,0],[1248,0,5,0],[1256,0,8,0],[481,0,18,0],[224,0,22,0],[1336,0,54,0],[1135,0,57,0],[1190,0,32,1],[1066,0,24,1],[631,0,24,1],[632,0,47,1],[1067,0,31,1],[701,0,51,1]]',
+}
+        </textarea>
+                </fieldset>
+            </div>
+        </div>
+
+
+
+        <div class=" row">
+            <p class="cb" id="buttons"></p>
+            <p class="version cb terminal" id="version"></p>
+        </div>
+
+        <div class="row use_3d">
+            <p>
+                Current floor:<select id="floors" class="ms-3"></select>
+                <input type="button" id="hint_down" value="Hint below" />
+                <input type="button" id="hint_up" value="Hint above" />
+                <input type="button" id="clearHint" value="Clear Hints" />
+                <input type="checkbox" id="keepHints" value="keepHints" name="keepHints" checked="checked">Keep
+                showing hints below
+                <input type="checkbox" id="keepHintsAbove" value="keepHintsAbove" name="keepHintsAbove">Keep showing
+                hints above
+                <input type="button" id="floor_on_top" value="Add floor on top" class="red_button" />
+            </p>
+        </div>
+
+        <div class=" row">
+            <p class="warning"><span>Error: </span><span id="error_message">Everything is fine</span></p>
+        </div>
+
+    </div>
+    </div>
+
+    <div id="game" class="winTrans"></div>
+    <div id="bottom" class="cb" style="margin-top: 1024px"></div>
+    <div id="temp" class="hidden"></div>
+    <div id="temp2" class="hidden"></div>
+    <!-- copy END -->
+
+    <!-- External JS -->
+    <script src="/External/bootstrap.bundle.min.js"></script>
+    <script src="/External/jquery-3.6.0.min.js"></script>
+    <script src="/External/gl-matrix-min.js" type="text/javascript"></script>
+    <!-- JS -->
+    <script src="/Code/JS/Library/Engine/Prototype_6_00.js" type="text/javascript"></script>
+    <script src="/Code/JS/Library/Engine/LS_Matrix_1_05.js" type="text/javascript"></script>
+    <script src="/Code/JS/Library/Engine/ENGINE_5_04.js" type="text/javascript"></script>
+    <script src="/Code/JS/Library/Engine/GRID_4_05.js" type="text/javascript"></script>
+    <script src="/Code/JS/Library/Engine/MAZE_5_00.js" type="text/javascript"></script>
+    <script src="/Code/JS/Library/Engine/BWT_1_00.js" type="text/javascript"></script>
+    <script src='/Code/JS/Library/Engine/IndexArrayManagers_4_03.js'></script>
+    <script src="/Code/JS/Library/Engine/WebGL_2_04.js" type="text/javascript"></script>
+    <script src="/Code/JS/Library/Engine/Lights_and_materials_1_06.js" type="text/javascript"></script>
+    <script src="/Assets/Definitions/ThePitifulChasmClamber/assets_ThePitifulChasmClamber.js" type="text/javascript"></script>
+    <script src="/Assets/Definitions/ThePitifulChasmClamber/Monsters_ThePitifulChasmClamber.js" type="text/javascript"></script>
+    <script src="/Assets/Definitions/MapEditor/MAP_for_MapEditor.js" type="text/javascript"></script>
+    <script src="/Games/MapEditor/MapEditor.js" type="text/javascript"></script>
+    <script src="/Code/JS/Library/Engine/MAP and SPAWN tools_3_00.js" type="text/javascript"></script>
+</body>

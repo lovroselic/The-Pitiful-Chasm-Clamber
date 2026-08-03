@@ -1,0 +1,50 @@
+/*jshint browser: true */
+/*jshint -W097 */
+/*jshint -W117 */
+/*jshint -W061 */
+
+"use strict";
+console.log("%cMonsters for Booga loaded.", "color: #888");
+
+const HERO_TYPE = {
+    Princess: {
+        name: "Princess",
+        asset: "PrincessWalk",
+        animate: true,
+        dirRef: UP,
+        w: 64,
+        h: 64,
+        fps: 60,
+    }
+};
+
+const MONSTER_TYPE = {
+   /*  DinoDragon: {
+        name: "DinoDragon",
+        category: "enemy",
+        asset: "DinoDragon",
+        w: 64,
+        h: 64,
+        dirRef: RIGHT,
+        animate: true,
+        fps: 60,
+        speed: 1.0 * 64,
+        behaviourArguments: [Infinity, ["wanderer"], 10000, ["hunter2D"]],
+        preventRotation: true,
+    }, */
+    /* CarniPlant: {
+        name: "CarniPlant",
+        category: "enemy",
+        asset: "CarniPlant",
+        w: 64,
+        h: 64,
+        dirRef: RIGHT,
+        animate: true,
+        fps: 12,
+        //speed: 1.0 * 64,
+        static: true,
+        //behaviourArguments: [Infinity, ["wanderer"], 10000, ["hunter2D"]],
+        preventRotation: true,
+    }, */
+
+};
