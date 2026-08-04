@@ -15,6 +15,8 @@ const INI = {
     TEXTURE_RESOLUTION: 128, //320
     DRAW_OCCLUSION_MAP: false,
     OCCLUSION_RESOLUTION: 4,
+
+    //usage flags
     USE_NOISE_FUNCTIONS: false,
     USE_QUAD_MAP: false,
     USE_OCCLUSION_MAP: false,
@@ -35,16 +37,19 @@ const INI = {
     USE_3D: false,
     USE_WORLD: false,
     USE_SPAWN: false,
+
+    //download flags
+    DOWNLOAD_MASK: false,
 };
 
 const MAP = {
-    Demo: {
+    1: {
         name: "Start",
-        data: '{"width":"17","height":"8","map":"BB3AA3BAA37BB28IBB8IBB17ABB16$ABB2ABB16"}',
-        wall: "",
-        start: '[38,1]',
+        data: '{"width":"17","height":"12","map":"B$AA19BB5AA52䁩A䁩ABB2AA50BB9AA2BAA2BB9ABB9䁩BB5䁩BB8AA2BB2ABB14AA2BB2"}',
+        wall: "BrownishMossy_128",
+        start: '[175,5]',
         mask: '[]',
-        maskdecals: '[]',
+        maskdecals: '[[144,0,0,0],[161,0,0,0],[178,0,0,0],[195,0,0,0]]',
     }
 };
 
@@ -72,7 +77,7 @@ const $MAP = {
 };
 
 const PRG = {
-    VERSION: "0.21.0",
+    VERSION: "0.21.1",
     NAME: "MapEditor",
     YEAR: "2026",
     CSS: "color: #239AFF;",
@@ -229,7 +234,7 @@ const GAME = {
         ENGINE.topCanvas = ENGINE.getCanvasName("ROOM");
         $(ENGINE.topCanvas).on("click", { layer: ENGINE.topCanvas }, GAME.mouseClick);
 
-        GAME.level = "Demo";
+        GAME.level = 1;
         GAME.loadLevel(GAME.level);
         GAME.started = false;
 
@@ -270,7 +275,7 @@ const GAME = {
         return $MAP.map;
     },
     syncLegacyLevel(level = GAME.level, map = GAME.activeMap()) {
-        if (!level) level = "Demo";
+        if (!level) level = 1;
         if (!MAP[level]) {
             MAP[level] = {
                 name: "MapEditor scratch level"
@@ -1224,8 +1229,14 @@ const GAME = {
                 break;
 
             case "mask":
-                // mask has no limitations
+                // mask has no limitations, but adds to previous
                 GA.addMask(grid)
+                $("#error_message").html("All is fine");
+                break;
+
+            case "stair":
+                // stair has no limitations, sets stair, clears previous
+                GA.toStair(grid)
                 $("#error_message").html("All is fine");
                 break;
 
@@ -1383,23 +1394,14 @@ const GAME = {
                 break;
 
             case "maskdecalpaint":
-                switch (currentValue) {
-                    case MAPDICT.MASK:
-                    case MAPDICT.WALL:
-                    case MAPDICT.EMPTY:
-                    case MAPDICT.RESERVED:
-                        const elIndex = MASK_DECALS.indexOf($("#mask_decal")[0].value);
-                        const rotation = parseInt($("#mask_rotation")[0].value, 10);
-                        const image = $(`#maskdecalcanvas`)[0].getContext("2d").canvas;
-                        const flip = parseInt($("#mask_flip")[0].value, 10);
-                        $MAP.mask_decal_moves.push([gridIndex, rotation, elIndex, flip]);
-                        break;
-                    default:
-                        $("#error_message").html(`Mask not supported on value: ${currentValue}`);
-                        return;
-                }
-                break;
+                //mask always allowed
 
+                const elIndex = MASK_DECALS.indexOf($("#mask_decal")[0].value);
+                const rotation = parseInt($("#mask_rotation")[0].value, 10);
+                const image = $(`#maskdecalcanvas`)[0].getContext("2d").canvas;
+                const flip = parseInt($("#mask_flip")[0].value, 10);
+                $MAP.mask_decal_moves.push([gridIndex, rotation, elIndex, flip]);
+                break;
             case "deletemaskdecal":
                 for (let [index, mask] of $MAP.mask_decal_moves.entries()) {
                     if (mask[0] === gridIndex) {
@@ -1798,8 +1800,8 @@ const GAME = {
         const gs = parseInt($("#gridsize").val(), 10);
         if (gs !== 64) console.error("Image size usuitable for mask, gs", gs);
         ENGINE.mergeLayerStack(["paintedmask", "decals"], "final");
-        ENGINE.saveCTXAsWEBP(LAYER.mask, `mask_level_${RoomID}.png`);
-        ENGINE.saveCTXAsWEBP(LAYER.final, `final_level_${RoomID}.png`, "#000000");
+        if (INI.DOWNLOAD_MASK) ENGINE.saveCTXAsWEBP(LAYER.mask, `mask_level_${RoomID}.png`);
+        ENGINE.saveCTXAsWEBP(LAYER.final, `Level_${RoomID}.png`, "#000000");
     },
     createMask(ok) {
         //const OK = ok || confirm("Sure? Current mask will be lost.");

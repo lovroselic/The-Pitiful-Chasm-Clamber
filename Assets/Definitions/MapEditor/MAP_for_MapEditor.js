@@ -7,7 +7,7 @@
 
 /** textures */
 const TEXTURE_LIST = [
-    
+    "BrownishMossy_128", "DarkRedBricks_128", "DatkMossy_128", "BrownishMossy_64",
 ].sort();
 
 /** Decals */
@@ -42,12 +42,16 @@ const SKY_DECALS = [
 //mask elements
 
 const MASK_ELEMENTS = [
-    
+
 ];
 
 const MASK_DECALS = [
-   
-    
+    "Ladder1",
+    //
+    "Flower1", "Fungi1", "Fungi101", "Fungi101103", "Fungi101123", "Fungi1011231111", "Fungi1011232", "Fungi1011232aa", "Fungi10113213122", "Fungi101543", "Fungi102", "Fungi1023",
+    "Fungi104", "Fungi121", "Fungi2", "Fungi201", "Fungi22221", "Fungus1", "Fungus3", "Fungus4", "GreenWallFungi1", "Lichen", "Moss1",
+    "Moss2", "Moss432", "Mushroom_233", "Mushroom_234", "Mushroom_235", "Mushroom_236", "Mushroom_237", "Mushroom_238", "Mushroom_239", "Mushroom_240", "Mushroom_242", "Plant1",
+    "Plant2", "SideFungus", "Spider126", "Spider129", "Spider4", "Spider5", "WallFungi1", "WallFungi2", "WallFungi3", "WallFungi4", "WallFungi5", "YellowPlant1"
 
 ];
 

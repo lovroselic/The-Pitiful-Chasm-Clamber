@@ -2716,8 +2716,8 @@ class $2D_Sprite {
         this.pos = GRID.gridToCenterPX(grid);                       // Point
         this.vPos = GRID.gridToCenterPX(grid);                      // Point - viewport support
         this.dir = dir;
-        this.preventRotation = false,
-            ImportTypeToConstructor(this, type);
+        this.preventRotation = false;
+        ImportTypeToConstructor(this, type);
         this.tint = tint;
         this.setAsset(this.asset);
         this.setDirRef(this.dirRef);

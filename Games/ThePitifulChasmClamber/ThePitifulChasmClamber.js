@@ -48,7 +48,7 @@ const INI = {
 };
 
 const PRG = {
-    VERSION: "0.1.0",
+    VERSION: "0.1.1",
     NAME: "The Pitiful Chasm Clamber",
     YEAR: "2026",
     SG: "ThePitifulChasmClamber",
@@ -94,7 +94,7 @@ const PRG = {
         ENGINE.gameWIDTH = 1088;
         ENGINE.titleWIDTH = ENGINE.gameWIDTH + 2 * INI.SCREEN_BORDER;
         ENGINE.sideWIDTH = INI.SCREEN_BORDER;
-        ENGINE.gameHEIGHT = 512;
+        ENGINE.gameHEIGHT = 768;
         ENGINE.titleHEIGHT = 96;
         ENGINE.bottomHEIGHT = 80;
         ENGINE.bottomWIDTH = ENGINE.titleWIDTH;
@@ -135,13 +135,13 @@ const HERO = {
     construct() {
         this.player = null;
         this.dead = false;
-        this.setMode();
+        this.setMode("idle", RIGHT);
 
 
         //binds
         this.handleFinishedJump = this.handleFinishedJump.bind(this);
     },
-    setMode(mode = "idle", dir = UP) {
+    setMode(mode = "idle", dir = RIGHT) {
         /**
          * idle
          * side, idle but with attitude
@@ -154,21 +154,25 @@ const HERO = {
 
         switch (this.mode) {
             case "idle":
-                this.player?.sprite.setAsset("FleaIdle");
-                this.player?.sprite.setDirRef(UP);
+                this.player?.sprite.setAsset("PrincessIdle");
+                this.player?.sprite.setDirRef(dir);
                 break;
-            case "falling":
+            case "walking":
+                this.player?.sprite.setAsset("PrincessWalking");
+                this.player?.sprite.setDirRef(dir);
+                break;
+           /*  case "falling":
             case "sliding":
                 this.player?.sprite.setAsset("FleaIdle");
                 this.player?.sprite.setDirRef(dir);
-                break;
-            case "jumping":
+                break; */
+            /* case "jumping":
                 this.player?.sprite.setAsset("FleaJump");
-                break;
-            case "side":
+                break; */
+           /*  case "side":
                 this.player?.sprite.setAsset("FleaSide");
                 this.player?.sprite.setDirRef(dir);
-                break;
+                break; */
             default: throw new Error(`Hero mode not suported: ${this.mode}`)
         }
 
@@ -199,6 +203,7 @@ const HERO = {
         TITLE.startTitle();
     },
     manage(lapsedTime) {
+        console.warn("manage", lapsedTime);
         GRID.translateSpritePosition(HERO.player, lapsedTime, HERO.handleFinishedJump, true, true);
         this.player.collisionToEntity();
     },
@@ -212,9 +217,9 @@ const HERO = {
         const map = MAP[GAME.level].map;
         const start_dir = map.startPosition.vector;
         const start_grid = Grid.toClass(map.startPosition.grid);
-        HERO.player = new $2D_player(start_grid, start_dir, HERO_TYPE.Booga, map.GA, map, true);
-        HERO.player.addDeathTexture(SPRITE.FleaSkeleton);
-        this.row = INI.MAX_ROW;
+        HERO.player = new $2D_player(start_grid, start_dir, HERO_TYPE.Princess, map.GA, map, true);
+        //HERO.player.addDeathTexture(SPRITE.FleaSkeleton);
+        //this.row = INI.MAX_ROW;
         if (GAME.time) GAME.time.unregister();
         if (DEBUG.VERBOSE) console.note("playerSetUp, HERO set to start grid");
     },
@@ -250,13 +255,16 @@ const HERO = {
     handleOutOfBounds() { },
     handleCarry() { },
     handleMove(dir) {
-        if (dir.y !== 0) return;                                    // x-only
-        if (!["idle", "side"].includes(this.mode)) return;          // only selected modes
+        if (dir.y !== 0) return this.handleVerticalMove(dir);       // x-only here
+        console.info("handling move", dir);
+        if (![
+            "idle",
+        ].includes(this.mode)) return;                              // only selected modes
 
-        this.jumpPower += INI.JUMP_POWER_INC;
-        this.jumpPower = Math.min(this.jumpPower, INI.MAX_JUMP_POWER);
-        if (!this.jumpDir) this.jumpDir = dir;
-        this.setMode("side", this.jumpDir);
+        this.setMode("walking", dir);
+    },
+    handleVerticalMove(dir) {
+        console.info("handling vertical move", dir);
     },
     handleNothingWasPressed() {
         if (this.mode !== "side") return;
@@ -403,7 +411,7 @@ const GAME = {
         ENGINE.GAME.pauseBlock();
         ENGINE.GAME.paused = true;
 
-        let GameRD = new RenderData("Booga", 60, "#fF2010", "text", "#444444", 2, 2, 2);
+        let GameRD = new RenderData("Chasm", 40, "#fF2010", "text", "#444444", 2, 2, 2);
         ENGINE.TEXT.setRD(GameRD);
         ENGINE.watchVisibility(ENGINE.GAME.lostFocus);
         ENGINE.GAME.setGameLoop(GAME.run);
@@ -434,7 +442,7 @@ const GAME = {
         GAME.clearPools();
         SPAWN_TOOLS_2D.spawn(level);
         HERO.dead = false;
-        HERO.setMode();
+        HERO.setMode("idle", RIGHT);
         HERO.playerSetUp();
         GAME.setCameraView();
         GAME.setWorld();
@@ -469,14 +477,14 @@ const GAME = {
         this.buildWorld(level);
         ENGINE.VIEWPORT.setMax({ x: MAP[level].pw, y: MAP[level].ph });
         await this.createBitmaps(level);
-        this.addMask(level);
+        //this.addMask(level);
     },
     async createBitmaps(level) {
-        await BITMAP.store(TEXTURE[`final_level_${level}`], "screen");
+        await BITMAP.store(TEXTURE[`Level_${level}`], "screen");
     },
-    addMask(level) {
-        MAP[level].map.maskdata = ENGINE.imgToBinaryMask(TEXTURE[`mask_level_${level}`]);
-    },
+    /*  addMask(level) {
+         MAP[level].map.maskdata = ENGINE.imgToBinaryMask(TEXTURE[`mask_level_${level}`]);
+     }, */
     setWorld() {
         WebGL.init2D('webgl');
     },
@@ -770,13 +778,13 @@ const TITLE = {
     },
     smalTitle() {
         const CTX = LAYER.title;
-        const fs = 20;
+        const fs = 12;
         CTX.font = fs + "px Chasm";
         CTX.textAlign = "center";
         const smallTitle = MAP[GAME.level].name;
         let txt = CTX.measureText(smallTitle);
         let x = ENGINE.titleWIDTH / 2;
-        let y = fs + 2;
+        let y = fs + 10;
         let gx = x - txt.width / 2;
         let gy = y - fs;
         let grad = this.makeGrad(CTX, gx, gy + 10, gx, gy + fs);
@@ -814,9 +822,9 @@ const TITLE = {
         TITLE.score();
         TITLE.stage();
         TITLE.hiscore();
-        TITLE.lives();
-        TITLE.time();
-        TITLE.jumpPower();
+        //TITLE.lives();
+        //TITLE.time();
+        //TITLE.jumpPower();
         TITLE.smalTitle();
     },
     music() {
@@ -836,7 +844,7 @@ const TITLE = {
         const CTX = LAYER.time;
         ENGINE.clearLayer("time");
         const x = 400 + 32;
-        const fs = 18;
+        const fs = 12;
         const y = ENGINE.titleHEIGHT / 2 + fs / 4;
         CTX.font = fs + "px Chasm";
         CTX.textAlign = "left";
@@ -853,7 +861,7 @@ const TITLE = {
     score() {
         ENGINE.clearLayer("score");
         const CTX = LAYER.score;
-        const fs = 18;
+        const fs = 12;
         const x = 64;
         const y = ENGINE.titleHEIGHT / 2 + fs / 4;
         CTX.font = fs + "px Chasm";
@@ -874,7 +882,7 @@ const TITLE = {
     stage() {
         ENGINE.clearLayer("level");
         const CTX = LAYER.level;
-        const fs = 18;
+        const fs = 12;
         const x = 240 + 32;
         const y = ENGINE.titleHEIGHT / 2 + fs / 4;
         CTX.font = fs + "px Chasm";
@@ -884,12 +892,12 @@ const TITLE = {
         CTX.shadowOffsetX = 1;
         CTX.shadowOffsetY = 1;
         CTX.shadowBlur = 1;
-        CTX.fillText(`Stage: ${GAME.level.toString().padStart(1, "0")}`, x, y);
+        CTX.fillText(`Room: ${GAME.level.toString().padStart(1, "0")}`, x, y);
     },
     hiscore() {
         ENGINE.clearLayer("hiscore");
         const CTX = LAYER.hiscore;
-        const fs = 18;
+        const fs = 12;
         const x = ENGINE.gameWIDTH + INI.SCREEN_BORDER;;
         const y = ENGINE.titleHEIGHT / 2 + fs / 4;
         CTX.font = fs + "px Chasm";

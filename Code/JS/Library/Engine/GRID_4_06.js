@@ -1023,7 +1023,7 @@ const MAPDICT = {
     //original - for random maps
     VACANT_PLACEHOLDER1: 2 ** 3,            //8
     BLOCKWALL: 2 ** 4,                      //16 - wall that is removable
-    STAIR: 2 ** 5,                          //32
+    STAIR: 2 ** 5,                          //32 - also covers ladders
     SHRINE: 2 ** 6,                         //64
 
     //alternative1 - RUN specific

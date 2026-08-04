@@ -52,7 +52,7 @@ const BELOW3 = new Vector3D(0, 0, -1);
 const ABOVE3 = new Vector3D(0, 0, 1);
 
 const ENGINE = {
-    VERSION: "5.04",
+    VERSION: "5.05",
     CSS: "color: #0FA",
     COLOR: "#0FA",
     INI: {
@@ -3458,7 +3458,8 @@ const ENGINE = {
                             //do nothing for those
                             break;
                         default:
-                            console.warn(`BLOCKGRID.drawMask not supported for value: ${value}. Ignoring!`);
+                            ENGINE.BLOCKGRID.block(x, y, "#000000");
+                            console.warn(`BLOCKGRID.drawMask not supported for value: ${value}. Painting it black!`);
                     }
                 }
             }
