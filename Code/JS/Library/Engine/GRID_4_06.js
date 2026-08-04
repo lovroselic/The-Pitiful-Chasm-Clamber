@@ -17,7 +17,7 @@ known bugs:
 */
 
 const GRID = {
-    VERSION: "4.05",
+    VERSION: "4.06",
     CSS: "color: #0AA",
     SETTING: {
         ALLOW_CROSS: false,
@@ -1036,13 +1036,13 @@ const MAPDICT = {
     HOLE: 2 ** 7,                           //128
 
     //aliases
-    MASK: 2 ** 2,                           //4 - alias door, this is fucked Lovro, change to  VACANT_PLACEHOLDER1 for the next version!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    //MASK: 2 ** 3,                         //8 - use this in the future
+    //MASK: 2 ** 2,                         // DEPRECATED!!!!!!!!!!!!!!!! 4 - alias door, this is fucked Lovro, change to  VACANT_PLACEHOLDER1 for the next version!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    MASK: 2 ** 3,                           //8 - use this in the future
     WARP: 2 ** 5,                           //32 - STAIR alias -> route to another part of the dungeon
     GOAL: 2 ** 14,                          //16384 alias RESERVED
 
     //16 bit extension
-    PILLAR: 2 ** 3,            //8
+    PILLAR: 2 ** 3,                         //8 - clashes with MASK, but i don't use masks in 3D
     WALL2: 2 ** 8,
     WALL4: 2 ** 9,
     WALL6: 2 ** 10,
@@ -1220,6 +1220,18 @@ class GA_Dimension_Agnostic_Methods {
     }
     notDoor(grid) {
         return !this.isDoor(grid);
+    }
+    addMask(grid) {
+        this.set(grid, MAPDICT.MASK);
+    }
+    toMask(grid) {
+        this.setValue(grid, MAPDICT.MASK);
+    }
+    isMask(grid) {
+        return this.check(grid, MAPDICT.MASK) === MAPDICT.MASK;
+    }
+    notMask(grid) {
+        return !this.isMask(grid);
     }
     addStair(grid) {
         this.set(grid, MAPDICT.STAIR);

@@ -48,7 +48,7 @@ const INI = {
 };
 
 const PRG = {
-    VERSION: "0.0.0",
+    VERSION: "0.1.0",
     NAME: "The Pitiful Chasm Clamber",
     YEAR: "2026",
     SG: "ThePitifulChasmClamber",
@@ -91,10 +91,10 @@ const PRG = {
         });
 
         //boxes
-        ENGINE.gameWIDTH = 960;
+        ENGINE.gameWIDTH = 1088;
         ENGINE.titleWIDTH = ENGINE.gameWIDTH + 2 * INI.SCREEN_BORDER;
         ENGINE.sideWIDTH = INI.SCREEN_BORDER;
-        ENGINE.gameHEIGHT = 768;
+        ENGINE.gameHEIGHT = 512;
         ENGINE.titleHEIGHT = 96;
         ENGINE.bottomHEIGHT = 80;
         ENGINE.bottomWIDTH = ENGINE.titleWIDTH;

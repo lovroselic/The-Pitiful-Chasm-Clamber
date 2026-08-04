@@ -38,17 +38,13 @@ const INI = {
 };
 
 const MAP = {
-
-    /*Demo: {
-        name: "Booga",
-        data: '{"width":"40","height":"40","map":"BB40AA1443B$BB39AA38BB38A"}',
-        start: '[1540,1]',
-    },*/
-
     Demo: {
-        name: "Booga",
-        data: '{"width":"40","height":"40","map":"BB25AA215EAA26EE2AA295BAA2BAA23BAA3BAA3BAA26BAA2EBAA3EAEAA30BAA3EAA31EAA92EE2AA28EAA14EAA28EAA60EAA35BAA8BAA30EAA7EAEAA10EAA4EAA51EE2AEE2AEAA52EAA56EAA65EAA65BB28EE2BB7AA23BB3ABB2AA2BB23AA2BB10ABB8ABB6ABB56A$EAA6EBABB3AA3EAA4EBABB3EE2BB5EBB4EBB5ABB10EBEE2BB6ABB5EBAA10EBEAA2B"}',
-        start: '[1540,1]',
+        name: "Start",
+        data: '{"width":"17","height":"8","map":"BB3AA3BAA37BB28IBB8IBB17ABB16$ABB2ABB16"}',
+        wall: "",
+        start: '[38,1]',
+        mask: '[]',
+        maskdecals: '[]',
     }
 };
 
@@ -1225,6 +1221,12 @@ const GAME = {
                 } else {
                     $("#error_message").html("You can't make door in the wall!");
                 }
+                break;
+
+            case "mask":
+                // mask has no limitations
+                GA.addMask(grid)
+                $("#error_message").html("All is fine");
                 break;
 
             case "trapdoor":

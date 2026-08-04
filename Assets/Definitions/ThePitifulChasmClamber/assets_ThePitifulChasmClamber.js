@@ -21,7 +21,7 @@ LoadFonts = [
 ];
 
 LoadTextures = [
-    { srcName: "Title/PCC_title_768.webp", name: "Title" },
+    { srcName: "Title/PCC_title_512.webp", name: "Title" },
 
 ];
 
