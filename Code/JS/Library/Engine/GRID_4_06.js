@@ -334,6 +334,7 @@ const GRID = {
     },
 
     translateSpritePosition(entity, lapsedTime, onFinish = null, animate = true, changeView = false) {
+        //console.log("translateSpritePosition", lapsedTime);
         const motion = entity.motion;
         if (!motion?.active) return;
         const sprite = entity.sprite;

@@ -31,6 +31,7 @@ const DEBUG = {
 
 const INI = {
     SCREEN_BORDER: 64,
+    WALKING_SPEED: 64 * 1.5,
 
     /* MAX_LEVEL: 3,
     JUMP_POWER_INC: 1,          // not tuned
@@ -48,7 +49,7 @@ const INI = {
 };
 
 const PRG = {
-    VERSION: "0.1.1",
+    VERSION: "0.1.2",
     NAME: "The Pitiful Chasm Clamber",
     YEAR: "2026",
     SG: "ThePitifulChasmClamber",
@@ -161,24 +162,31 @@ const HERO = {
                 this.player?.sprite.setAsset("PrincessWalking");
                 this.player?.sprite.setDirRef(dir);
                 break;
-           /*  case "falling":
-            case "sliding":
-                this.player?.sprite.setAsset("FleaIdle");
-                this.player?.sprite.setDirRef(dir);
-                break; */
+            /*  case "falling":
+             case "sliding":
+                 this.player?.sprite.setAsset("FleaIdle");
+                 this.player?.sprite.setDirRef(dir);
+                 break; */
             /* case "jumping":
                 this.player?.sprite.setAsset("FleaJump");
                 break; */
-           /*  case "side":
-                this.player?.sprite.setAsset("FleaSide");
-                this.player?.sprite.setDirRef(dir);
-                break; */
+            /*  case "side":
+                 this.player?.sprite.setAsset("FleaSide");
+                 this.player?.sprite.setDirRef(dir);
+                 break; */
             default: throw new Error(`Hero mode not suported: ${this.mode}`)
         }
 
         this.player?.sprite.update(dir);
     },
-    concludeAction() { },
+    concludeAction() {
+        if (![
+            "walking",
+        ].includes(this.mode)) return;
+
+        this.setMode("idle", this.player.sprite.dir);
+        this.player.motion.deactivate();
+    },
     die() {
         if (DEBUG.VERBOSE) console.red("HERO.die");
 
@@ -203,7 +211,7 @@ const HERO = {
         TITLE.startTitle();
     },
     manage(lapsedTime) {
-        console.warn("manage", lapsedTime);
+        //console.warn("manage", lapsedTime);
         GRID.translateSpritePosition(HERO.player, lapsedTime, HERO.handleFinishedJump, true, true);
         this.player.collisionToEntity();
     },
@@ -259,9 +267,9 @@ const HERO = {
         console.info("handling move", dir);
         if (![
             "idle",
+            "walking",
         ].includes(this.mode)) return;                              // only selected modes
-
-        this.setMode("walking", dir);
+        this.startWalking(dir);
     },
     handleVerticalMove(dir) {
         console.info("handling vertical move", dir);
@@ -275,6 +283,16 @@ const HERO = {
         //cleanup
         this.jumpPower = 0;
         this.jumpDir = null;
+    },
+    startWalking(dir) {
+        this.player.sprite.setDir(dir);
+        const speed = INI.WALKING_SPEED;
+        const mode = "walking"
+        this.setMode(mode, dir);
+        this.player.motion.setType(mode);                           // no importance, but aligned with mode, just in case
+        this.player.motion.setVelocity({ x: dir.x * speed, y: 0 });
+        this.player.motion.setAcceleration({ x: 0, y: 0 });
+        this.player.motion.activate();
     },
     performJump() {
         if (this.player.motion.active) return;

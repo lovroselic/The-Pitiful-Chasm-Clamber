@@ -38,7 +38,7 @@
  */
 
 const WebGL = {
-    VERSION: "2.04",
+    VERSION: "2.05",
     CSS: "color: gold",
     CTX: null,
     DEBUG: false,
@@ -2719,18 +2719,28 @@ class $2D_Sprite {
         this.preventRotation = false;
         ImportTypeToConstructor(this, type);
         this.tint = tint;
-        this.setAsset(this.asset);
+        this.asset = null;
+        this.state = {};
+        this.setAsset(this.assetName);
         this.setDirRef(this.dirRef);
         this.update(dir);
         this.show();
     }
-    setAsset(assetName) {
+    setAsset(assetName, reset = true, recallFrame = true) {
+        if (this.asset && this.assetName === assetName) return;
         if (assetName) {
+            if (this.asset) {
+                //store current state
+                if (!this.state.assetName) this.state.assetName = {};
+                this.state.assetName.frame = this.frame;
+            }
+            this.assetname = assetName;
             this.asset = ASSET[assetName];
             this.Nframes = this.asset.linear.length;
             this.fps = this.fps || 60;
             this.nextSpriteTime = 1000 / this.fps;
-            this.reset();
+            if (reset) this.reset();
+            if (recallFrame && this.state.assetName) this.frame = this.state.assetName.frame;
         }
     }
     show() {
@@ -2741,6 +2751,9 @@ class $2D_Sprite {
     }
     setDirRef(dirRef) {
         this.dirRef = Vector.toClass(dirRef);
+    }
+    setDir(dir) {
+        this.rotationFromDir(dir);
     }
     rotationFromDir(dir) {
         this.dir = dir;

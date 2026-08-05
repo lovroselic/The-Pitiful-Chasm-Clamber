@@ -9,13 +9,13 @@ console.log("%cMonsters for Booga loaded.", "color: #888");
 const HERO_TYPE = {
     Princess: {
         name: "Princess",
-        asset: "PrincessIdle",
+        assetName: "PrincessIdle",
         animate: true,
         dirRef: RIGHT,
         w: 64,
         h: 64,
-        fps: 60,
-        //preventRotation: true,
+        fps: 120,
+        preventRotation: true,
     }
 };
 
