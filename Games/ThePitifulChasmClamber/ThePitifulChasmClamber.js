@@ -23,7 +23,7 @@ const DEBUG = {
     SETTING: true,
     FPS: true,
     VERBOSE: true,
-    _2D_display: true,
+    _2D_display: false,
     INVINCIBLE: false,
     keys: false,
     max17: false,
@@ -50,7 +50,7 @@ const INI = {
 };
 
 const PRG = {
-    VERSION: "0.1.4",
+    VERSION: "0.1.5",
     NAME: "The Pitiful Chasm Clamber",
     YEAR: "2026",
     SG: "ThePitifulChasmClamber",
@@ -445,7 +445,7 @@ const GAME = {
         ENGINE.GAME.pauseBlock();
         ENGINE.GAME.paused = true;
 
-        let GameRD = new RenderData("Chasm", 40, "#fF2010", "text", "#444444", 2, 2, 2);
+        let GameRD = new RenderData("Chasm", 45, "#fF2010", "text", "#f38982", 3, 3, 4);
         ENGINE.TEXT.setRD(GameRD);
         ENGINE.watchVisibility(ENGINE.GAME.lostFocus);
         ENGINE.GAME.setGameLoop(GAME.run);

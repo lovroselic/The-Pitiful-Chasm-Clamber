@@ -52,7 +52,7 @@ const MAP = {
         wall: "BrownishMossy_128",
         start: '[172,5]',
         mask: '[]',
-        maskdecals: '[[144,0,0,0],[161,0,0,0],[178,0,0,0],[195,0,0,0]]',
+        maskdecals: '[[144,0,0,0,64],[161,0,0,0,64],[178,0,0,0,64],[195,0,0,0,64],[2,0,1,0,320],[6,0,2,0,320],[10,0,3,0,320],[14,0,4,0,320]]',
     }
 };
 
@@ -80,7 +80,7 @@ const $MAP = {
 };
 
 const PRG = {
-    VERSION: "0.22.0",
+    VERSION: "0.22.1",
     NAME: "MapEditor",
     YEAR: "2026",
     CSS: "color: #239AFF;",
@@ -1415,7 +1415,9 @@ const GAME = {
                 const rotation = parseInt($("#mask_rotation")[0].value, 10);
                 const image = $(`#maskdecalcanvas`)[0].getContext("2d").canvas;
                 const flip = parseInt($("#mask_flip")[0].value, 10);
-                $MAP.mask_decal_moves.push([gridIndex, rotation, elIndex, flip]);
+                let gs = ENGINE.INI.GRIDPIX;
+                if ($("input[name='expand_sprite']")[0].checked) gs = parseInt($("#spritesize").val(), 10);                 //if expansion is forced
+                $MAP.mask_decal_moves.push([gridIndex, rotation, elIndex, flip, gs]);
                 break;
             case "deletemaskdecal":
                 for (let [index, mask] of $MAP.mask_decal_moves.entries()) {
@@ -1864,13 +1866,11 @@ const GAME = {
                 let assetIndex = -1;
                 //border on notwall grid only, can have mask, can be stair/ladder
                 if (GA.notWall(grid)) {
-                    console.log("try", grid);
 
                     if (GA.isWall(left)) {
                         if (GA.isWall(down)) {
                             assetIndex = BORDER.VERTICAL_CUT;
                         } else assetIndex = BORDER.VERTICAL;
-                        console.log("..paint border", REV_BORDER[assetIndex], grid, GA.getValue(grid), "left", left, GA.getValue(left), "down", down, GA.getValue(down));
                         ENGINE.drawGridToId(maskCanvasId, grid, asset.linear[assetIndex]);
                     }
 
@@ -1878,7 +1878,6 @@ const GAME = {
                         if (GA.isWall(left)) {
                             assetIndex = BORDER.HORIZONTAL_CUT;
                         } else assetIndex = BORDER.HORIZONTAL;
-                        console.log("..paint border", REV_BORDER[assetIndex], grid, GA.getValue(grid), "left", left, GA.getValue(left), "down", down, GA.getValue(down));
                         ENGINE.drawGridToId(maskCanvasId, grid, asset.linear[assetIndex]);
                     }
 
@@ -1888,8 +1887,6 @@ const GAME = {
         }
     },
     paintMask() {
-        //console.trace();
-        //console.info("painting mask");
         ENGINE.BLOCKGRID.drawMask(LAYER.mask, $MAP.map);
         const gs = parseInt($("#gridsize").val(), 10);
         const maskCanvasId = $("#ROOM canvas[title='mask']").attr("id");
@@ -1906,7 +1903,6 @@ const GAME = {
         }
     },
     paintMaskDecals() {
-        const gs = parseInt($("#gridsize").val(), 10);
         const maskDecalCanvasId = $("#ROOM canvas[title='decals']").attr("id");
 
         if (INI.ADD_BORDERS) this.addBorders(maskDecalCanvasId);
@@ -1916,8 +1912,9 @@ const GAME = {
             const rotation = mask[1];
             const element = MASK_DECALS[mask[2]];
             const flip = mask[3];
+            const gs = mask[4];
             const grid = $MAP.map.GA.indexToGrid(gridIndex);
-            const p = GRID.gridToCoord(grid, gs);
+            const p = GRID.gridToCoord(grid);
             const image = SPRITE[element];
             ENGINE.drawRotatedToId(maskDecalCanvasId, p.x, p.y, image, rotation, false, flip, gs);
         }

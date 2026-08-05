@@ -99,6 +99,10 @@ LoadSprites = [
     { srcName: "MaskDecals/WallFungi4.png", name: "WallFungi4" },
     { srcName: "MaskDecals/WallFungi5.png", name: "WallFungi5" },
     { srcName: "MaskDecals/YellowPlant1.png", name: "YellowPlant1" },
+    { srcName: "MaskDecals/GnarlyTree_243.png", name: "GnarlyTree_243" },
+    { srcName: "MaskDecals/GnarlyTree_244.png", name: "GnarlyTree_244" },
+    { srcName: "MaskDecals/GnarlyTree_245.png", name: "GnarlyTree_245" },
+    { srcName: "MaskDecals/GnarlyTree_246.png", name: "GnarlyTree_246" },
 
 ];
 
