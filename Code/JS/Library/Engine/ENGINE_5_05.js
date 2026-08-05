@@ -415,6 +415,10 @@ const ENGINE = {
         }
         CTX.drawImage(image, X, Y);
     },
+    drawGridToId(id, grid, image, clear = false, center = false) {
+        const p = GRID.gridToCoord(grid);
+        return ENGINE.drawToId(id, p.x, p.y, image, clear = false, center = false);
+    },
     drawRotatedToId(id, X, Y, image, rotation = 0, clear = true, flip = 0, gs = ENGINE.INI.GRIDPIX) {
         if (!image) return; // ignore silently
 

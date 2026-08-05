@@ -55,6 +55,10 @@ const MASK_DECALS = [
 
 ];
 
+const BORDER_ASSETS = [
+    "MossyBorders",
+];
+
 const TRIGGER_DECALS = [];
 const LAIR_DECALS = [].sort();
 

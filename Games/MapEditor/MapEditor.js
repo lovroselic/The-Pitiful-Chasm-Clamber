@@ -40,14 +40,17 @@ const INI = {
 
     //download flags
     DOWNLOAD_MASK: false,
+
+    //mask flags
+    ADD_BORDERS: true,
 };
 
 const MAP = {
     1: {
         name: "Start",
-        data: '{"width":"17","height":"12","map":"B$AA19BB5AA52䁩A䁩ABB2AA50BB9AA2BAA2BB9ABB9䁩BB5䁩BB8AA2BB2ABB14AA2BB2"}',
+        data: '{"width":"17","height":"12","map":"B$ABAA2BB5AA61䁩A䁩ABB2AA55BABB8AA2BAA2BB9ABB9䁩BB5䁩BB8AA2BB2ABB14AA2BB2"}',
         wall: "BrownishMossy_128",
-        start: '[175,5]',
+        start: '[172,5]',
         mask: '[]',
         maskdecals: '[[144,0,0,0],[161,0,0,0],[178,0,0,0],[195,0,0,0]]',
     }
@@ -77,7 +80,7 @@ const $MAP = {
 };
 
 const PRG = {
-    VERSION: "0.21.1",
+    VERSION: "0.22.0",
     NAME: "MapEditor",
     YEAR: "2026",
     CSS: "color: #239AFF;",
@@ -211,6 +214,10 @@ const PRG = {
 
         if (!INI.USE_3D) {
             $(".use_3d").hide();
+        }
+
+        if (!INI.ADD_BORDERS) {
+            $(".use_borderrs").hide();
         }
     },
     start() {
@@ -572,6 +579,14 @@ const GAME = {
 
         GAME.updateTextures();                  //common to textures and panorama
 
+
+        /** borders */
+
+        if (BORDER_ASSETS.length > 0) {
+            for (const border of BORDER_ASSETS) {
+                $("#border_element").append(`<option value="${border}">${border}</option>`);
+            }
+        }
 
         /** mask elements */
         if (MASK_ELEMENTS.length > 0) {
@@ -1816,6 +1831,62 @@ const GAME = {
             $("canvas[title = 'mask']").show();
         } else $("canvas[title = 'mask']").hide();
     },
+    addBorders(maskCanvasId) {
+        const BORDER = {
+            HORIZONTAL: 0,
+            HORIZONTAL_CUT: 1,
+            VERTICAL: 2,
+            VERTICAL_CUT: 3,
+            CORNER: 4,
+        };
+        const REV_BORDER = {
+            0: "HORIZONTAL",
+            1: "HORIZONTAL_CUT",
+            2: "VERTICAL",
+            3: "VERTICAL_CUT",
+            4: "CORNER",
+        };
+        const asset = ASSET[$("#border_element").val()];
+        console.info("adding borders, asset", asset, "map", $MAP.map);
+
+
+        const GA = $MAP.map.GA;
+        const sizeX = $MAP.map.width;
+        const sizeY = $MAP.map.height;
+
+        for (let x = 0; x < sizeX; x++) {
+            for (let y = 0; y < sizeY; y++) {
+                const grid = new Grid(x, y);
+                const left = grid.add(LEFT);
+                const down = grid.add(DOWN);
+                const diag = grid.add(DownLeft);
+
+                let assetIndex = -1;
+                //border on notwall grid only, can have mask, can be stair/ladder
+                if (GA.notWall(grid)) {
+                    console.log("try", grid);
+
+                    if (GA.isWall(left)) {
+                        if (GA.isWall(down)) {
+                            assetIndex = BORDER.VERTICAL_CUT;
+                        } else assetIndex = BORDER.VERTICAL;
+                        console.log("..paint border", REV_BORDER[assetIndex], grid, GA.getValue(grid), "left", left, GA.getValue(left), "down", down, GA.getValue(down));
+                        ENGINE.drawGridToId(maskCanvasId, grid, asset.linear[assetIndex]);
+                    }
+
+                    if (GA.isWall(down)) {
+                        if (GA.isWall(left)) {
+                            assetIndex = BORDER.HORIZONTAL_CUT;
+                        } else assetIndex = BORDER.HORIZONTAL;
+                        console.log("..paint border", REV_BORDER[assetIndex], grid, GA.getValue(grid), "left", left, GA.getValue(left), "down", down, GA.getValue(down));
+                        ENGINE.drawGridToId(maskCanvasId, grid, asset.linear[assetIndex]);
+                    }
+
+                    if (GA.notWall(down) && GA.notWall(left) && GA.isWall(diag)) ENGINE.drawGridToId(maskCanvasId, grid, asset.linear[BORDER.CORNER]);
+                }
+            }
+        }
+    },
     paintMask() {
         //console.trace();
         //console.info("painting mask");
@@ -1837,6 +1908,8 @@ const GAME = {
     paintMaskDecals() {
         const gs = parseInt($("#gridsize").val(), 10);
         const maskDecalCanvasId = $("#ROOM canvas[title='decals']").attr("id");
+
+        if (INI.ADD_BORDERS) this.addBorders(maskDecalCanvasId);
 
         for (const [i, mask] of $MAP.mask_decal_moves.entries()) {
             const gridIndex = mask[0];
@@ -1900,7 +1973,7 @@ const GAME = {
     },
     fillArea(from, to, fillValue) {
         const dimension = $("#dimensions input[name=dimensions]:checked").val();
-        console.warn("fillArea", from, to, fillValue, "dimension", dimension);
+        //console.warn("fillArea", from, to, fillValue, "dimension", dimension);
         const W = to.x - from.x;
         const H = to.y - from.y;
         if (to.z !== from.z) return "Needs to be same slice depth.";

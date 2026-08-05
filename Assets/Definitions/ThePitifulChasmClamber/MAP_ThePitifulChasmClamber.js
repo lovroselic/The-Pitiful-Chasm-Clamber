@@ -10,7 +10,7 @@ console.log("%cMAP for ThePitifulChasmClamber loaded.", "color: #888");
 const MAP = {
    1: {
       name: "Start",
-      data: '{"width":"17","height":"12","map":"B$AA19BB5AA52䁩A䁩ABB2AA50BB9AA2BAA2BB9ABB9䁩BB5䁩BB8AA2BB2ABB14AA2BB2"}',
+      data: '{"width":"17","height":"12","map":"B$ABAA2BB5AA61䁩A䁩ABB2AA55BABB8AA2BAA2BB9ABB9䁩BB5䁩BB8AA2BB2ABB14AA2BB2"}',
       wall: "BrownishMossy_128",
       start: '[172,5]',
       mask: '[]',
