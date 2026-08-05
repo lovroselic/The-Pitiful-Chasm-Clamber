@@ -23,7 +23,7 @@ const DEBUG = {
     SETTING: true,
     FPS: true,
     VERBOSE: true,
-    _2D_display: false,
+    _2D_display: true,
     INVINCIBLE: false,
     keys: false,
     max17: false,
@@ -32,6 +32,7 @@ const DEBUG = {
 const INI = {
     SCREEN_BORDER: 64,
     WALKING_SPEED: 64 * 1.5,
+    TEXT_SIZE: 13,
 
     /* MAX_LEVEL: 3,
     JUMP_POWER_INC: 1,          // not tuned
@@ -49,7 +50,7 @@ const INI = {
 };
 
 const PRG = {
-    VERSION: "0.1.2",
+    VERSION: "0.1.3",
     NAME: "The Pitiful Chasm Clamber",
     YEAR: "2026",
     SG: "ThePitifulChasmClamber",
@@ -100,6 +101,7 @@ const PRG = {
         ENGINE.bottomHEIGHT = 80;
         ENGINE.bottomWIDTH = ENGINE.titleWIDTH;
         MAP_TOOLS.INI.FOG = false;
+        GRID.SETTING.COLLISION_STEP = 16;
 
         $("#bottom").css("margin-top", ENGINE.gameHEIGHT + ENGINE.titleHEIGHT + ENGINE.bottomHEIGHT);
         $(ENGINE.gameWindowId).width(ENGINE.gameWIDTH + 2 * ENGINE.sideWIDTH + 4);
@@ -214,6 +216,7 @@ const HERO = {
         //console.warn("manage", lapsedTime);
         GRID.translateSpritePosition(HERO.player, lapsedTime, HERO.handleFinishedJump, true, true);
         this.player.collisionToEntity();
+        this.paintLanding([this.player.sprite.pos]);
     },
     completeLevel() {
         GAME.levelComplete = true;
@@ -306,6 +309,7 @@ const HERO = {
         this.player.motion.activate();
     },
     handlePositionCollision(context) {
+        console.warn("handlePositionCollision", context);
         const entity = context.entity;
         const motion = entity.motion;
         const maskdata = entity.map.maskdata;
@@ -316,13 +320,25 @@ const HERO = {
         const type = context.collision.type;
 
         switch (type) {
+
             case "blocked":
-                motion.velocity.x = 0;                                                                      // stop side movement
-                motion.velocity.y = Math.abs(motion.velocity.y);                                            // keep speed down or revert from up
-                this.setMode("falling", DOWN);
-                motion.setType("falling");
-                motion.setAcceleration({ x: 0, y: INI.GRAVITY });
-                return { finished: false, pos: context.currentPos, };
+                switch (this.mode) {
+                    case "walking":
+                        this.setMode("idle", this.player.sprite.dir);
+                        this.player.motion.deactivate();
+                        return { finished: false, pos: context.currentPos, };
+                    case "jumping":
+                        motion.velocity.x = 0;                                                                      // stop side movement
+                        motion.velocity.y = Math.abs(motion.velocity.y);                                            // keep speed down or revert from up
+                        this.setMode("falling", DOWN);
+                        motion.setType("falling");
+                        motion.setAcceleration({ x: 0, y: INI.GRAVITY });
+                        return { finished: false, pos: context.currentPos, };
+
+                };
+                break; //redundant, just in case
+
+
 
             case "unsupported":
                 motion.velocity.x = 0;
@@ -385,17 +401,17 @@ const HERO = {
     paintLanding(points) {
         ENGINE.clearLayer("fill");
         const CTX = LAYER.fill;
-        CTX.fillStyle = "#FFF";
+        CTX.fillStyle = "#e60b0b";
         for (const point of points) {
             let p = point.toViewportCopy()
-            CTX.pixelAtPoint(p, 3);
+            CTX.pixelAtPoint(p, 6);
         }
     },
     handleFinishedJump(result) {
         const sprite = this.player.sprite;
         const grid = sprite.getGrid();
         this.player.moveState.reset(grid);
-        this.checkForwardProgress();
+        //this.checkForwardProgress();
         this.player.checkEndMove();
     },
     checkForwardProgress() {
@@ -554,7 +570,7 @@ const GAME = {
     },
     drawFirstFrame(level) {
         if (DEBUG.VERBOSE) console.log("drawing first frame");
-        if (DEBUG._2D_display) GRID.paintCoord("coord", MAP.main.map);
+        if (DEBUG._2D_display) GRID.paintCoord("coord", MAP[GAME.level].map);
 
         TITLE.firstFrame();
         ENGINE.VIEWPORT.changed = true;
@@ -577,7 +593,6 @@ const GAME = {
         GAME.updateVieport();
         WebGL.render2DScene(MAP[GAME.level].map);
         TITLE.time();
-        TITLE.jumpPower();
         if (DEBUG.FPS) {
             GAME.FPS(lapsedTime);
         }
@@ -796,16 +811,16 @@ const TITLE = {
     },
     smalTitle() {
         const CTX = LAYER.title;
-        const fs = 12;
+        const fs = INI.TEXT_SIZE;
         CTX.font = fs + "px Chasm";
         CTX.textAlign = "center";
         const smallTitle = MAP[GAME.level].name;
         let txt = CTX.measureText(smallTitle);
         let x = ENGINE.titleWIDTH / 2;
-        let y = fs + 10;
+        let y = fs + 4;
         let gx = x - txt.width / 2;
         let gy = y - fs;
-        let grad = this.makeGrad(CTX, gx, gy + 10, gx, gy + fs);
+        let grad = this.makeGrad(CTX, gx, gy + 2, gx, gy + fs);
         CTX.fillStyle = grad;
         GAME.grad = grad;
         CTX.shadowColor = "#666666";
@@ -848,7 +863,7 @@ const TITLE = {
     music() {
         AUDIO.Title.play();
     },
-    jumpPower() {
+    /* jumpPower() {
         const CTX = LAYER.time;
         ENGINE.clearLayer("jump");
         const x = 64;
@@ -857,12 +872,12 @@ const TITLE = {
         const w = ENGINE.gameWIDTH;
         const fraction = HERO.jumpPower / INI.MAX_JUMP_POWER;
         ENGINE.percentBar(fraction, y, CTX, w, ["green", "yellow", "red"], h, x, 0);
-    },
+    }, */
     time() {
         const CTX = LAYER.time;
         ENGINE.clearLayer("time");
         const x = 400 + 32;
-        const fs = 12;
+        const fs = INI.TEXT_SIZE;
         const y = ENGINE.titleHEIGHT / 2 + fs / 4;
         CTX.font = fs + "px Chasm";
         CTX.textAlign = "left";
@@ -879,7 +894,7 @@ const TITLE = {
     score() {
         ENGINE.clearLayer("score");
         const CTX = LAYER.score;
-        const fs = 12;
+        const fs = INI.TEXT_SIZE;;
         const x = 64;
         const y = ENGINE.titleHEIGHT / 2 + fs / 4;
         CTX.font = fs + "px Chasm";
@@ -900,7 +915,7 @@ const TITLE = {
     stage() {
         ENGINE.clearLayer("level");
         const CTX = LAYER.level;
-        const fs = 12;
+        const fs = INI.TEXT_SIZE;;
         const x = 240 + 32;
         const y = ENGINE.titleHEIGHT / 2 + fs / 4;
         CTX.font = fs + "px Chasm";
@@ -915,7 +930,7 @@ const TITLE = {
     hiscore() {
         ENGINE.clearLayer("hiscore");
         const CTX = LAYER.hiscore;
-        const fs = 12;
+        const fs = INI.TEXT_SIZE;;
         const x = ENGINE.gameWIDTH + INI.SCREEN_BORDER;;
         const y = ENGINE.titleHEIGHT / 2 + fs / 4;
         CTX.font = fs + "px Chasm";

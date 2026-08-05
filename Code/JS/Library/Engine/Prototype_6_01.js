@@ -6,7 +6,7 @@
 console.clear();
 
 const LIB = {
-    VERSION: "6.00",
+    VERSION: "6.01",
     CSS: "color: #EFE",
     log: function () {
         console.log(`%cPrototype LIB ${LIB.VERSION} loaded`, LIB.CSS);
@@ -713,7 +713,7 @@ changelog:
             return null;
         }
     });
-    
+
     defineExtension(Set.prototype, "Set.prototype", "addArray", function addArray(arr) {
         arr.forEach(el => this.add(el));
     });
@@ -746,7 +746,7 @@ changelog:
     defineExtension(HTMLAudioElement.prototype, "HTMLAudioElement.prototype", "isPlaying", function isPlaying() {
         return !this.paused && this.currentTime > 0;
     });
-    
+
     defineExtension(Audio.prototype, "Audio.prototype", "stop", function stop() {
         this.pause();
         this.currentTime = 0;
@@ -936,6 +936,12 @@ class Point extends MasterGridClass {
         //change to offset
         this.x = this.x - ENGINE.VIEWPORT.vx;
         this.y = this.y - ENGINE.VIEWPORT.vy;
+    }
+    toViewportCopy() {
+        //change to offset
+        let x = this.x - ENGINE.VIEWPORT.vx;
+        let y = this.y - ENGINE.VIEWPORT.vy;
+        return new Point(x, y);
     }
     toAbsolute() {
         this.x = this.x + ENGINE.VIEWPORT.vx;

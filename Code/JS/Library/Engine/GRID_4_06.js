@@ -363,12 +363,15 @@ const GRID = {
         let currentPos = sprite.pos;
         let result = { finished: false };
 
+        console.info("..", "steps", steps, "dt", dt);
+
         for (let step = 0; step < steps; step++) {
             motion.velocity.x = clampSpeed(motion.velocity.x + motion.acceleration.x * subDt);
             motion.velocity.y = clampSpeed(motion.velocity.y + motion.acceleration.y * subDt);
 
             let candidatePos = currentPos.translate(motion.velocity, subDt);
             const collision = GRID.checkWallCollision(entity, candidatePos);
+            console.warn("....candidatePos", candidatePos, "collision", collision);
 
             if (collision.hit) {
                 result = GRID.resolveWallCollision(entity, collision, currentPos, candidatePos);
@@ -378,6 +381,8 @@ const GRID = {
 
             currentPos = candidatePos;
         }
+
+        console.error("---->", "currentPos", currentPos,);
 
         sprite.setPosition(currentPos);
 
@@ -438,7 +443,7 @@ const GRID = {
      * - `contact`: the tested position at which the collision occurred.
      */
     checkWallCollision(entity, candidatePos) {
-
+        console.info("--> checkWallCollision", candidatePos);
         const GA = entity.GA;
         const gs2 = (ENGINE.INI.GRIDPIX >>> 1) * GRID.SETTING.WALL_COLLISION_TOLERANCE;                       // slight tolerance. put to INI
         const dir = new Vector(Math.sign(entity.motion.velocity.x), 0);
@@ -460,18 +465,19 @@ const GRID = {
 
         const test = {
             top: createTest(UP, ["jumping"], "blocked", "top"),
-            side: createTest(dir, ["jumping", "sliding"], "blocked", "side"),
+            side: createTest(dir, ["jumping", "sliding", "walking"], "blocked", "side"),
             bottom: createTest(DOWN, ["jumping", "sliding", "falling"], "surface", "bottom"),
         };
 
         for (const testType of Object.keys(test)) {
             const T = test[testType];
             if (!T.app.includes(mode)) continue;                                        //only test applicable, order of tests matter
-            if (mode === "jumping" && T.cat === "bottom" && jumpY === -1) continue;     //ignore bottom check when jumping di is still up
+            if (mode === "jumping" && T.cat === "bottom" && jumpY === -1) continue;     //ignore bottom check when jumping dir is still up
             const gridValue = T.value;
 
             switch (gridValue) {
                 case MAPDICT.EMPTY: continue;
+                case MAPDICT.STAIR + MAPDICT.MASK + MAPDICT.RESERVED: continue;
                 case MAPDICT.RESERVED: continue;
                 case MAPDICT.MASK:
                     const result = GRID.checkMaskedGrid(T, maskdata);
