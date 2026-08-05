@@ -363,7 +363,7 @@ const GRID = {
         let currentPos = sprite.pos;
         let result = { finished: false };
 
-        console.info("..", "steps", steps, "dt", dt);
+        //console.info("..", "steps", steps, "dt", dt);
 
         for (let step = 0; step < steps; step++) {
             motion.velocity.x = clampSpeed(motion.velocity.x + motion.acceleration.x * subDt);
@@ -371,7 +371,7 @@ const GRID = {
 
             let candidatePos = currentPos.translate(motion.velocity, subDt);
             const collision = GRID.checkWallCollision(entity, candidatePos);
-            console.warn("....candidatePos", candidatePos, "collision", collision);
+            //console.warn("....candidatePos", candidatePos, "collision", collision);
 
             if (collision.hit) {
                 result = GRID.resolveWallCollision(entity, collision, currentPos, candidatePos);
@@ -382,7 +382,7 @@ const GRID = {
             currentPos = candidatePos;
         }
 
-        console.error("---->", "currentPos", currentPos,);
+        //console.error("---->", "currentPos", currentPos,);
 
         sprite.setPosition(currentPos);
 
@@ -443,7 +443,7 @@ const GRID = {
      * - `contact`: the tested position at which the collision occurred.
      */
     checkWallCollision(entity, candidatePos) {
-        console.info("--> checkWallCollision", candidatePos);
+        //console.info("--> checkWallCollision", candidatePos);
         const GA = entity.GA;
         const gs2 = (ENGINE.INI.GRIDPIX >>> 1) * GRID.SETTING.WALL_COLLISION_TOLERANCE;                       // slight tolerance. put to INI
         const dir = new Vector(Math.sign(entity.motion.velocity.x), 0);

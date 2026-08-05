@@ -50,7 +50,7 @@ const INI = {
 };
 
 const PRG = {
-    VERSION: "0.1.5",
+    VERSION: "0.2.0",
     NAME: "The Pitiful Chasm Clamber",
     YEAR: "2026",
     SG: "ThePitifulChasmClamber",
@@ -267,7 +267,7 @@ const HERO = {
     handleCarry() { },
     handleMove(dir) {
         if (dir.y !== 0) return this.handleVerticalMove(dir);       // x-only here
-        console.info("handling move", dir);
+        //console.info("handling move", dir);
         if (![
             "idle",
             "walking",
@@ -276,7 +276,14 @@ const HERO = {
     },
     handleVerticalMove(dir) {
         console.info("handling vertical move", dir);
+        // block incompatible modes
+
+        const pos = this.player.sprite.pos;
+        const grid = GRID.pointToGrid(pos);
+        const GA = this.player.map.GA;
+        console.info(".. where we are", grid, "is stair", GA.isStair(grid));
     },
+    startClimbing(dir) { },
     handleNothingWasPressed() {
         if (this.mode !== "side") return;
         if (this.jumpPower <= 0) return;
