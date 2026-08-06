@@ -23,7 +23,7 @@ const DEBUG = {
     SETTING: true,
     FPS: true,
     VERBOSE: true,
-    _2D_display: false,
+    _2D_display: true,
     INVINCIBLE: false,
     keys: false,
     max17: false,
@@ -49,6 +49,7 @@ const DEBUG = {
 const INI = {
     SCREEN_BORDER: 64,
     WALKING_SPEED: 64 * 1.5,
+    CLIMBING_SPEED: 64 * 1.5,
     TEXT_SIZE: 13,
 
     /* MAX_LEVEL: 3,
@@ -67,7 +68,7 @@ const INI = {
 };
 
 const PRG = {
-    VERSION: "0.2.1",
+    VERSION: "0.2.2",
     NAME: "The Pitiful Chasm Clamber",
     YEAR: "2026",
     SG: "ThePitifulChasmClamber",
@@ -176,9 +177,15 @@ const HERO = {
                 this.player?.sprite.setDirRef(dir);
                 break;
             case "walking":
-                this.player?.sprite.setAsset("PrincessWalking", false);
-                this.player?.sprite.setDirRef(dir);
+                this.player.sprite.setAsset("PrincessWalking", false);
+                this.player.sprite.setDirRef(dir);
                 break;
+
+            case "climbing":
+                this.player.sprite.setAsset("PrincessClimb", false);
+                this.player.sprite.setDirRef(dir);
+                break;
+
             /*  case "falling":
              
                  this.player?.sprite.setAsset("FleaIdle");
@@ -194,12 +201,20 @@ const HERO = {
         this.player?.sprite.update(dir);
     },
     concludeAction() {
-        if (![
-            "walking",
-        ].includes(this.mode)) return;
 
-        this.setMode("idle", this.player.sprite.dir);
-        this.player.motion.deactivate();
+        //conclusion for walking, 
+        if (["walking"].includes(this.mode)) {
+            this.setMode("idle", this.player.sprite.dir);
+            this.player.motion.deactivate();
+            return;
+        }
+
+        //conclusion for climbing
+        if (["climbing"].includes(this.mode)) {
+            this.player.motion.deactivate(true);                // keep props
+            return;
+        }
+
     },
     die() {
         if (DEBUG.VERBOSE) console.red("HERO.die");
@@ -226,15 +241,15 @@ const HERO = {
     },
     manage(lapsedTime) {
         //console.warn("manage", lapsedTime);
-        GRID.translateSpritePosition(HERO.player, lapsedTime, HERO.handleFinishedJump, true, true);
+        GRID.translateSpritePosition(HERO.player, lapsedTime, HERO.handleFinishedJump, true, false);
         this.player.collisionToEntity();
 
-        if ([
-            "idle",
+        //update animations even if not moving for selected modes
+        // modes not updated: climbing,
+        if (["idle"].includes(this.mode)) this.player.sprite.updateAnimation(lapsedTime);
 
-        ].includes(this.mode)) this.player.sprite.updateAnimation(lapsedTime);
         //debug
-        //this.paintLanding([this.player.sprite.pos]);
+        this.paintLanding([this.player.sprite.pos]);
     },
     completeLevel() {
         GAME.levelComplete = true;
@@ -285,7 +300,8 @@ const HERO = {
     handleCarry() { },
     handleMove(dir) {
         if (dir.y !== 0) return this.handleVerticalMove(dir);       // x-only here
-        //console.info("handling move", dir);
+
+        // only horizontal moves below
         if (![
             "idle",
             "walking",
@@ -293,15 +309,35 @@ const HERO = {
         this.startWalking(dir);
     },
     handleVerticalMove(dir) {
-        console.info("handling vertical move", dir);
-        // block incompatible modes
+        //console.info("handling vertical move", dir);
 
+        // block incompatible modes
+        if (this.mode === "climbing") {
+            this.player.motion.velocity.y = Math.abs(this.player.motion.velocity.y) * Math.sign(dir.y);;
+            return this.player.motion.activate();
+        }
+
+
+        //
         const pos = this.player.sprite.pos;
         const grid = GRID.pointToGrid(pos);
         const GA = this.player.map.GA;
+        if (!GA.isStair(grid)) return;                                              // no climbing possible if not on stairs
         console.info(".. where we are", grid, "is stair", GA.isStair(grid));
+        this.player.sprite.pos = GRID.centerPointToGrid(this.player.sprite.pos);    //to grid center
+        this.startClimbing(dir);
     },
-    startClimbing(dir) { },
+    startClimbing(dir) {
+        this.player.sprite.setDir(dir);
+        const speed = INI.CLIMBING_SPEED;
+        const mode = "climbing";
+        this.setMode(mode, dir);
+        this.player.motion.setType(mode);                           // no importance, but aligned with mode, just in case
+        this.player.motion.setVelocity({ x: 0, y: dir.y * speed });
+        console.log("velocity", this.player.motion.velocity.y);
+        this.player.motion.setAcceleration({ x: 0, y: 0 });
+        this.player.motion.activate();
+    },
     handleNothingWasPressed() {
         if (this.mode !== "side") return;
         if (this.jumpPower <= 0) return;
@@ -315,7 +351,7 @@ const HERO = {
     startWalking(dir) {
         this.player.sprite.setDir(dir);
         const speed = INI.WALKING_SPEED;
-        const mode = "walking"
+        const mode = "walking";
         this.setMode(mode, dir);
         this.player.motion.setType(mode);                           // no importance, but aligned with mode, just in case
         this.player.motion.setVelocity({ x: dir.x * speed, y: 0 });
@@ -348,6 +384,8 @@ const HERO = {
 
             case "blocked":
                 switch (this.mode) {
+                    case "climbing":
+                        return { finished: false, pos: context.currentPos, };
                     case "walking":
                         this.setMode("idle", this.player.sprite.dir);
                         this.player.motion.deactivate();

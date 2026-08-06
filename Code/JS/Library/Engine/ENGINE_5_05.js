@@ -4419,11 +4419,13 @@ class Motion2D {
     activate() {
         this.active = true;
     }
-    deactivate() {
+    deactivate(keep = false) {
         this.active = false;
-        this.type = null;
-        this.velocity = new FP_Vector();
-        this.acceleration = new FP_Vector();
+        if (!keep) {
+            this.type = null;
+            this.velocity = new FP_Vector();
+            this.acceleration = new FP_Vector();
+        }
     }
     pause() {
         this.active = false;

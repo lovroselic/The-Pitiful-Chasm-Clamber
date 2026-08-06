@@ -144,6 +144,10 @@ const GRID = {
         var ty = y / ENGINE.INI.GRIDPIX;
         return new FP_Grid(tx, ty);
     },
+    centerPointToGrid(point) {
+        const grid = this.pointToGrid(point);
+        return this.gridToCenterPX(grid);
+    },
     pointToGrid(point) {
         return this.coordToGrid(point.x, point.y);
     },
@@ -334,7 +338,9 @@ const GRID = {
     },
 
     translateSpritePosition(entity, lapsedTime, onFinish = null, animate = true, changeView = false) {
-        //console.log("translateSpritePosition", lapsedTime);
+        //console.line();
+        //console.log("translateSpritePosition", lapsedTime, "entity.motion", entity.motion);
+
         const motion = entity.motion;
         if (!motion?.active) return;
         const sprite = entity.sprite;
@@ -349,21 +355,17 @@ const GRID = {
         const projectedVelocityX = clampSpeed(motion.velocity.x + motion.acceleration.x * dt);
         const projectedVelocityY = clampSpeed(motion.velocity.y + motion.acceleration.y * dt);
 
-        const maxAxisSpeed = Math.max(
-            Math.abs(motion.velocity.x),
-            Math.abs(motion.velocity.y),
-            Math.abs(projectedVelocityX),
-            Math.abs(projectedVelocityY)
-        );
+        const maxAxisSpeed = Math.max(Math.abs(motion.velocity.x), Math.abs(motion.velocity.y), Math.abs(projectedVelocityX), Math.abs(projectedVelocityY));
 
         const frameDisplacement = maxAxisSpeed * dt;
         const steps = Math.max(1, Math.ceil(frameDisplacement / maxStep));
         const subDt = dt / steps;
 
         let currentPos = sprite.pos;
+        //console.warn("from", currentPos.x, currentPos.y);
         let result = { finished: false };
 
-        //console.info("..", "steps", steps, "dt", dt);
+        //console.info("..", entity.parent.mode, "steps", steps, "dt", dt);
 
         for (let step = 0; step < steps; step++) {
             motion.velocity.x = clampSpeed(motion.velocity.x + motion.acceleration.x * subDt);
@@ -371,7 +373,7 @@ const GRID = {
 
             let candidatePos = currentPos.translate(motion.velocity, subDt);
             const collision = GRID.checkWallCollision(entity, candidatePos);
-            //console.warn("....candidatePos", candidatePos, "collision", collision);
+            //console.warn("....", entity.parent.mode, "candidatePos", candidatePos, "collision", collision.hit, "motion.velocity, subDt", motion.velocity, subDt);
 
             if (collision.hit) {
                 result = GRID.resolveWallCollision(entity, collision, currentPos, candidatePos);
@@ -380,9 +382,10 @@ const GRID = {
             }
 
             currentPos = candidatePos;
+            //console.info("currentPos = candidatePos ??", currentPos, candidatePos);
         }
 
-        //console.error("---->", "currentPos", currentPos,);
+        //console.error("---->", entity.parent.mode, "currentPos to be set", currentPos,);
 
         sprite.setPosition(currentPos);
 
@@ -443,7 +446,7 @@ const GRID = {
      * - `contact`: the tested position at which the collision occurred.
      */
     checkWallCollision(entity, candidatePos) {
-        //console.info("--> checkWallCollision", candidatePos);
+        console.info("--> checkWallCollision", candidatePos, "entity.mode", entity.parent.mode);
         const GA = entity.GA;
         const gs2 = (ENGINE.INI.GRIDPIX >>> 1) * GRID.SETTING.WALL_COLLISION_TOLERANCE;                       // slight tolerance. put to INI
         const dir = new Vector(Math.sign(entity.motion.velocity.x), 0);
@@ -464,19 +467,24 @@ const GRID = {
         };
 
         const test = {
+            current: createTest(NOWAY, ["climbing"], "blocked", "current"),
             top: createTest(UP, ["jumping"], "blocked", "top"),
             side: createTest(dir, ["jumping", "sliding", "walking"], "blocked", "side"),
             bottom: createTest(DOWN, ["jumping", "sliding", "falling"], "surface", "bottom"),
+            down: createTest(DOWN, ["climbing"], "blocked", "down"),
         };
 
         for (const testType of Object.keys(test)) {
             const T = test[testType];
-            if (!T.app.includes(mode)) continue;                                        //only test applicable, order of tests matter
+            if (!T.app.includes(mode)) continue;                                        // not testing if test is not for current moded
             if (mode === "jumping" && T.cat === "bottom" && jumpY === -1) continue;     //ignore bottom check when jumping dir is still up
             const gridValue = T.value;
 
             switch (gridValue) {
-                case MAPDICT.EMPTY: continue;
+                case MAPDICT.EMPTY:
+                    if (T.app.includes("climbing") && T.cat === "current") return { hit: true, type: T.type, contact: T.position, };
+                    continue;
+                case MAPDICT.STAIR + MAPDICT.RESERVED: continue;
                 case MAPDICT.STAIR + MAPDICT.MASK + MAPDICT.RESERVED: continue;
                 case MAPDICT.RESERVED: continue;
                 case MAPDICT.MASK:
