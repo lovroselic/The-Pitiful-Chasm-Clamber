@@ -11,7 +11,14 @@
 
 LoadSheetSequences = [
     { srcName: "Princess.png", count: 26, name: "PrincessWalking", trim: false },
-    { srcName: "PrincessIdle.png", count: 1, name: "PrincessIdle", trim: false },
+    { srcName: "PrincessIdle.png", count: 11, name: "PrincessIdle", trim: false },
+    { srcName: "PrincessSwim.png", count: 11, name: "PrincessSwim", trim: false },
+    { srcName: "PrincessDuck.png", count: 11, name: "PrincessDuck", trim: false },
+    { srcName: "PrincessFall.png", count: 11, name: "PrincessFall", trim: false },
+    { srcName: "PrincessJump.png", count: 20, name: "PrincessJump", trim: false },
+    { srcName: "PrincessClimb.png", count: 20, name: "PrincessClimb", trim: false },
+
+    //borders
     { srcName: "MossyBorders.png", count: 5, name: "MossyBorders", trim: false },
 ];
 

@@ -2722,26 +2722,27 @@ class $2D_Sprite {
         this.asset = null;
         this.state = {};
         this.setAsset(this.assetName);
+        this.fps = this.fps || 60;
+        this.nextSpriteTime = 1000 / this.fps;
         this.setDirRef(this.dirRef);
         this.update(dir);
         this.show();
     }
     setAsset(assetName, reset = true, recallFrame = true) {
+
         if (this.asset && this.assetName === assetName) return;
-        if (assetName) {
-            if (this.asset) {
-                //store current state
-                if (!this.state.assetName) this.state.assetName = {};
-                this.state.assetName.frame = this.frame;
-            }
-            this.assetname = assetName;
-            this.asset = ASSET[assetName];
-            this.Nframes = this.asset.linear.length;
-            this.fps = this.fps || 60;
-            this.nextSpriteTime = 1000 / this.fps;
-            if (reset) this.reset();
-            if (recallFrame && this.state.assetName) this.frame = this.state.assetName.frame;
+
+        if (this.asset) {
+            if (!this.state[this.assetName]) this.state[this.assetName] = {};
+            this.state[this.assetName].frame = this.frame;                      //previous asset frame is stored
         }
+
+        this.assetName = assetName;                     // to new asset name
+        this.asset = ASSET[assetName];                  // new asset
+        this.Nframes = this.asset.linear.length;
+
+        if (reset) this.reset();                        // reset to frame  0, in time 0
+        if (recallFrame && this.state[assetName]) this.frame = this.state[assetName].frame;   //but reload previos frame if exists
     }
     show() {
         this.visible = true;

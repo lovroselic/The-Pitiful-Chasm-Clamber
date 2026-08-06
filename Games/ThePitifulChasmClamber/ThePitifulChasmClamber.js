@@ -27,6 +27,23 @@ const DEBUG = {
     INVINCIBLE: false,
     keys: false,
     max17: false,
+    calledFunction() {
+        const caller = new Error().stack
+            ?.split("\n")[2]
+            ?.trim();
+
+        console.log("Called by:", caller);
+    },
+    calledStack(begin = 0, end = 3) {
+        const off = 2;
+        const stack = new Error().stack
+            ?.split("\n")
+            .filter(line => !/^Error\b/.test(line))
+            .slice(off + begin, off + end)
+            .join("\n");
+
+        console.log(stack);
+    }
 };
 
 const INI = {
@@ -39,7 +56,7 @@ const INI = {
     MAX_JUMP_POWER: 100,        // not tuned
     JUMP_SPEED_FACTOR: 20,      // converts charged power into pixels/second
     GRAVITY: 500,               // pixels/second² 500
-    FEET: 18,                   // px apart from ceter, for testing surface stability 
+    FEET: 18,                   // px apart from center, for testing surface stability 
     MIN_SLIDE_SPEED: 500,       // minimal sliding speed when sliding
     PLANE_Y_TOLERANCE: 5,       // px difference still means flat
     SCORE_GOAL: 100,            // score for reaching rocket
@@ -50,7 +67,7 @@ const INI = {
 };
 
 const PRG = {
-    VERSION: "0.2.0",
+    VERSION: "0.2.1",
     NAME: "The Pitiful Chasm Clamber",
     YEAR: "2026",
     SG: "ThePitifulChasmClamber",
@@ -147,9 +164,7 @@ const HERO = {
     setMode(mode = "idle", dir = RIGHT) {
         /**
          * idle
-         * side, idle but with attitude
          * jumping
-         * sliding, idle but rotation
          * falling, idle but straight
          */
         if (mode === this.mode) return;
@@ -161,21 +176,18 @@ const HERO = {
                 this.player?.sprite.setDirRef(dir);
                 break;
             case "walking":
-                this.player?.sprite.setAsset("PrincessWalking");
+                this.player?.sprite.setAsset("PrincessWalking", false);
                 this.player?.sprite.setDirRef(dir);
                 break;
             /*  case "falling":
-             case "sliding":
+             
                  this.player?.sprite.setAsset("FleaIdle");
                  this.player?.sprite.setDirRef(dir);
                  break; */
             /* case "jumping":
                 this.player?.sprite.setAsset("FleaJump");
                 break; */
-            /*  case "side":
-                 this.player?.sprite.setAsset("FleaSide");
-                 this.player?.sprite.setDirRef(dir);
-                 break; */
+
             default: throw new Error(`Hero mode not suported: ${this.mode}`)
         }
 
@@ -216,7 +228,13 @@ const HERO = {
         //console.warn("manage", lapsedTime);
         GRID.translateSpritePosition(HERO.player, lapsedTime, HERO.handleFinishedJump, true, true);
         this.player.collisionToEntity();
-        this.paintLanding([this.player.sprite.pos]);
+
+        if ([
+            "idle",
+
+        ].includes(this.mode)) this.player.sprite.updateAnimation(lapsedTime);
+        //debug
+        //this.paintLanding([this.player.sprite.pos]);
     },
     completeLevel() {
         GAME.levelComplete = true;
