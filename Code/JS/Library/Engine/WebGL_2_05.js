@@ -2904,6 +2904,9 @@ class $2D_player extends $2D_Entity {
     jump(dir) {
         this.parent.handleJump?.(dir);
     }
+    duck(dir) {
+        this.parent.handleDuck?.(dir);
+    }
     nothingWasPressed() {
         this.parent.handleNothingWasPressed?.();
     }
@@ -2942,12 +2945,14 @@ class $2D_player extends $2D_Entity {
             if (keymap[ENGINE.KEY.map.up]) {
                 if (clear) keymap[ENGINE.KEY.map.up] = false;
                 if (WebGL.USE_VIEWPORT) this.moveViewport(UP);
+                 this.jump(UP);
                 return;
             }
 
             if (keymap[ENGINE.KEY.map.down]) {
                 if (clear) keymap[ENGINE.KEY.map.down] = false;
                 if (WebGL.USE_VIEWPORT) this.moveViewport(DOWN);
+                this.duck(DOWN);
                 return;
             }
 

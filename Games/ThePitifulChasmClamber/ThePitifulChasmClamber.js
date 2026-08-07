@@ -57,7 +57,7 @@ const INI = {
 };
 
 const PRG = {
-    VERSION: "0.2.4",
+    VERSION: "0.2.5",
     NAME: "The Pitiful Chasm Clamber",
     YEAR: "2026",
     SG: "ThePitifulChasmClamber",
@@ -181,8 +181,13 @@ const HERO = {
                 break;
 
             case "falling":
-                this.player?.sprite.setAsset("PrincessFall");
-                this.player?.sprite.setDirRef(DOWN);
+                this.player.sprite.setAsset("PrincessFall");
+                this.player.sprite.setDirRef(DOWN);
+                break;
+
+            case "ducking":
+                this.player.sprite.setAsset("PrincessDuck");
+                this.player.sprite.setDirRef(DOWN);
                 break;
 
 
@@ -194,7 +199,7 @@ const HERO = {
     concludeAction() {
 
         //conclusion for walking, 
-        if (["walking"].includes(this.mode)) {
+        if (["walking", "ducking"].includes(this.mode)) {
             this.setMode("idle", this.player.sprite.dir);
             this.player.motion.deactivate();
             return;
@@ -237,7 +242,7 @@ const HERO = {
 
         //update animations even if not moving for selected modes
         // modes not updated: climbing,
-        if (["idle"].includes(this.mode)) this.player.sprite.updateAnimation(lapsedTime);
+        if (["idle", "ducking"].includes(this.mode)) this.player.sprite.updateAnimation(lapsedTime);
 
         //debug
         this.paintLanding([this.player.sprite.pos]);
@@ -281,6 +286,9 @@ const HERO = {
     },
     handleOutOfBounds() { },
     handleCarry() { },
+    handleDuck() {
+        this.setMode("ducking", this.player.sprite.dir);
+    },
     handleJump(dir) {
         this.performJump(dir, INI.JUMP_SPEED);
     },
