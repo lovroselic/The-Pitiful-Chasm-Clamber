@@ -51,13 +51,16 @@ const INI = {
     WALKING_SPEED: 64 * 1.5,
     CLIMBING_SPEED: 64 * 1.5,
     TEXT_SIZE: 13,
+    //FEET: 4,                        // px apart from center, for testing surface stability 
+    JUMP_SPEED: 64 * 2.0,           // converts charged power into pixels/second
+    GRAVITY: 500,                   // pixels/second² 500
 
     /* MAX_LEVEL: 3,
     JUMP_POWER_INC: 1,          // not tuned
     MAX_JUMP_POWER: 100,        // not tuned
-    JUMP_SPEED_FACTOR: 20,      // converts charged power into pixels/second
-    GRAVITY: 500,               // pixels/second² 500
-    FEET: 18,                   // px apart from center, for testing surface stability 
+    
+   
+   
     MIN_SLIDE_SPEED: 500,       // minimal sliding speed when sliding
     PLANE_Y_TOLERANCE: 5,       // px difference still means flat
     SCORE_GOAL: 100,            // score for reaching rocket
@@ -68,7 +71,7 @@ const INI = {
 };
 
 const PRG = {
-    VERSION: "0.2.2",
+    VERSION: "0.2.3",
     NAME: "The Pitiful Chasm Clamber",
     YEAR: "2026",
     SG: "ThePitifulChasmClamber",
@@ -186,14 +189,17 @@ const HERO = {
                 this.player.sprite.setDirRef(dir);
                 break;
 
+            case "jumping":
+                this.player.sprite.setAsset("PrincessJump");
+                this.player.sprite.setDirRef(dir);
+                break;
+
             /*  case "falling":
              
                  this.player?.sprite.setAsset("FleaIdle");
                  this.player?.sprite.setDirRef(dir);
                  break; */
-            /* case "jumping":
-                this.player?.sprite.setAsset("FleaJump");
-                break; */
+
 
             default: throw new Error(`Hero mode not suported: ${this.mode}`)
         }
@@ -288,24 +294,22 @@ const HERO = {
         ENGINE.GAME.paused = true;
         ENGINE.GAME.ANIMATION.next(GAME.goalReachedRun);
     },
-    checkForwardProgress() {
-        const currentRow = this.player.moveState.startGrid.y;
-        if (currentRow < this.row) {
-            this.row = currentRow;
-            GAME.score += INI.SCORE_ROW;
-            TITLE.score();
-        }
-    },
     handleOutOfBounds() { },
     handleCarry() { },
+    handleJump(dir) {
+        this.performJump(dir);
+    },
     handleMove(dir) {
         if (dir.y !== 0) return this.handleVerticalMove(dir);       // x-only here
 
+        if (this.mode === "climbing") {
+            const sideGrid = GRID.pointToGrid(this.player.sprite.pos).add(dir);
+            console.log("moving of climbing test", sideGrid);
+
+        }
+
         // only horizontal moves below
-        if (![
-            "idle",
-            "walking",
-        ].includes(this.mode)) return;                              // only selected modes
+        if (!["idle", "walking",].includes(this.mode)) return;                              // only selected modes
         this.startWalking(dir);
     },
     handleVerticalMove(dir) {
@@ -338,16 +342,7 @@ const HERO = {
         this.player.motion.setAcceleration({ x: 0, y: 0 });
         this.player.motion.activate();
     },
-    handleNothingWasPressed() {
-        if (this.mode !== "side") return;
-        if (this.jumpPower <= 0) return;
-
-        this.performJump();
-
-        //cleanup
-        this.jumpPower = 0;
-        this.jumpDir = null;
-    },
+    handleNothingWasPressed() { },
     startWalking(dir) {
         this.player.sprite.setDir(dir);
         const speed = INI.WALKING_SPEED;
@@ -358,14 +353,14 @@ const HERO = {
         this.player.motion.setAcceleration({ x: 0, y: 0 });
         this.player.motion.activate();
     },
-    performJump() {
+    performJump(dir) {
         if (this.player.motion.active) return;
-        const speed = this.jumpPower * INI.JUMP_SPEED_FACTOR;
+        const speed = INI.JUMP_SPEED;
         const component = speed * Math.SQRT1_2;                     // cos(45°) and sin(45°)
         const mode = "jumping";
-        this.setMode(mode, this.jumpDir);
+        this.setMode(mode, dir);
         this.player.motion.setType(mode);                           // no importance, but aligned with mode, just in case
-        this.player.motion.setVelocity({ x: this.jumpDir.x * component, y: -component });
+        this.player.motion.setVelocity({ x: dir.x * component, y: -component });
         this.player.motion.setAcceleration({ x: 0, y: INI.GRAVITY });
         this.player.motion.activate();
     },
@@ -373,7 +368,6 @@ const HERO = {
         console.warn("handlePositionCollision", context);
         const entity = context.entity;
         const motion = entity.motion;
-        const maskdata = entity.map.maskdata;
         let contact = Point.rounded(context.collision.contact);
         const gs2 = (ENGINE.INI.GRIDPIX >>> 1) * GRID.SETTING.WALL_COLLISION_TOLERANCE;
         let origin = Point.rounded(context.currentPos.translate(DOWN, gs2));
@@ -412,51 +406,13 @@ const HERO = {
                 return { finished: false, pos: context.candidatePos, };
 
             case "surface":
-                contact = ENGINE.adjustYToWallEdge(maskdata, contact);                                      // adjust
-                const feet = [
-                    ENGINE.adjustYToWallEdge(maskdata, contact.translate(LEFT, INI.FEET)),
-                    ENGINE.adjustYToWallEdge(maskdata, contact.translate(RIGHT, INI.FEET))
-                ];
-
-                const Y = [feet[0].y, contact.y, feet[1].y];
-                const lined = (Math.max(...Y) - Math.min(...Y)) <= INI.PLANE_Y_TOLERANCE;                   //tolerance, set to INI
-
-
-                if (lined) {
-                    this.setMode("idle", UP);
-                    origin = ENGINE.adjustYToWallEdge(maskdata, origin);
-                    origin.y--;                                                                             //one px up, out of wall
-                    const finalSafePos = Point.rounded(origin.translate(UP, gs2));
-                    return { finished: true, pos: finalSafePos, };
-                } else {
-                    let slideDir;
-                    if (feet[0].y < feet[1].y) {
-                        slideDir = RIGHT;
-                    } else if (feet[0].y > feet[1].y) {
-                        slideDir = LEFT;
-                    } else slideDir = [LEFT, RIGHT].chooseRandom();                                         // Symmetrical or ambiguous surface: choose random direction.
-
-                    motion.velocity.y = Math.max(Math.abs(motion.velocity.y), INI.MIN_SLIDE_SPEED);
-                    motion.velocity.x = motion.velocity.y * slideDir.x;
-                    motion.setAcceleration({ x: 0, y: 0 });
-
-                    if (
-                        (
-                            feet[0].y < contact.y &&
-                            Math.abs(contact.y - feet[1].y) <= INI.PLANE_Y_TOLERANCE
-                        ) ||
-                        (
-                            feet[1].y < contact.y &&
-                            Math.abs(contact.y - feet[0].y) <= INI.PLANE_Y_TOLERANCE
-                        )
-                    ) {
-                        motion.velocity.y = 0;                                                              // slide horizontally
-                    }
-
-                    this.setMode("sliding", slideDir);
-                    motion.setType("sliding");
-                    return { finished: false, pos: context.candidatePos, };
-                }
+                this.setMode("idle", this.player.sprite.dir);
+                this.player.motion.deactivate();
+                contact = ENGINE.adjustPointToUpperGrid(contact);                                      // adjust
+                console.warn("contact", contact, contact.to_Grid());
+                contact.y--;                                                                             //one px up, out of wall
+                const finalSafePos = contact.translate(UP, gs2);
+                return { finished: true, pos: finalSafePos, };
 
             default: throw new Error(`handlePositionCollision wrong event type ${type}`);
         }
@@ -471,20 +427,12 @@ const HERO = {
         }
     },
     handleFinishedJump(result) {
+        console.error("handleFinishedJump", result);
         const sprite = this.player.sprite;
         const grid = sprite.getGrid();
         this.player.moveState.reset(grid);
-        //this.checkForwardProgress();
         this.player.checkEndMove();
     },
-    checkForwardProgress() {
-        const currentRow = this.player.moveState.startGrid.y;
-        if (currentRow < this.row) {
-            GAME.score += INI.SCORE_ROW * (this.row - currentRow);
-            this.row = currentRow;
-            TITLE.score();
-        }
-    }
 };
 
 const GAME = {

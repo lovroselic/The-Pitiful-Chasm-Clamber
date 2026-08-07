@@ -1152,6 +1152,17 @@ const ENGINE = {
     },
 
     /**
+     * grid based version of adjustYToWallEdge
+     */
+    adjustPointToUpperGrid(p) {
+        const origin = Point.clone(p);
+        let grid = GRID.pointToGrid(p).add(UP);                                 // grid above the collision
+        //console.log("upper grid", grid);
+        origin.y = grid.y * ENGINE.INI.GRIDPIX - 1 + ENGINE.INI.GRIDPIX;        // max bottom y coord
+        return origin;
+    },
+
+    /**
      * Retrieves image data from a given image source, with optional offsets.
      * 
      * @param {HTMLImageElement|SVGImageElement|HTMLVideoElement|HTMLCanvasElement|OffscreenCanvas} img - The image source from which to extract the image data.

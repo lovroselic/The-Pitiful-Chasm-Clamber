@@ -53,6 +53,7 @@ const WebGL = {
     VIEWS_ALLOWED: new Set([1, 2, 3, 4, 5, 6, 7]),      // which cameras are set - default all, sys expects a set
     BUTTONS_APPENDED: false,                            // perspective buttons already appended  
     VIEWPORT_SPEED: 2 * 64,                             // speed of viewport moving
+    USE_VIEWPORT: false,                                // use map bigger thatn screen, viewport movement clases with jump
     INI: {
         SCALE_DECAL: 1.0,                               // change/adapt decal scale for skewed surface based rendering
         ADDITIONAL_TOP_OFFSET: 0.0,                     // change/adapt top offset for skewed surface based rendering
@@ -2900,6 +2901,9 @@ class $2D_player extends $2D_Entity {
     move(dir) {
         this.parent.handleMove?.(dir);
     }
+    jump(dir) {
+        this.parent.handleJump?.(dir);
+    }
     nothingWasPressed() {
         this.parent.handleNothingWasPressed?.();
     }
@@ -2923,25 +2927,27 @@ class $2D_player extends $2D_Entity {
 
             if (keymap[ENGINE.KEY.map.left]) {
                 if (clear) keymap[ENGINE.KEY.map.left] = false;
-                this.moveViewport(LEFT);
+                if (WebGL.USE_VIEWPORT) this.moveViewport(LEFT);
+                this.jump(LEFT);
                 return;
             }
 
             if (keymap[ENGINE.KEY.map.right]) {
                 if (clear) keymap[ENGINE.KEY.map.right] = false;
-                this.moveViewport(RIGHT);
+                if (WebGL.USE_VIEWPORT) this.moveViewport(RIGHT);
+                this.jump(RIGHT);
                 return;
             }
 
             if (keymap[ENGINE.KEY.map.up]) {
                 if (clear) keymap[ENGINE.KEY.map.up] = false;
-                this.moveViewport(UP);
+                if (WebGL.USE_VIEWPORT) this.moveViewport(UP);
                 return;
             }
 
             if (keymap[ENGINE.KEY.map.down]) {
                 if (clear) keymap[ENGINE.KEY.map.down] = false;
-                this.moveViewport(DOWN);
+                if (WebGL.USE_VIEWPORT) this.moveViewport(DOWN);
                 return;
             }
 
@@ -2991,6 +2997,8 @@ class $2D_player extends $2D_Entity {
             case MAPDICT.EMPTY: return this.handleEmptyMove(grid);
             case MAPDICT.RESERVED: return this.handleReservedMove(grid);
             case MAPDICT.MASK: return this.handleMaskMove(grid);
+            case MAPDICT.STAIR + MAPDICT.RESERVED: break;                                   // do nothing
+            case MAPDICT.STAIR + MAPDICT.MASK + MAPDICT.RESERVED: break;                    // do nothing
             default: throw new Error(`Unmanaged end move: ${REVERSED_MAPDICT[endValue] ?? endValue}`);
         }
     }
