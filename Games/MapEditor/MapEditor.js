@@ -37,6 +37,7 @@ const INI = {
     USE_3D: false,
     USE_WORLD: false,
     USE_SPAWN: false,
+    USE_CONNECTIONS: true,
 
     //download flags
     DOWNLOAD_MASK: false,
@@ -46,14 +47,15 @@ const INI = {
 };
 
 const MAP = {
-1 : {
-name: "Start",
-data: '{"width":"17","height":"12","map":"B$ABAA2BB5AA63BB2AA23䁡A䁡AA12䁩䁩2AA15BABB8AA2BAA2BB9ABB8䁡䁩BB11AA2BB2ABB10䁩BB5AA2BAA2BB2"}',
-wall: "BrownishMossy_128",
-start: '[180,5]',
-mask: '[]',
-maskdecals: '[[144,0,0,0,64],[161,0,0,0,64],[178,0,0,0,64],[195,0,0,0,64],[2,0,1,0,320],[6,0,2,0,320],[10,0,3,0,320],[14,0,4,0,320],[147,0,0,0,64],[164,0,0,0,64],[181,0,0,0,64]]',
-}
+    1: {
+        name: "Start",
+        data: '{"width":"17","height":"12","map":"B$ABAA2BB5AA63BB2AA23䁡A䁡AA12䁩䁩2AA15BABB8AA2BAA2BB9ABB8䁡䁩BB11AA2BB2ABB10䁩BB5AA2BAA2BB2"}',
+        wall: "BrownishMossy_128",
+        start: '[134,5]',
+        mask: '[]',
+        maskdecals: '[[144,0,0,0,64],[161,0,0,0,64],[178,0,0,0,64],[195,0,0,0,64],[2,0,1,0,320],[6,0,2,0,320],[10,0,3,0,320],[14,0,4,0,320],[147,0,0,0,64],[164,0,0,0,64],[181,0,0,0,64]]',
+        connections: '["-1","2","-1","-1"]',
+    }
 };
 
 const $MAP = {
@@ -80,7 +82,7 @@ const $MAP = {
 };
 
 const PRG = {
-    VERSION: "0.22.1",
+    VERSION: "0.22.2",
     NAME: "MapEditor",
     YEAR: "2026",
     CSS: "color: #239AFF;",
@@ -217,7 +219,11 @@ const PRG = {
         }
 
         if (!INI.ADD_BORDERS) {
-            $(".use_borderrs").hide();
+            $(".use_borders").hide();
+        }
+
+        if (!INI.USE_CONNECTIONS) {
+            $(".use_connections").hide();
         }
     },
     start() {
@@ -1245,13 +1251,13 @@ const GAME = {
 
             case "mask":
                 // mask has no limitations, but adds to previous
-                GA.addMask(grid)
+                GA.addMask(grid);
                 $("#error_message").html("All is fine");
                 break;
 
             case "stair":
                 // stair has no limitations, sets stair, clears previous
-                GA.toStair(grid)
+                GA.toStair(grid);
                 $("#error_message").html("All is fine");
                 break;
 
@@ -2142,7 +2148,7 @@ data: '${JSON.stringify(Export)}',`;
 
         if (INI.USE_SAVEGAME) {
             roomExport += `
-sg: ${SG},`
+sg: ${SG},`;
         }
 
         if (INI.USE_MONSTERS && INI.USE_SPAWN) {
@@ -2150,7 +2156,7 @@ sg: ${SG},`
 maxSpawned: ${MaxSpawned},
 killCountdown: ${KillCountdown},
 killsRequiredToStopSpawning: ${SpawnStop},
-spawnDelay: ${SpawnDelay},`
+spawnDelay: ${SpawnDelay},`;
         }
 
         if (INI.USE_TEXTURES) {
@@ -2179,7 +2185,7 @@ rightPanorama: "${$("#rightPanorama")[0].value}",
 backPanorama: "${$("#backPanorama")[0].value}",
 archPanorama: "${$("#archPanorama")[0].value}",
 skyPanorama: "${$("#skyPanorama")[0].value}",
-`
+`;
         }
 
         for (let desc of $MAP.properties) {
@@ -2198,6 +2204,11 @@ skyPanorama: "${$("#skyPanorama")[0].value}",
         if (INI.USE_MASK) {
             roomExport += `mask: '${JSON.stringify($MAP.mask_moves)}',\n`;
             roomExport += `maskdecals: '${JSON.stringify($MAP.mask_decal_moves)}',\n`;
+        }
+
+        if (INI.USE_CONNECTIONS) {
+            const connections = [$("#connection_north")[0].value, $("#connection_east")[0].value, $("#connection_south")[0].value, $("#connection_west")[0].value];
+            roomExport += `connections: '${JSON.stringify(connections)}',\n`;
         }
 
         //end
@@ -2247,6 +2258,18 @@ skyPanorama: "${$("#skyPanorama")[0].value}",
                 const pattern = new RegExp(`${prop}:\\s"(.*)"`);
                 $(`#${prop}`).val(ImportText.extractGroup(pattern));
             }
+        }
+
+        //connections
+        if (INI.USE_CONNECTIONS) {
+            const connections = JSON.parse(ImportText.extractGroup(/connections:\s'(.*)'/));
+            if (connections) {
+                $("#connection_north").val(connections[0]);
+                $("#connection_east").val(connections[1]);
+                $("#connection_south").val(connections[2]);
+                $("#connection_west").val(connections[3]);
+            }
+            // console.error("connections", connections, typeof connections);
         }
 
         $MAP.width = parseInt(Import.width, 10);
@@ -2337,7 +2360,7 @@ skyPanorama: "${$("#skyPanorama")[0].value}",
         ENGINE.copyToClipboard("mask_decal_moves_exp");
     },
     resizeGL_window() {
-        $("#WEBGL_canvas_0").css("top", `${ENGINE.gameHEIGHT + 4 + 3 * 128 + 2 * 256 + 768 + 320}px`)
+        $("#WEBGL_canvas_0").css("top", `${ENGINE.gameHEIGHT + 4 + 3 * 128 + 2 * 256 + 768 + 320}px`);
     },
     parseFloatSafe(value, fallback) {
         const n = parseFloat(value);

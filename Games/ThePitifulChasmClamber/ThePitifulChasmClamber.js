@@ -57,7 +57,7 @@ const INI = {
 };
 
 const PRG = {
-    VERSION: "0.2.5",
+    VERSION: "0.3.0",
     NAME: "The Pitiful Chasm Clamber",
     YEAR: "2026",
     SG: "ThePitifulChasmClamber",
