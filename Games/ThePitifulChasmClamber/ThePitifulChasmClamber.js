@@ -51,27 +51,13 @@ const INI = {
     WALKING_SPEED: 64 * 1.5,
     CLIMBING_SPEED: 64 * 1.5,
     TEXT_SIZE: 13,
-    //FEET: 4,                        // px apart from center, for testing surface stability 
-    JUMP_SPEED: 64 * 2.0,           // converts charged power into pixels/second
-    GRAVITY: 500,                   // pixels/second² 500
-
-    /* MAX_LEVEL: 3,
-    JUMP_POWER_INC: 1,          // not tuned
-    MAX_JUMP_POWER: 100,        // not tuned
-    
-   
-   
-    MIN_SLIDE_SPEED: 500,       // minimal sliding speed when sliding
-    PLANE_Y_TOLERANCE: 5,       // px difference still means flat
-    SCORE_GOAL: 100,            // score for reaching rocket
-    SCORE_ROW: 1,               // score for getting higher
-    MAX_ROW: 40,                // hardconfig
-    LEVEL_TIME: 120,            // time to finish the level and get bonus: default 120
-    SCORE_PER_SECOND: 20,       // score per second if before timeout */
+    JUMP_SPEED: 64 * 4.0,               // converts charged power into pixels/second
+    LADDER_EXIT: 64 * 2.0,              // converts charged power into pixels/second
+    GRAVITY: 500,                       // pixels/second² 500
 };
 
 const PRG = {
-    VERSION: "0.2.3",
+    VERSION: "0.2.4",
     NAME: "The Pitiful Chasm Clamber",
     YEAR: "2026",
     SG: "ThePitifulChasmClamber",
@@ -194,11 +180,10 @@ const HERO = {
                 this.player.sprite.setDirRef(dir);
                 break;
 
-            /*  case "falling":
-             
-                 this.player?.sprite.setAsset("FleaIdle");
-                 this.player?.sprite.setDirRef(dir);
-                 break; */
+            case "falling":
+                this.player?.sprite.setAsset("PrincessFall");
+                this.player?.sprite.setDirRef(DOWN);
+                break;
 
 
             default: throw new Error(`Hero mode not suported: ${this.mode}`)
@@ -297,14 +282,15 @@ const HERO = {
     handleOutOfBounds() { },
     handleCarry() { },
     handleJump(dir) {
-        this.performJump(dir);
+        this.performJump(dir, INI.JUMP_SPEED);
     },
     handleMove(dir) {
         if (dir.y !== 0) return this.handleVerticalMove(dir);       // x-only here
 
         if (this.mode === "climbing") {
             const sideGrid = GRID.pointToGrid(this.player.sprite.pos).add(dir);
-            console.log("moving of climbing test", sideGrid);
+            //console.log("moving of climbing test", sideGrid);
+            return this.performJump(dir, INI.LADDER_EXIT); // moving from ladder
 
         }
 
@@ -324,11 +310,20 @@ const HERO = {
 
         //
         const pos = this.player.sprite.pos;
-        const grid = GRID.pointToGrid(pos);
+        let grid = GRID.pointToGrid(pos);
         const GA = this.player.map.GA;
-        if (!GA.isStair(grid)) return;                                              // no climbing possible if not on stairs
+        if (!GA.isStair(grid)) {
+            if (dir.y === 1) grid = grid.add(DOWN);
+            if (GA.isStair(grid)) {
+                this.player.sprite.pos = GRID.gridToCenterPX(grid);
+                const gs2 = (ENGINE.INI.GRIDPIX >>> 1) * GRID.SETTING.WALL_COLLISION_TOLERANCE;
+                this.player.sprite.pos = Point.rounded(this.player.sprite.pos.translate(UP, gs2));              //if ladder is below feet, move to that grid, top-wise
+            } else return;                                                                                      // no climbing possible if not on stairs, or above them
+        } else {
+            this.player.sprite.pos = GRID.centerPointToGrid(this.player.sprite.pos);    //to grid center
+        }
+
         console.info(".. where we are", grid, "is stair", GA.isStair(grid));
-        this.player.sprite.pos = GRID.centerPointToGrid(this.player.sprite.pos);    //to grid center
         this.startClimbing(dir);
     },
     startClimbing(dir) {
@@ -353,9 +348,8 @@ const HERO = {
         this.player.motion.setAcceleration({ x: 0, y: 0 });
         this.player.motion.activate();
     },
-    performJump(dir) {
+    performJump(dir, speed) {
         if (this.player.motion.active) return;
-        const speed = INI.JUMP_SPEED;
         const component = speed * Math.SQRT1_2;                     // cos(45°) and sin(45°)
         const mode = "jumping";
         this.setMode(mode, dir);
@@ -393,17 +387,6 @@ const HERO = {
                         return { finished: false, pos: context.currentPos, };
 
                 };
-                break; //redundant, just in case
-
-
-
-            case "unsupported":
-                motion.velocity.x = 0;
-                motion.velocity.y = Math.abs(motion.velocity.y);
-                this.setMode("falling", DOWN);
-                motion.setType("falling");
-                motion.setAcceleration({ x: 0, y: INI.GRAVITY });
-                return { finished: false, pos: context.candidatePos, };
 
             case "surface":
                 this.setMode("idle", this.player.sprite.dir);
