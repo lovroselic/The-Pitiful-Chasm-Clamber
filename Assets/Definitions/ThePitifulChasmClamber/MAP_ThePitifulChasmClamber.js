@@ -22,7 +22,7 @@ const MAP = {
         name: "Pool",
         data: '{"width":"17","height":"12","map":"AA12B$AA39BAA66BABB2AA56BB20AA5"}',
         wall: "BrownishMossy_128",
-        start: '[123,1]',
+        start: '[119,1]',
         mask: '[]',
         maskdecals: '[]',
         connections: '["-1","-1","-1","1"]',

@@ -57,7 +57,7 @@ const INI = {
 };
 
 const PRG = {
-    VERSION: "0.3.2",
+    VERSION: "0.3.3",
     NAME: "The Pitiful Chasm Clamber",
     YEAR: "2026",
     SG: "ThePitifulChasmClamber",
@@ -236,9 +236,9 @@ const HERO = {
         TITLE.hiscore();
         TITLE.startTitle();
     },
-    manage(lapsedTime) {
+    async manage(lapsedTime) {
         //console.warn("manage", lapsedTime);
-        GRID.translateSpritePosition(HERO.player, lapsedTime, HERO.handleFinishedJump, true, false);
+        await GRID.translateSpritePosition(HERO.player, lapsedTime, HERO.handleFinishedJump, true, false);
         this.player.collisionToEntity();
 
         //update animations even if not moving for selected modes
@@ -309,11 +309,13 @@ const HERO = {
 
         // prepare new map 
         if (!MAP[level].map) {
+            console.log("preparing new map");
             GAME.STORE.clearPools();
             await GAME.loadNewLevel(level);
             GAME.STORE.linkMap(MAP[level].map);
         } else {
             await GAME.createBitmaps(level);
+            console.log("reloading map");
             GAME.reloadIAM(level);                                  // or reload stored IAM
         }
 
@@ -507,7 +509,7 @@ const GAME = {
         ENGINE.GAME.setGameLoop(GAME.run);
         ENGINE.GAME.start(16);
         GAME.extraLife = SCORE.extraLife.clone();
-        GAME.level = 1; //1
+        GAME.level = 2; //1
         GAME.lives = 3; //3
         GAME.score = 0;
 
@@ -530,7 +532,6 @@ const GAME = {
         if (DEBUG.VERBOSE) console.log("Starting level", level);
         GAME.prepareForRestart();
         HERO.construct();
-        //this.levelComplete = false;
         await GAME.initLevel(level);
         GAME.continueLevel(level);
     },
@@ -645,12 +646,12 @@ const GAME = {
         ENGINE.VIEWPORT.alignToPosition(HERO.player.actor.pos, HERO.player.actor.vPos);
         GAME.updateVieport();
     },
-    run(lapsedTime) {
+    async run(lapsedTime) {
         if (ENGINE.GAME.stopAnimation) return;
         const date = Date.now();
         GAME.respond(lapsedTime);
         ENGINE.TIMERS.update();
-        HERO.manage(lapsedTime);
+        await HERO.manage(lapsedTime);
         ENEMY2D.manage(lapsedTime, HERO.player);
         GAME.frameDraw(lapsedTime);
         HERO.concludeAction(lapsedTime);
