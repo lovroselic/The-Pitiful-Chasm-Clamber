@@ -57,7 +57,7 @@ const INI = {
 };
 
 const PRG = {
-    VERSION: "0.3.1",
+    VERSION: "0.3.2",
     NAME: "The Pitiful Chasm Clamber",
     YEAR: "2026",
     SG: "ThePitifulChasmClamber",
@@ -195,7 +195,7 @@ const HERO = {
         }
 
         this.player?.sprite.update(dir);
-        console.warn("set mode", this.mode, "pos", this.player?.sprite.pos);
+        //console.warn("set mode", this.mode, "pos", this.player?.sprite.pos);
     },
     concludeAction() {
 
@@ -304,33 +304,36 @@ const HERO = {
 
         GAME.STORE.storeIAM(MAP[GAME.level].map);                           // store old map
         GAME.level = nextLevel;
-
+        const level = GAME.level;
 
 
         // prepare new map 
-        if (!MAP[GAME.level].map) {
+        if (!MAP[level].map) {
             GAME.STORE.clearPools();
-            await GAME.loadNewLevel(GAME.level);
-            GAME.STORE.linkMap(MAP[GAME.level].map);
-        } else GAME.reloadIAM(GAME.level);                                       // or reload stored IAM
+            await GAME.loadNewLevel(level);
+            GAME.STORE.linkMap(MAP[level].map);
+        } else {
+            await GAME.createBitmaps(level);
+            GAME.reloadIAM(level);                                  // or reload stored IAM
+        }
 
-        map = MAP[GAME.level].map;
+        map = MAP[level].map;
 
         if (grid.x === 0) grid.x = map.width - 1;                   //west
         else if (grid.y === 0) grid.y = map.height - 1;             // north
         else if (grid.x === map.width - 1) grid.x = 0;              // east
         else if (grid.y === map.height - 1) grid.y = 0;             // south
 
-        console.log("level", GAME.level, "new grid", grid);
+        //console.log("level", level, "new grid", grid);
 
         this.player.setGrid(grid);
         this.setMode("idle", this.player.sprite.dir);
         this.player.motion.deactivate();
-        this.player.setMap(MAP[GAME.level].map);
+        this.player.setMap(MAP[level].map);
 
-        console.error(" new pos:  this.player.sprite.pos", this.player.sprite.pos);
+        //console.error(" new pos:  this.player.sprite.pos", this.player.sprite.pos, "grid", this.player.sprite.pos.toGrid());
 
-        GAME.drawFirstFrame(GAME.level);
+        GAME.drawFirstFrame(level);
         return { finished: false, pos: this.player.sprite.pos };
     },
     handleCarry() { },
@@ -598,6 +601,7 @@ const GAME = {
         GAME.STORE.clearPools();
     },
     reloadIAM(level) {
+        if (DEBUG.VERBOSE) console.log("reloading IAM");
         GAME.STORE.loadIAM(MAP[level].map);
         GAME.STORE.linkMap(MAP[level].map);
     },

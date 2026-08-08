@@ -337,7 +337,7 @@ const GRID = {
         return;
     },
 
-    translateSpritePosition(entity, lapsedTime, onFinish = null, animate = true, changeView = false) {
+    async translateSpritePosition(entity, lapsedTime, onFinish = null, animate = true, changeView = false) {
         //console.line();
         //console.log("translateSpritePosition", lapsedTime, "entity.motion", entity.motion);
 
@@ -376,13 +376,16 @@ const GRID = {
             //console.warn("....", entity.parent.mode, "candidatePos", candidatePos, "collision", collision.hit, "motion.velocity, subDt", motion.velocity, subDt);
 
             if (collision.hit) {
-                result = GRID.resolveWallCollision(entity, collision, currentPos, candidatePos);
-                currentPos = result.pos ?? candidatePos;
+                result = await GRID.resolveWallCollision(entity, collision, currentPos, candidatePos);
+                console.warn("fucking result", result);
+                //currentPos = result.pos ?? candidatePos;
+                currentPos = result.pos; //require that we await result
+                //console.info("currentPos = candidatePos ??", currentPos, result.pos, candidatePos);
                 break;
             }
 
             currentPos = candidatePos;
-            //console.info("currentPos = candidatePos ??", currentPos, candidatePos);
+            //console.info("loop currentPos = candidatePos ??", currentPos, candidatePos);
         }
 
         //console.error("---->", entity.parent.mode, "currentPos to be set", currentPos,);

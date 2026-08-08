@@ -366,6 +366,7 @@ class Enemy2D extends IAM {
         this.reIndex();
         this.poolToIA(map[this.IA]);
         if (reference) {
+            //console.log("reference", reference.moveState.pos);
             GRID.calcDistancesBFS_A(reference.moveState.pos, map, GRID2D_SIDEVIEW);
         }
         for (const entity of this.POOL) {
@@ -552,7 +553,7 @@ class Spawner extends Floor_Object {
         let selected = null;
         let distance = Infinity;
         const refGrid = this.reference.moveState.homeGrid;
-        GRID.calcDistancesBFS_A(refGrid, this.map)
+        GRID.calcDistancesBFS_A(refGrid, this.map);
 
         for (let nest of this.POOL) {
             if (nest.outOfSight()) continue;
@@ -877,7 +878,7 @@ class Bullet3D extends IAM {
             const itemID = IA.unroll(grid);                     // by design it can be only single item
             const item = this.item_IAM.show(itemID);
             if (item) {
-                const hit = GRID.collisionPosInBoundingBox(obj.pos, item.element.boundingBox, item.grid)
+                const hit = GRID.collisionPosInBoundingBox(obj.pos, item.element.boundingBox, item.grid);
                 if (hit) {
                     item.shootInteraction();
                     obj.clean();
@@ -901,7 +902,7 @@ class ParticleEmmission3D extends IAM {
             if (item) {
                 item.update(date);
                 if (item.normalized_age > 1) {
-                    if (item.callback) item.callback()
+                    if (item.callback) item.callback();
                     this.remove(item.id);
                 }
             }

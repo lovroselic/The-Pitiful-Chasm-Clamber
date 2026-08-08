@@ -4329,6 +4329,8 @@ class MoveState {
         }
     }
     reset(grid, moving = false) {
+        //console.log("------reseting to ", grid);
+        //DEBUG.calledStack();
         this.startGrid = Grid.toClass(grid);
         this.homeGrid = Grid.toClass(grid);
         this.endGrid = Grid.toClass(grid);
