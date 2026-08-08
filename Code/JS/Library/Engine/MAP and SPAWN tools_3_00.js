@@ -104,6 +104,9 @@ const MAP_TOOLS = {
         /** terrain data */
         if (this.MAP[level].terrain) this.MAP[level].terrain = JSON.parse(this.MAP[level].terrain);
 
+        /** connections */
+        if (this.MAP[level].connections) this.MAP[level].connections = JSON.parse(this.MAP[level].connections);
+
         /** initialize global map proterties */
         const SG = this.MAP[level].sg || null;
         this.MAP[level].map.sg = SG;
@@ -146,7 +149,7 @@ const MAP_TOOLS = {
                 originXZ: new Float32Array([map.zMap1.minX, map.zMap1.minY]),
                 resolution: map.zMap1.resolution,
                 size: new Float32Array([map.zMap1.xSize, map.zMap1.ySize, 1])
-            }
+            };
 
         } else {
             const texture = WebGL.createOcclusionTexture3D(GA.toTextureMap(), map.width, map.height, map.depth);
@@ -155,7 +158,7 @@ const MAP_TOOLS = {
                 originXZ: new Float32Array([0, 0]),
                 resolution: 1,
                 size: new Float32Array([map.width, map.height, map.depth])
-            }
+            };
         }
     },
 
@@ -327,7 +330,7 @@ const SPAWN_TOOLS = {
     containers(map, GA) {
         for (const C of map.containers) {
             const grid = Grid3D.toCenter2D(GA.indexToGrid(C[0]));
-            const type = CONTAINER_ITEM_TYPE[C[1]]
+            const type = CONTAINER_ITEM_TYPE[C[1]];
             let rotation = null;
             if (C.length > 3 && C[3]) {
                 let dir = Vector.fromInt(C[3]);
@@ -335,7 +338,7 @@ const SPAWN_TOOLS = {
                     rotation = null;
                 } else {
                     rotation = UP.radAngleBetweenVectors(dir) + type.rotateToNorth;
-                    const element = ELEMENT[type.element]
+                    const element = ELEMENT[type.element];
                     const SP = ELEMENT.getSurfaceProjection(element, type.scale);
                     grid.y = (grid.y >>> 0) + ((1 - dir.y) / 2) + (dir.y * SP.H / 2);
                     grid.x = (grid.x >>> 0) + ((1 - dir.x) / 2) + (dir.x * SP.H / 2);
@@ -509,7 +512,7 @@ const SPAWN_TOOLS_2D = {
         const map = MAP_TOOLS.MAP[level];
         const blinkGrids = [new Grid(1, 0), new Grid(4, 0), new Grid(7, 0), new Grid(10, 0), new Grid(13, 0)];
         for (const laneIndex in MAP_TOOLS.MAP[level]) {
-            const lane = map[laneIndex]
+            const lane = map[laneIndex];
             const types = lane.types || null;
             const gridsUsed = [];
             const dir = new Vector(lane.dir, 0);

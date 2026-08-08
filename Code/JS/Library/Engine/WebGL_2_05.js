@@ -352,7 +352,7 @@ const WebGL = {
             console.info("******* WebGL initialized *******");
             console.log(`%cContext:`, this.CSS, gl);
             console.info(`MAX_VERTEX_UNIFORM_VECTORS ${gl.getParameter(gl.MAX_VERTEX_UNIFORM_VECTORS)}`);
-            console.info(`MAX_FRAGMENT_UNIFORM_VECTORS ${gl.getParameter(gl.MAX_FRAGMENT_UNIFORM_VECTORS)}`)
+            console.info(`MAX_FRAGMENT_UNIFORM_VECTORS ${gl.getParameter(gl.MAX_FRAGMENT_UNIFORM_VECTORS)}`);
             console.info("*********************************");
         }
         if (!gl) console.error("Unable to initialize WebGL. Your browser or machine may not support it.");
@@ -1518,7 +1518,7 @@ const WebGL = {
         // draw HERO/player 
         if (WebGL.hero && WebGL.hero.player) {
             if (WebGL.hero.dead) {
-                WebGL.hero.player.draw(gl, program, this.sprite_quad, WebGL.hero.player.deathTexture)
+                WebGL.hero.player.draw(gl, program, this.sprite_quad, WebGL.hero.player.deathTexture);
             } else {
                 if (WebGL.hero.player.sprite.visible) WebGL.hero.player.draw(gl, program, this.sprite_quad);
             }
@@ -2832,7 +2832,7 @@ class $2D_Sprite {
 
 class $2D_Entity {
     constructor(grid, dir, type, GA, useViewport = false) {
-        this.use
+        this.use;
         ImportTypeToConstructor(this, type);
         this.sprite = new $2D_Sprite(grid, dir, type);
         this.actor = this.sprite;                               // legacy compatibility, redundant already? probably, but i like it, so ...
@@ -2895,8 +2895,20 @@ class $2D_player extends $2D_Entity {
     constructor(grid, dir, type, GA, map, useViewport = false, parent = HERO) {
         super(grid, dir, type, GA, useViewport);
         this.parent = parent;
-        this.map = map;
+        this.setMap(map);
         this.checkEndMove = this.checkEndMove.bind(this);
+    }
+    setGrid(grid) {
+        /** player exist, but we need relocation */
+        console.log("setting grid to player", grid);
+        this.moveState.reset(grid);
+        const pos = GRID.gridToCenterPX(grid);
+        this.sprite.setPosition(pos);
+        this.sprite.vPos = pos;
+    }
+    setMap(map) {
+        this.map = map;
+        this.GA = this.map.GA;
     }
     move(dir) {
         this.parent.handleMove?.(dir);
@@ -2945,7 +2957,7 @@ class $2D_player extends $2D_Entity {
             if (keymap[ENGINE.KEY.map.up]) {
                 if (clear) keymap[ENGINE.KEY.map.up] = false;
                 if (WebGL.USE_VIEWPORT) this.moveViewport(UP);
-                 this.jump(UP);
+                this.jump(UP);
                 return;
             }
 
@@ -4884,7 +4896,7 @@ class BouncingMissile extends Missile {
             this.mScaleMatrix = mScaleMatrix;
         } else if (this.collectible) {
             this.drop(GA);
-            this.explode(IAM)
+            this.explode(IAM);
         } else {
             this.explode(IAM);
         };
@@ -4894,7 +4906,7 @@ class BouncingMissile extends Missile {
 
         const placementPosition = GA.findSolidFloor(this.pos);
         if (!placementPosition) return;                                                 //console.error("orb cannot be placed at", placementPosition, "orb is lost!");
-        placementPosition.adjuctCirclePos(this.r)
+        placementPosition.adjuctCirclePos(this.r);
 
         const dropped = new AirItem3D(Vector3.to_FP_Grid3D(this.pos), this.collectibleType, placementPosition);
         dropped.createTexture();
@@ -5092,7 +5104,7 @@ class InteractionEntity extends WallFeature3D {
                 this.deactivate();
                 this.storageLog();
                 name = this.gives;
-                inventorySprite = INTERACTION_ITEM[name].inventorySprite
+                inventorySprite = INTERACTION_ITEM[name].inventorySprite;
                 category = INTERACTION_ITEM[name].category;
                 color = INTERACTION_ITEM[name].color;
                 which = INTERACTION_ITEM[name].which;
@@ -5957,7 +5969,7 @@ class $3D_Entity {
         const avgDim = (dZ + dX) / 2;
         const maxDim = Math.max(dZ, dX);
         this.r = Math.max((avgDim + maxDim) / 2, WebGL.INI.MIN_R);
-        this.r = Math.min(this.r, WebGL.INI.MAX_R)
+        this.r = Math.min(this.r, WebGL.INI.MAX_R);
 
         this.canAttack = true;
         this.canShoot = false;
@@ -6164,7 +6176,7 @@ class $3D_Entity {
 
         const placementPosition = GA.findSolidFloor(this.moveState.referencePos);
         if (!placementPosition) return;
-        placementPosition.adjuctCirclePos(this.r)
+        placementPosition.adjuctCirclePos(this.r);
 
         const dropped = new AirItem3D(Vector3.to_FP_Grid3D(this.moveState.pos), this.inventory, placementPosition);
         dropped.createTexture();
@@ -6445,7 +6457,7 @@ const ImportTypeToConstructor = function (that, type) {
 
         that[prop] = v;
     }
-}
+};
 
 const FaceToOffset = function (face, E = 0) {
     const offsets = {

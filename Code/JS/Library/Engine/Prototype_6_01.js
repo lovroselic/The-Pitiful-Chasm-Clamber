@@ -799,8 +799,8 @@ class Grid extends MasterGridClass {
      */
     constructor(x = 0, y = 0) {
         super();
-        this.x = Math.trunc(x);
-        this.y = Math.trunc(y);
+        this.x = Math.floor(x);
+        this.y = Math.floor(y);
     }
     static toClass(grid) {
         return new Grid(grid.x, grid.y);
@@ -1089,8 +1089,8 @@ class Vector extends MasterVectorClass {
      */
     constructor(x = 0, y = 0) {
         super();
-        this.x = Math.trunc(x);
-        this.y = Math.trunc(y);
+        this.x = Math.floor(x);
+        this.y = Math.floor(y);
     }
     static toClass(vector) {
         return new Vector(vector.x, vector.y);

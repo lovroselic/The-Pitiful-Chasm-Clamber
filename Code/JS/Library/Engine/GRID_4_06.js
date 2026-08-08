@@ -309,7 +309,7 @@ const GRID = {
             entity.moveState.moving = false;
             entity.moveState.startGrid = entity.moveState.endGrid;
             entity.moveState.homeGrid = entity.moveState.startGrid;
-            entity.moveState.pos = FP_Grid.toClass(entity.moveState.homeGrid)
+            entity.moveState.pos = FP_Grid.toClass(entity.moveState.homeGrid);
             entity.actor.pos = GRID.gridToCenterPX(entity.moveState.startGrid);
             if (onFinish) onFinish.call();
         }
@@ -446,7 +446,7 @@ const GRID = {
      * - `contact`: the tested position at which the collision occurred.
      */
     checkWallCollision(entity, candidatePos) {
-        console.info("--> checkWallCollision", candidatePos, "entity.mode", entity.parent.mode);
+        console.info("--> checkWallCollision", candidatePos, "entity.mode", entity.parent.mode, "; level", GAME.level);
         const GA = entity.GA;
         const gs2 = (ENGINE.INI.GRIDPIX >>> 1) * GRID.SETTING.WALL_COLLISION_TOLERANCE;                       // slight tolerance. put to INI
         const dir = new Vector(Math.sign(entity.motion.velocity.x), 0);
@@ -457,6 +457,8 @@ const GRID = {
         const createTest = (direction, app, type, cat) => {
             const position = candidatePos.translate(direction, gs2);
             const grid = position.to_Grid();
+
+            console.warn(".test", cat, "test grid", grid, "position", position, "GA.getValue(grid)", GA.getValue(grid));
 
             return {
                 position,
@@ -492,6 +494,8 @@ const GRID = {
                     if (result.hit) return result;
                     continue;
                 case MAPDICT.WALL: return { hit: true, type: T.type, contact: T.position, };
+                
+                case false: return { hit: true, type: "outOfBounds", contact: T.position, };
                 default: throw new Error(`checkWallCollision grid Value not supported ${gridValue}, ${REVERSED_MAPDICT[gridValue]}`);
             }
         }
@@ -1085,7 +1089,7 @@ const reverseDictionary = (dict) => {
         reversed[value] = key; // Last occurrence wins since object keys are overwritten
     }
     return reversed;
-}
+};
 
 const REVERSED_MAPDICT = reverseDictionary(MAPDICT);
 const STAIRCASE_GRIDS = [MAPDICT.WALL2, MAPDICT.WALL4, MAPDICT.WALL6, MAPDICT.WALL8];
@@ -1329,7 +1333,7 @@ class GA_Dimension_Agnostic_Methods {
         return this.check(grid, MAPDICT.PILLAR) === MAPDICT.PILLAR;
     }
     notPillar(grid) {
-        return !this.isPillar(grid)
+        return !this.isPillar(grid);
     }
     notBlockWall(grid) {
         return !this.isBlockWall(grid);

@@ -57,7 +57,7 @@ const INI = {
 };
 
 const PRG = {
-    VERSION: "0.3.0",
+    VERSION: "0.3.1",
     NAME: "The Pitiful Chasm Clamber",
     YEAR: "2026",
     SG: "ThePitifulChasmClamber",
@@ -112,7 +112,7 @@ const PRG = {
 
         $("#bottom").css("margin-top", ENGINE.gameHEIGHT + ENGINE.titleHEIGHT + ENGINE.bottomHEIGHT);
         $(ENGINE.gameWindowId).width(ENGINE.gameWIDTH + 2 * ENGINE.sideWIDTH + 4);
-        ENGINE.addBOX("TITLE", ENGINE.titleWIDTH, ENGINE.titleHEIGHT, ["title", "score", "level", "hiscore", "time", "jump"], null);
+        ENGINE.addBOX("TITLE", ENGINE.titleWIDTH, ENGINE.titleHEIGHT, ["title", "smalltitle", "score", "level", "hiscore", "time", "jump"], null);
         ENGINE.addBOX("LSIDE", INI.SCREEN_BORDER, ENGINE.gameHEIGHT, ["Lsideback",], "side");
         ENGINE.addBOX("ROOM", ENGINE.gameWIDTH, ENGINE.gameHEIGHT, ["background", "grid", "coord", "3d_webgl", "fill", "info", "text", "FPS", "button", "click"], "side");
         ENGINE.addBOX("SIDE", ENGINE.sideWIDTH, ENGINE.gameHEIGHT, ["sideback"], "fside");
@@ -191,10 +191,11 @@ const HERO = {
                 break;
 
 
-            default: throw new Error(`Hero mode not suported: ${this.mode}`)
+            default: throw new Error(`Hero mode not suported: ${this.mode}`);
         }
 
         this.player?.sprite.update(dir);
+        console.warn("set mode", this.mode, "pos", this.player?.sprite.pos);
     },
     concludeAction() {
 
@@ -284,7 +285,54 @@ const HERO = {
         ENGINE.GAME.paused = true;
         ENGINE.GAME.ANIMATION.next(GAME.goalReachedRun);
     },
-    handleOutOfBounds() { },
+    async handleOutOfBounds(context) {
+        console.warn("handleOutOfBounds", context);
+        //ENGINE.GAME.ANIMATION.stop();                                       // not sure if really required
+        let map = MAP[GAME.level].map;
+        const pos = this.player.sprite.pos;
+        let grid = GRID.pointToGrid(pos);
+        console.log("handleOutOfBounds grid", grid, "pos", pos);
+
+        let connectionIndex;
+        if (grid.x === 0) connectionIndex = 3;                              //west
+        else if (grid.y === 0) connectionIndex = 0;                         // north
+        else if (grid.x === map.width - 1) connectionIndex = 1;             // east
+        else if (grid.y === map.height - 1) connectionIndex = 2;            // south
+
+        const nextLevel = parseInt(MAP[GAME.level].connections[connectionIndex], 10);
+        if (nextLevel <= 0) throw new Error(`wrong or not existing connection ${nextLevel}`);
+
+        GAME.STORE.storeIAM(MAP[GAME.level].map);                           // store old map
+        GAME.level = nextLevel;
+
+
+
+        // prepare new map 
+        if (!MAP[GAME.level].map) {
+            GAME.STORE.clearPools();
+            await GAME.loadNewLevel(GAME.level);
+            GAME.STORE.linkMap(MAP[GAME.level].map);
+        } else GAME.reloadIAM(GAME.level);                                       // or reload stored IAM
+
+        map = MAP[GAME.level].map;
+
+        if (grid.x === 0) grid.x = map.width - 1;                   //west
+        else if (grid.y === 0) grid.y = map.height - 1;             // north
+        else if (grid.x === map.width - 1) grid.x = 0;              // east
+        else if (grid.y === map.height - 1) grid.y = 0;             // south
+
+        console.log("level", GAME.level, "new grid", grid);
+
+        this.player.setGrid(grid);
+        this.setMode("idle", this.player.sprite.dir);
+        this.player.motion.deactivate();
+        this.player.setMap(MAP[GAME.level].map);
+
+        console.error(" new pos:  this.player.sprite.pos", this.player.sprite.pos);
+
+        GAME.drawFirstFrame(GAME.level);
+        return { finished: false, pos: this.player.sprite.pos };
+    },
     handleCarry() { },
     handleDuck() {
         this.setMode("ducking", this.player.sprite.dir);
@@ -347,6 +395,7 @@ const HERO = {
     },
     handleNothingWasPressed() { },
     startWalking(dir) {
+        //console.info("startWalking", this.player.sprite.pos);
         this.player.sprite.setDir(dir);
         const speed = INI.WALKING_SPEED;
         const mode = "walking";
@@ -377,6 +426,8 @@ const HERO = {
         const type = context.collision.type;
 
         switch (type) {
+
+            case "outOfBounds": return this.handleOutOfBounds(context);
 
             case "blocked":
                 switch (this.mode) {
@@ -413,7 +464,7 @@ const HERO = {
         const CTX = LAYER.fill;
         CTX.fillStyle = "#e60b0b";
         for (const point of points) {
-            let p = point.toViewportCopy()
+            let p = point.toViewportCopy();
             CTX.pixelAtPoint(p, 6);
         }
     },
@@ -457,6 +508,9 @@ const GAME = {
         GAME.lives = 3; //3
         GAME.score = 0;
 
+        const storeList = ["ENEMY2D"];
+        GAME.STORE = new Store(storeList);
+
         GAME.fps = new FPS_short_term_measurement(300);
         if (DEBUG._2D_display) GRID.grid();
 
@@ -465,13 +519,20 @@ const GAME = {
     WebGL_settings() {
         WebGL.INI.BACKGROUND_ALPHA = 0.0;
     },
+    async loadNewLevel(level) {
+        if (DEBUG.VERBOSE) console.log("Loading new level", level);
+        await GAME.initLevel(level);
+    },
     async levelStart(level) {
         if (DEBUG.VERBOSE) console.log("Starting level", level);
         GAME.prepareForRestart();
         HERO.construct();
-        this.levelComplete = false;
+        //this.levelComplete = false;
         await GAME.initLevel(level);
         GAME.continueLevel(level);
+    },
+    continueLoadedLevel(level) {
+        if (DEBUG.VERBOSE) console.log("Continue LOADED level", level);
     },
     continueLevel(level) {
         if (DEBUG.VERBOSE) console.log("Continue level", level);
@@ -513,14 +574,10 @@ const GAME = {
         this.buildWorld(level);
         ENGINE.VIEWPORT.setMax({ x: MAP[level].pw, y: MAP[level].ph });
         await this.createBitmaps(level);
-        //this.addMask(level);
     },
     async createBitmaps(level) {
         await BITMAP.store(TEXTURE[`Level_${level}`], "screen");
     },
-    /*  addMask(level) {
-         MAP[level].map.maskdata = ENGINE.imgToBinaryMask(TEXTURE[`mask_level_${level}`]);
-     }, */
     setWorld() {
         WebGL.init2D('webgl');
     },
@@ -538,6 +595,11 @@ const GAME = {
         ENGINE.clearManylayers(clear);
         TITLE.blackBackgrounds();
         ENGINE.TIMERS.clear();
+        GAME.STORE.clearPools();
+    },
+    reloadIAM(level) {
+        GAME.STORE.loadIAM(MAP[level].map);
+        GAME.STORE.linkMap(MAP[level].map);
     },
     async setup() {
         console.log("GAME SETUP started");
@@ -706,7 +768,7 @@ const TITLE = {
     },
     clearAllLayers() {
         ENGINE.layersToClear = new Set(["text",
-            "sideback", "button", "title", "FPS", "info", "subtitle",
+            "sideback", "button", "title", "FPS", "info", "subtitle", "smalltitle",
             "score", "level", "hiscore",
             "lives", "time", "jump",
             "fill",
@@ -812,7 +874,8 @@ const TITLE = {
         CTX.fillText(PRG.NAME, x, y);
     },
     smalTitle() {
-        const CTX = LAYER.title;
+        ENGINE.clearLayer("smalltitle");
+        const CTX = LAYER.smalltitle;
         const fs = INI.TEXT_SIZE;
         CTX.font = fs + "px Chasm";
         CTX.textAlign = "center";
