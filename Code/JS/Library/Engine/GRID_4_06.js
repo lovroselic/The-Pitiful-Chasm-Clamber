@@ -25,6 +25,7 @@ const GRID = {
         FORWARD_CIRCLE_RESOLUTION: 2,
         FORWARD_CIRCLE_CHECK_ANGLE: Math.PI / 4,
         WALL_COLLISION_TOLERANCE: 0.975,
+        WALL_COLLISTION_OVERKILL: 1.1,
         COLLISION_STEP: 2,
         MAX_MOTION_SPEED: 3500,
     },
@@ -451,17 +452,18 @@ const GRID = {
     checkWallCollision(entity, candidatePos) {
         console.info("--> checkWallCollision", candidatePos, "entity.mode", entity.parent.mode, "; level", GAME.level);
         const GA = entity.GA;
-        const gs2 = (ENGINE.INI.GRIDPIX >>> 1) * GRID.SETTING.WALL_COLLISION_TOLERANCE;                       // slight tolerance. put to INI
+        const gs2 = (ENGINE.INI.GRIDPIX >>> 1) * GRID.SETTING.WALL_COLLISION_TOLERANCE;                         // slight tolerance. put to INI
+        const gs = (ENGINE.INI.GRIDPIX >>> 1) * GRID.SETTING.WALL_COLLISTION_OVERKILL;                          // underfeet check
         const dir = new Vector(Math.sign(entity.motion.velocity.x), 0);
         const jumpY = Math.sign(entity.motion.velocity.y);
         const mode = entity.parent.mode;
         const maskdata = entity.map.maskdata;
 
-        const createTest = (direction, app, type, cat) => {
-            const position = candidatePos.translate(direction, gs2);
+        const createTest = (direction, D, app, type, cat) => {
+            const position = candidatePos.translate(direction, D);
             const grid = position.to_Grid();
 
-            console.warn(".test", cat, "test grid", grid, "position", position, "GA.getValue(grid)", GA.getValue(grid));
+            console.warn("...test", cat, "test grid", grid, "position", position, "GA.getValue(grid)", GA.getValue(grid));
 
             return {
                 position,
@@ -471,34 +473,42 @@ const GRID = {
             };
         };
 
+        console.line();
         const test = {
-            current: createTest(NOWAY, ["climbing"], "blocked", "current"),
-            top: createTest(UP, ["jumping"], "blocked", "top"),
-            side: createTest(dir, ["jumping", "sliding", "walking"], "blocked", "side"),
-            bottom: createTest(DOWN, ["jumping", "sliding", "falling"], "surface", "bottom"),
-            down: createTest(DOWN, ["climbing"], "blocked", "down"),
+            current: createTest(NOWAY, gs2, ["climbing"], "blocked", "current"),
+            top: createTest(UP, gs2, ["jumping"], "blocked", "top"),
+            side: createTest(dir, gs2, ["jumping", "sliding", "walking"], "blocked", "side"),
+            bottom: createTest(DOWN, gs2, ["jumping", "sliding", "falling"], "surface", "bottom"),
+            down: createTest(DOWN, gs2, ["climbing"], "blocked", "down"),
+            bottom_support: createTest(DOWN, gs, ["walking"], "surface", "bottom_support"),
         };
+        console.line();
 
         for (const testType of Object.keys(test)) {
             const T = test[testType];
-            if (!T.app.includes(mode)) continue;                                        // not testing if test is not for current moded
-            if (mode === "jumping" && T.cat === "bottom" && jumpY === -1) continue;     //ignore bottom check when jumping dir is still up
+            if (!T.app.includes(mode)) continue;                                                        // not testing if test is not for current moded
+            if (mode === "jumping" && T.cat === "bottom" && jumpY === -1) continue;                     //ignore bottom check when jumping dir is still up
             const gridValue = T.value;
 
             switch (gridValue) {
+                case false: return { hit: true, type: "outOfBounds", contact: T.position, };            // out ouf bounds
+
                 case MAPDICT.EMPTY:
-                    if (T.app.includes("climbing") && T.cat === "current") return { hit: true, type: T.type, contact: T.position, };
+                    if (T.app.includes("climbing") && T.cat === "current") return { hit: true, type: T.type, contact: T.position, };    // don't 'climb' over empty grids
+                    if (T.cat === "bottom_support") return { hit: true, type: "unsupported", contact: test.side.position, };            // no support, falling from a side candidate
                     continue;
                 case MAPDICT.STAIR + MAPDICT.RESERVED: continue;
                 case MAPDICT.STAIR + MAPDICT.MASK + MAPDICT.RESERVED: continue;
                 case MAPDICT.RESERVED: continue;
                 case MAPDICT.MASK:
+                    if (T.cat === "bottom_support") continue;
                     const result = GRID.checkMaskedGrid(T, maskdata);
                     if (result.hit) return result;
                     continue;
-                case MAPDICT.WALL: return { hit: true, type: T.type, contact: T.position, };
-                
-                case false: return { hit: true, type: "outOfBounds", contact: T.position, };
+                case MAPDICT.WALL:
+                    if (T.cat === "bottom_support") continue;
+                    return { hit: true, type: T.type, contact: T.position, };
+
                 default: throw new Error(`checkWallCollision grid Value not supported ${gridValue}, ${REVERSED_MAPDICT[gridValue]}`);
             }
         }

@@ -53,11 +53,12 @@ const INI = {
     TEXT_SIZE: 13,
     JUMP_SPEED: 64 * 4.0,               // converts charged power into pixels/second
     LADDER_EXIT: 64 * 2.0,              // converts charged power into pixels/second
+    SIDE_DRIFT: 64 * 0.25,
     GRAVITY: 500,                       // pixels/second² 500
 };
 
 const PRG = {
-    VERSION: "0.3.3",
+    VERSION: "0.3.4",
     NAME: "The Pitiful Chasm Clamber",
     YEAR: "2026",
     SG: "ThePitifulChasmClamber",
@@ -109,6 +110,7 @@ const PRG = {
         ENGINE.bottomWIDTH = ENGINE.titleWIDTH;
         MAP_TOOLS.INI.FOG = false;
         GRID.SETTING.COLLISION_STEP = 16;
+        //GRID.WALL_COLLISION_TOLERANCE = 1.01
 
         $("#bottom").css("margin-top", ENGINE.gameHEIGHT + ENGINE.titleHEIGHT + ENGINE.bottomHEIGHT);
         $(ENGINE.gameWindowId).width(ENGINE.gameWIDTH + 2 * ENGINE.sideWIDTH + 4);
@@ -329,8 +331,10 @@ const HERO = {
         //console.log("level", level, "new grid", grid);
 
         this.player.setGrid(grid);
-        this.setMode("idle", this.player.sprite.dir);
-        this.player.motion.deactivate();
+        if (this.mode !== "falling") {
+            this.setMode("idle", this.player.sprite.dir);
+            this.player.motion.deactivate();
+        }
         this.player.setMap(MAP[level].map);
 
         //console.error(" new pos:  this.player.sprite.pos", this.player.sprite.pos, "grid", this.player.sprite.pos.toGrid());
@@ -425,9 +429,11 @@ const HERO = {
         const entity = context.entity;
         const motion = entity.motion;
         let contact = Point.rounded(context.collision.contact);
-        const gs2 = (ENGINE.INI.GRIDPIX >>> 1) * GRID.SETTING.WALL_COLLISION_TOLERANCE;
+        const gs2 = (ENGINE.INI.GRIDPIX >>> 1) * GRID.SETTING.WALL_COLLISION_TOLERANCE;             // ~ half grid
+        const gs4 = gs2 >>> 1;                                                                      // ~ quarter grid    
         let origin = Point.rounded(context.currentPos.translate(DOWN, gs2));
         let candidate = Point.rounded(context.candidatePos.translate(DOWN, gs2));
+        let candidateSide = candidate.translate(entity.sprite.dir, gs4);
         const type = context.collision.type;
 
         switch (type) {
@@ -455,11 +461,22 @@ const HERO = {
             case "surface":
                 this.setMode("idle", this.player.sprite.dir);
                 this.player.motion.deactivate();
-                contact = ENGINE.adjustPointToUpperGrid(contact);                                      // adjust
+                contact = ENGINE.adjustPointToUpperGrid(contact);                                                   // adjust
                 console.warn("contact", contact, contact.to_Grid());
-                contact.y--;                                                                             //one px up, out of wall
+                contact.y--;                                                                                        //one px up, out of wall
                 const finalSafePos = contact.translate(UP, gs2);
                 return { finished: true, pos: finalSafePos, };
+
+            case "unsupported":
+                switch (this.mode) {
+                    case "walking":
+                        motion.velocity.x = entity.sprite.dir.x * INI.SIDE_DRIFT;                                     // slight side movement
+                        motion.velocity.y = Math.abs(motion.velocity.y);                                            // keep speed down or revert from up
+                        this.setMode("falling", DOWN);
+                        motion.setType("falling");
+                        motion.setAcceleration({ x: 0, y: INI.GRAVITY });
+                        return { finished: false, pos: candidateSide, };
+                }
 
             default: throw new Error(`handlePositionCollision wrong event type ${type}`);
         }
