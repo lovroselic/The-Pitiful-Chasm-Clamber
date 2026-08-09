@@ -3331,7 +3331,8 @@ const ENGINE = {
                 for (let y = 0; y < sizeY; y++) {
                     let grid = new Grid(x, y);
                     let value = maze.GA.getValue(grid);
-                    value &= 2 ** maze.GA.gridSizeBit - 1 - MAPDICT.FOG - MAPDICT.RESERVED;
+                    //value &= 2 ** maze.GA.gridSizeBit - 1 - MAPDICT.FOG - MAPDICT.RESERVED;
+                    value &= 2 ** maze.GA.gridSizeBit - 1  - MAPDICT.RESERVED;
                     if (maze.GA.isBlockWall(grid) || maze.GA.isPillar(grid)) {
                         ENGINE.BLOCKGRID.wall(x, y, CTX, value);
                     } else if (maze.GA.isMazeWall(grid)) {
@@ -3339,7 +3340,6 @@ const ENGINE = {
 
                         if (value & MAPDICT.STAIR) value = MAPDICT.STAIR;
                         if (value & MAPDICT.SHRINE) value = MAPDICT.SHRINE;
-
 
                         ENGINE.BLOCKGRID.wall(x, y, CTX, value);
                     } else {
@@ -3394,6 +3394,9 @@ const ENGINE = {
         corr(x, y, CTX, value, corr, off = 0) {
             let FS;
             switch (value) {
+                 case MAPDICT.WATER:
+                    FS = "#4306f9";
+                    break;
                 case MAPDICT.HOLE:
                     FS = "#000";
                     break;

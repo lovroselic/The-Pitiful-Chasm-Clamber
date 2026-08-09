@@ -463,7 +463,7 @@ const GRID = {
             const position = candidatePos.translate(direction, D);
             const grid = position.to_Grid();
 
-            console.warn("...test", cat, "test grid", grid, "position", position, "GA.getValue(grid)", GA.getValue(grid));
+            console.warn("...test", cat, "test grid", grid, "position", position, "GA.getValue(grid)", GA.getValue(grid), REVERSED_MAPDICT[GA.getValue(grid)]);
 
             return {
                 position,
@@ -475,11 +475,11 @@ const GRID = {
 
         console.line();
         const test = {
-            current: createTest(NOWAY, gs2, ["climbing"], "blocked", "current"),
+            current: createTest(NOWAY, gs2, ["climbing", "swimming"], "blocked", "current"),
             top: createTest(UP, gs2, ["jumping"], "blocked", "top"),
-            side: createTest(dir, gs2, ["jumping", "sliding", "walking"], "blocked", "side"),
+            side: createTest(dir, gs2, ["jumping", "sliding", "walking", "swimming"], "blocked", "side"),
             bottom: createTest(DOWN, gs2, ["jumping", "sliding", "falling"], "surface", "bottom"),
-            down: createTest(DOWN, gs2, ["climbing"], "blocked", "down"),
+            down: createTest(DOWN, gs2, ["climbing", "swimming"], "blocked", "down"),
             bottom_support: createTest(DOWN, gs, ["walking"], "surface", "bottom_support"),
         };
         console.line();
@@ -495,6 +495,7 @@ const GRID = {
 
                 case MAPDICT.EMPTY:
                     if (T.app.includes("climbing") && T.cat === "current") return { hit: true, type: T.type, contact: T.position, };    // don't 'climb' over empty grids
+                    if (T.app.includes("swimming") && T.cat === "current") return { hit: true, type: T.type, contact: T.position, };    // don't 'swim' over empty grids
                     if (T.cat === "bottom_support") return { hit: true, type: "unsupported", contact: test.side.position, };            // no support, falling from a side candidate
                     continue;
                 case MAPDICT.STAIR + MAPDICT.RESERVED: continue;
@@ -508,6 +509,10 @@ const GRID = {
                 case MAPDICT.WALL:
                     if (T.cat === "bottom_support") continue;
                     return { hit: true, type: T.type, contact: T.position, };
+
+                case MAPDICT.WATER:
+                    if (mode === "swimming") continue;
+                    return { hit: true, type: "water", contact: test.bottom_support.position, };
 
                 default: throw new Error(`checkWallCollision grid Value not supported ${gridValue}, ${REVERSED_MAPDICT[gridValue]}`);
             }
@@ -1377,6 +1382,15 @@ class GA_Dimension_Agnostic_Methods {
     }
     clearFog(grid) {
         this.clear(grid, MAPDICT.FOG);
+    }
+    isWater(grid) {
+        return this.check(grid, MAPDICT.WATER) === MAPDICT.WATER;
+    }
+    addWater(grid) {
+        this.set(grid, MAPDICT.WATER);
+    }
+    toWater(grid) {
+        this.setValue(grid, MAPDICT.WATER);
     }
     setStackValue(stack, value) {
         for (const grid of stack) {

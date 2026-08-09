@@ -2789,6 +2789,7 @@ class $2D_Sprite {
         glMatrix.mat4.rotateZ(this.modelMatrix, this.modelMatrix, this.rotation || 0);
         let scaleX = this.w;
         if (this.dir.x !== 0) scaleX *= this.dir.x;
+        //console.info("scaleX", scaleX, this.dir.x);
         glMatrix.mat4.scale(this.modelMatrix, this.modelMatrix, [scaleX, this.h, 1]);
         return this.modelMatrix;
     }

@@ -112,6 +112,11 @@ LoadSprites = [
     { srcName: "MaskDecals/GnarlyTree_244.png", name: "GnarlyTree_244" },
     { srcName: "MaskDecals/GnarlyTree_245.png", name: "GnarlyTree_245" },
     { srcName: "MaskDecals/GnarlyTree_246.png", name: "GnarlyTree_246" },
+    { srcName: "MaskDecals/Water64_247.webp", name: "Water64_247" },
+    { srcName: "MaskDecals/Water64_248.webp", name: "Water64_248" },
+    { srcName: "MaskDecals/Water64_249.webp", name: "Water64_249" },
+    { srcName: "MaskDecals/Water64_250.webp", name: "Water64_250" },
+    { srcName: "MaskDecals/Water64_251.webp", name: "Water64_251" },
 
 ];
 

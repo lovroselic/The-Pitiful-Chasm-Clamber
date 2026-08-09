@@ -530,6 +530,7 @@ const GAME = {
         $("#fill_value").append(`<option value="${MAPDICT.HOLE}">Hole</option>`);
         $("#fill_value").append(`<option value="${MAPDICT.WALL}">Wall</option>`);
         $("#fill_value").append(`<option value="${MAPDICT.MASK}">Mask</option>`);
+        $("#fill_value").append(`<option value="${MAPDICT.WATER}">Water</option>`);
 
         //textures
         for (const prop of TEXTURE_LIST) {
@@ -1259,6 +1260,15 @@ const GAME = {
                 // stair has no limitations, sets stair, clears previous
                 GA.toStair(grid);
                 $("#error_message").html("All is fine");
+                break;
+
+            case "water":
+                if (GA.isEmpty(grid)) {
+                    GA.towater(grid);
+                    $("#error_message").html("All is fine");
+                } else {
+                    $("#error_message").html("You can't make water in non empty grid");
+                }
                 break;
 
             case "trapdoor":

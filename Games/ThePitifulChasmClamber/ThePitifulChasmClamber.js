@@ -50,6 +50,7 @@ const INI = {
     SCREEN_BORDER: 64,
     WALKING_SPEED: 64 * 1.5,
     CLIMBING_SPEED: 64 * 1.5,
+    SWIMMING_SPEED: 64 * 1.5,
     TEXT_SIZE: 13,
     JUMP_SPEED: 64 * 4.0,               // converts charged power into pixels/second
     LADDER_EXIT: 64 * 2.0,              // converts charged power into pixels/second
@@ -58,7 +59,7 @@ const INI = {
 };
 
 const PRG = {
-    VERSION: "0.3.4",
+    VERSION: "0.3.5",
     NAME: "The Pitiful Chasm Clamber",
     YEAR: "2026",
     SG: "ThePitifulChasmClamber",
@@ -167,6 +168,7 @@ const HERO = {
                 this.player?.sprite.setAsset("PrincessIdle");
                 this.player?.sprite.setDirRef(dir);
                 break;
+
             case "walking":
                 this.player.sprite.setAsset("PrincessWalking", false);
                 this.player.sprite.setDirRef(dir);
@@ -192,12 +194,17 @@ const HERO = {
                 this.player.sprite.setDirRef(DOWN);
                 break;
 
+            case "swimming":
+                this.player.sprite.setAsset("PrincessSwim");
+                this.player.sprite.setDirRef(dir);
+                break;
+
 
             default: throw new Error(`Hero mode not suported: ${this.mode}`);
         }
 
         this.player?.sprite.update(dir);
-        //console.warn("set mode", this.mode, "pos", this.player?.sprite.pos);
+        console.warn("set mode", this.mode, "pos", this.player?.sprite.pos);
     },
     concludeAction() {
 
@@ -208,12 +215,11 @@ const HERO = {
             return;
         }
 
-        //conclusion for climbing
-        if (["climbing"].includes(this.mode)) {
+        //conclusion for climbing, swimming
+        if (["climbing", "swimming"].includes(this.mode)) {
             this.player.motion.deactivate(true);                // keep props
             return;
         }
-
     },
     die() {
         if (DEBUG.VERBOSE) console.red("HERO.die");
@@ -350,6 +356,10 @@ const HERO = {
         this.performJump(dir, INI.JUMP_SPEED);
     },
     handleMove(dir) {
+        if (this.mode === "swimming") {
+            return this.handleSwimming(dir);
+        }
+
         if (dir.y !== 0) return this.handleVerticalMove(dir);       // x-only here
 
         if (this.mode === "climbing") {
@@ -362,6 +372,16 @@ const HERO = {
         // only horizontal moves below
         if (!["idle", "walking",].includes(this.mode)) return;                              // only selected modes
         this.startWalking(dir);
+    },
+    handleSwimming(dir) {
+        console.warn("handleSwimming", dir, "this.player.motion", this.player.motion);
+        const mode = "swimming";
+        this.setMode(mode);
+        this.player.motion.setType(mode);   
+        this.player.sprite.setDir(dir);                        // no importance, but aligned with mode, just in case
+        this.player.motion.setVelocity({ x: dir.x * INI.SWIMMING_SPEED, y: dir.y * INI.SWIMMING_SPEED });
+        this.player.motion.setAcceleration({ x: 0, y: 0 });
+        this.player.motion.activate();
     },
     handleVerticalMove(dir) {
         //console.info("handling vertical move", dir);
@@ -425,7 +445,7 @@ const HERO = {
         this.player.motion.activate();
     },
     handlePositionCollision(context) {
-        console.warn("handlePositionCollision", context);
+        console.error("handlePositionCollision", context);
         const entity = context.entity;
         const motion = entity.motion;
         let contact = Point.rounded(context.collision.contact);
@@ -443,6 +463,7 @@ const HERO = {
             case "blocked":
                 switch (this.mode) {
                     case "climbing":
+                    case "swimming":
                         return { finished: false, pos: context.currentPos, };
                     case "walking":
                         this.setMode("idle", this.player.sprite.dir);
@@ -462,7 +483,7 @@ const HERO = {
                 this.setMode("idle", this.player.sprite.dir);
                 this.player.motion.deactivate();
                 contact = ENGINE.adjustPointToUpperGrid(contact);                                                   // adjust
-                console.warn("contact", contact, contact.to_Grid());
+                //console.warn("contact", contact, contact.to_Grid());
                 contact.y--;                                                                                        //one px up, out of wall
                 const finalSafePos = contact.translate(UP, gs2);
                 return { finished: true, pos: finalSafePos, };
@@ -477,6 +498,14 @@ const HERO = {
                         motion.setAcceleration({ x: 0, y: INI.GRAVITY });
                         return { finished: false, pos: candidateSide, };
                 }
+
+            case "water":
+                this.setMode("swimming", this.player.sprite.dir);
+                const newGrid = context.collision.contact.to_Grid();
+                const newPos = GRID.gridToCenterPX(newGrid);
+                console.log("context.candidatePos", context.candidatePos, "water grid", newGrid, newPos);
+                this.player.motion.deactivate();
+                return { finished: false, pos: newPos, };
 
             default: throw new Error(`handlePositionCollision wrong event type ${type}`);
         }
