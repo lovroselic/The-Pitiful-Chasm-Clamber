@@ -518,6 +518,10 @@ const GRID = {
             }
         }
 
+        if (mode === "swimming") {
+            //continue here;
+        }
+
         if (mode === "sliding") return { hit: true, type: "unsupported", contact: test.bottom.position, };  //sliding without support requires resolution -> "unsupported"
 
         return { hit: false, type: null, contact: null, };                                                 // All applicable probes completed without detecting a collision.

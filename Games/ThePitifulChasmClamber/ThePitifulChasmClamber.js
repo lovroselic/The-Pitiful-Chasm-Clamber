@@ -59,7 +59,7 @@ const INI = {
 };
 
 const PRG = {
-    VERSION: "0.3.5",
+    VERSION: "0.3.6",
     NAME: "The Pitiful Chasm Clamber",
     YEAR: "2026",
     SG: "ThePitifulChasmClamber",
@@ -353,6 +353,7 @@ const HERO = {
         this.setMode("ducking", this.player.sprite.dir);
     },
     handleJump(dir) {
+        if (this.mode === "swimming") return;
         this.performJump(dir, INI.JUMP_SPEED);
     },
     handleMove(dir) {
