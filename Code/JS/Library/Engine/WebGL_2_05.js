@@ -310,7 +310,7 @@ const WebGL = {
             }
         }
 
-        console.log("----------------------------------");
+        console.line();
         const maxVertexUniformVectors = gl.getParameter(gl.MAX_VERTEX_UNIFORM_VECTORS);
         const maxFragmentUniformVectors = gl.getParameter(gl.MAX_FRAGMENT_UNIFORM_VECTORS);
         const activeUniforms = gl.getProgramParameter(program, gl.ACTIVE_UNIFORMS);
@@ -342,7 +342,7 @@ const WebGL = {
         console.log(`Fragment Shader Uniform Vectors Used: ${fragmentUniformVectors}, available: ${maxFragmentUniformVectors - fragmentUniformVectors}`);
         console.assert(vertexUniformVectors <= maxVertexUniformVectors, `Vertex shader exceeds uniform vector limit! Used: ${vertexUniformVectors}, Max: ${maxVertexUniformVectors}`);
         console.assert(fragmentUniformVectors <= maxFragmentUniformVectors, `Fragment shader exceeds uniform vector limit! Used: ${fragmentUniformVectors}, Max: ${maxFragmentUniformVectors}`);
-        console.log("----------------------------------");
+        console.line();
 
     },
     setContext(layer) {
@@ -370,7 +370,7 @@ const WebGL = {
         this.initPrograms2D(gl);
         this.initSpriteQuad(gl);
         // no needs to set world textures, same reason
-        //no need to set camere,as it is static displax
+        // no need to set camere, as it is static display
 
         //working here
         if (this.VERBOSE) {
@@ -2785,11 +2785,10 @@ class $2D_Sprite {
 
         glMatrix.mat4.identity(this.modelMatrix);
         const pos = useViewport ? this.vPos : this.pos;
-        glMatrix.mat4.translate(this.modelMatrix, this.modelMatrix, [Math.round(pos.x), Math.round(pos.y), 0]);
+        glMatrix.mat4.translate(this.modelMatrix, this.modelMatrix, [Math.round(pos.x), Math.round(pos.y), 0]); // see that 0? that's z, hence 2D ... leave it
         glMatrix.mat4.rotateZ(this.modelMatrix, this.modelMatrix, this.rotation || 0);
         let scaleX = this.w;
         if (this.dir.x !== 0) scaleX *= this.dir.x;
-        //console.info("scaleX", scaleX, this.dir.x);
         glMatrix.mat4.scale(this.modelMatrix, this.modelMatrix, [scaleX, this.h, 1]);
         return this.modelMatrix;
     }

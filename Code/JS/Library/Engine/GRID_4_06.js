@@ -19,6 +19,7 @@ known bugs:
 const GRID = {
     VERSION: "4.06",
     CSS: "color: #0AA",
+    VERBOSE: true,
     SETTING: {
         ALLOW_CROSS: false,
         EPSILON: 0.05,
@@ -452,7 +453,7 @@ const GRID = {
     checkWallCollision(entity, candidatePos) {
         console.info("--> checkWallCollision", candidatePos, "entity.mode", entity.parent.mode, "; level", GAME.level);
         const GA = entity.GA;
-        const gs2 = (ENGINE.INI.GRIDPIX >>> 1) * GRID.SETTING.WALL_COLLISION_TOLERANCE;                         // slight tolerance. put to INI
+        const gs2 = (ENGINE.INI.GRIDPIX >>> 1) * GRID.SETTING.WALL_COLLISION_TOLERANCE;                         // slight tolerance. 
         const gs = (ENGINE.INI.GRIDPIX >>> 1) * GRID.SETTING.WALL_COLLISTION_OVERKILL;                          // underfeet check
         const dir = new Vector(Math.sign(entity.motion.velocity.x), 0);
         const jumpY = Math.sign(entity.motion.velocity.y);
@@ -463,14 +464,13 @@ const GRID = {
             const position = candidatePos.translate(direction, D);
             const grid = position.to_Grid();
 
-            console.warn("...test", cat, "test grid", grid, "position", position, "GA.getValue(grid)", GA.getValue(grid), REVERSED_MAPDICT[GA.getValue(grid)]);
+            //debug
+            if (GRID.VERBOSE) console.warn("...test", cat,
+                "test grid", grid, "position", position,
+                "GA.getValue(grid)", GA.getValue(grid),
+                REVERSED_MAPDICT[GA.getValue(grid)]);
 
-            return {
-                position,
-                grid,
-                value: GA.getValue(grid),
-                app, type, cat,
-            };
+            return { position, grid, value: GA.getValue(grid), app, type, cat, };
         };
 
         console.line();
@@ -483,6 +483,21 @@ const GRID = {
             bottom_support: createTest(DOWN, gs, ["walking"], "surface", "bottom_support"),
         };
         console.line();
+
+        /**
+        * special cases
+        * need to be befor main switch
+        */
+
+        if (mode === "swimming") {
+            const surface = test.top.value === MAPDICT.EMPTY;
+            const side = test.side.value === MAPDICT.WALL;
+            if (surface && side) return { hit: true, type: "exit_water", contact: test.top.position, }; // prepare to jump from the water using topmost position
+        }
+
+        /**
+         * main switch
+         */
 
         for (const testType of Object.keys(test)) {
             const T = test[testType];
@@ -518,9 +533,6 @@ const GRID = {
             }
         }
 
-        if (mode === "swimming") {
-            //continue here;
-        }
 
         if (mode === "sliding") return { hit: true, type: "unsupported", contact: test.bottom.position, };  //sliding without support requires resolution -> "unsupported"
 

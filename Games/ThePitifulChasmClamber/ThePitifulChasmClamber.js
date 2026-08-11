@@ -23,7 +23,7 @@ const DEBUG = {
     SETTING: true,
     FPS: true,
     VERBOSE: true,
-    _2D_display: true,
+    _2D_display: false,
     INVINCIBLE: false,
     keys: false,
     max17: false,
@@ -48,7 +48,7 @@ const DEBUG = {
 
 const INI = {
     SCREEN_BORDER: 64,
-    WALKING_SPEED: 64 * 1.5,
+    WALKING_SPEED: 64 * 1.6,
     CLIMBING_SPEED: 64 * 1.5,
     SWIMMING_SPEED: 64 * 1.5,
     TEXT_SIZE: 13,
@@ -59,7 +59,7 @@ const INI = {
 };
 
 const PRG = {
-    VERSION: "0.3.6",
+    VERSION: "0.3.7",
     NAME: "The Pitiful Chasm Clamber",
     YEAR: "2026",
     SG: "ThePitifulChasmClamber",
@@ -127,6 +127,7 @@ const PRG = {
         if (DEBUG.VERBOSE) {
             WebGL.VERBOSE = true;
             ENGINE.verbose = true;
+            GRID.VERBOSE = true;
             MAP_TOOLS.INI.VERBOSE = true;
             AI.VERBOSE = true;
         }
@@ -378,7 +379,7 @@ const HERO = {
         console.warn("handleSwimming", dir, "this.player.motion", this.player.motion);
         const mode = "swimming";
         this.setMode(mode);
-        this.player.motion.setType(mode);   
+        this.player.motion.setType(mode);
         this.player.sprite.setDir(dir);                        // no importance, but aligned with mode, just in case
         this.player.motion.setVelocity({ x: dir.x * INI.SWIMMING_SPEED, y: dir.y * INI.SWIMMING_SPEED });
         this.player.motion.setAcceleration({ x: 0, y: 0 });
@@ -435,7 +436,7 @@ const HERO = {
         this.player.motion.setAcceleration({ x: 0, y: 0 });
         this.player.motion.activate();
     },
-    performJump(dir, speed) {
+    performJump(dir, speed = INI.JUMP_SPEED) {
         if (this.player.motion.active) return;
         const component = speed * Math.SQRT1_2;                     // cos(45°) and sin(45°)
         const mode = "jumping";
@@ -484,7 +485,6 @@ const HERO = {
                 this.setMode("idle", this.player.sprite.dir);
                 this.player.motion.deactivate();
                 contact = ENGINE.adjustPointToUpperGrid(contact);                                                   // adjust
-                //console.warn("contact", contact, contact.to_Grid());
                 contact.y--;                                                                                        //one px up, out of wall
                 const finalSafePos = contact.translate(UP, gs2);
                 return { finished: true, pos: finalSafePos, };
@@ -507,6 +507,11 @@ const HERO = {
                 console.log("context.candidatePos", context.candidatePos, "water grid", newGrid, newPos);
                 this.player.motion.deactivate();
                 return { finished: false, pos: newPos, };
+
+            case "exit_water":
+                this.player.motion.deactivate();
+                this.performJump(this.player.sprite.dir);
+                return { finished: false, pos: contact, };
 
             default: throw new Error(`handlePositionCollision wrong event type ${type}`);
         }
