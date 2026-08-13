@@ -1241,11 +1241,11 @@ class Carrier2D extends IAM {
         super();
         this.IA = "carrierIA";
     }
-    poolToIA(IA) {
+   /*  poolToIA(IA) {
         for (const obj of this.POOL) {
             if (obj) IA.next(obj.grid, obj.id);
         }
-    }
+    } */
     manage(lapsedTime) {
         let map = this.map;
         map[this.IA] = new IndexArray(map.width, map.height, 4, 4);

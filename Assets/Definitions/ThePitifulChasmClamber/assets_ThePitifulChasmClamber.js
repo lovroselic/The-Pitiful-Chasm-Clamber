@@ -17,7 +17,6 @@ LoadSheetSequences = [
     { srcName: "PrincessFall.png", count: 11, name: "PrincessFall", trim: false },
     { srcName: "PrincessJump.png", count: 20, name: "PrincessJump", trim: false },
     { srcName: "PrincessClimb.png", count: 20, name: "PrincessClimb", trim: false },
-    { srcName: "Rope.webp", count: 1, name: "Rope", trim: false },
 
     //borders
     { srcName: "MossyBorders.png", count: 5, name: "MossyBorders", trim: false },
@@ -58,7 +57,7 @@ LoadShaders = [
 
 LoadSprites = [
     //items
-    //{ srcName: "Items/Rope.webp", name: "Rope" },
+    { srcName: "Items/Rope.webp", name: "Rope" },
     //UI
     //{ srcName: "UI/Booga.png", name: "Lives" },
     //
@@ -121,6 +120,42 @@ LoadSprites = [
     { srcName: "MaskDecals/Water64_249.webp", name: "Water64_249" },
     { srcName: "MaskDecals/Water64_250.webp", name: "Water64_250" },
     { srcName: "MaskDecals/Water64_251.webp", name: "Water64_251" },
+
+    //mask elements
+    { srcName: "MaskElements/AnotherLedge.png", name: "AnotherLedge" },
+    { srcName: "MaskElements/CurvedTriangle.png", name: "CurvedTriangle" },
+    { srcName: "MaskElements/FullDeepWedge.png", name: "FullDeepWedge" },
+    { srcName: "MaskElements/FullDeepWedge2.png", name: "FullDeepWedge2" },
+    { srcName: "MaskElements/Half.png", name: "Half" },
+    { srcName: "MaskElements/HalfCorner.png", name: "HalfCorner" },
+    { srcName: "MaskElements/HalfRidge.png", name: "HalfRidge" },
+    { srcName: "MaskElements/HalfToFull.png", name: "HalfToFull" },
+    { srcName: "MaskElements/HalfToHalf.png", name: "HalfToHalf" },
+    { srcName: "MaskElements/HalfToZero.png", name: "HalfToZero" },
+    { srcName: "MaskElements/HighLedge.png", name: "HighLedge" },
+    { srcName: "MaskElements/Hook.png", name: "Hook" },
+    { srcName: "MaskElements/InvCurvedTriangle.png", name: "InvCurvedTriangle" },
+    { srcName: "MaskElements/InvHalfCorner.png", name: "InvHalfCorner" },
+    { srcName: "MaskElements/InvHalfToFull.png", name: "InvHalfToFull" },
+    { srcName: "MaskElements/InvHalfToZero.png", name: "InvHalfToZero" },
+    { srcName: "MaskElements/InvThirdToFull.png", name: "InvThirdToFull" },
+    { srcName: "MaskElements/InvThirdToZero.png", name: "InvThirdToZero" },
+    { srcName: "MaskElements/Line.png", name: "Line" },
+    { srcName: "MaskElements/LowLedge.png", name: "LowLedge" },
+    { srcName: "MaskElements/MiniCorner.png", name: "MiniCorner" },
+    { srcName: "MaskElements/Peak.png", name: "Peak" },
+    { srcName: "MaskElements/RoughLine.png", name: "RoughLine" },
+    { srcName: "MaskElements/Stalag.png", name: "Stalag" },
+    { srcName: "MaskElements/Third.png", name: "Third" },
+    { srcName: "MaskElements/ThirdRidge.png", name: "ThirdRidge" },
+    { srcName: "MaskElements/ThirdToFull.png", name: "ThirdToFull" },
+    { srcName: "MaskElements/ThirdToHalf.png", name: "ThirdToHalf" },
+    { srcName: "MaskElements/ThirdToThird.png", name: "ThirdToThird" },
+    { srcName: "MaskElements/ThirdToZero.png", name: "ThirdToZero" },
+    { srcName: "MaskElements/Tit.png", name: "Tit" },
+    { srcName: "MaskElements/Triangle.png", name: "Triangle" },
+    { srcName: "MaskElements/highLedge2.png", name: "highLedge2" },
+    { srcName: "MaskElements/highLedge3.png", name: "highLedge3" },
 
 ];
 

@@ -2724,11 +2724,16 @@ class $2D_Sprite {
         this.asset = null;
         this.state = {};
         this.setAsset(this.assetName);
+        this.setSpriteTexture(this.spriteName);
         this.fps = this.fps || 60;
         this.nextSpriteTime = 1000 / this.fps;
         this.setDirRef(this.dirRef);
         this.update(dir);
         this.show();
+    }
+    setSpriteTexture(spriteName) {
+        if (!spriteName) return;
+        this.spriteTexture = WebGL.createTexture(SPRITE[spriteName]);
     }
     setAsset(assetName, reset = true, recallFrame = true) {
         if (!assetName) return;

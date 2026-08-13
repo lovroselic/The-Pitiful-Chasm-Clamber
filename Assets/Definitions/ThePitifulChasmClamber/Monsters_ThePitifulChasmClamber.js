@@ -54,9 +54,9 @@ const SWINGING_ROPE_TYPE = {
     BasicRope: {
         swingLength: 3.5,        // grids
         swingWidth: 5,          // grids
-        assetName: "Rope",  
+        spriteName: "Rope",
         swingPeriod: 4,         // not tuned
-        w: 6,
+        w: 5,
         dirRef: DOWN,
         animate: false,
         static: true,
