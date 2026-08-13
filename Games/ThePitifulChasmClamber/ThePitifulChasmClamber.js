@@ -60,7 +60,7 @@ const INI = {
 };
 
 const PRG = {
-    VERSION: "0.4.1",
+    VERSION: "0.4.2",
     NAME: "The Pitiful Chasm Clamber",
     YEAR: "2026",
     SG: "ThePitifulChasmClamber",
@@ -360,7 +360,6 @@ const HERO = {
         this.setMode("gripping");
         this.player.carrier = entity;
         this.player.motion.deactivate();
-        //this.player.sprite.updateModelMatrix();
     },
     handleDuck() {
         this.setMode("ducking", this.player.sprite.dir);
@@ -394,9 +393,15 @@ const HERO = {
     handleSwimming(dir) {
         console.warn("handleSwimming", dir, "this.player.motion", this.player.motion);
         const mode = "swimming";
-        this.setMode(mode);
-        this.player.motion.setType(mode);
-        this.player.sprite.setDir(dir);                        // no importance, but aligned with mode, just in case
+
+        if (dir.x !== 0) this.facingDir = dir.x < 0 ? LEFT : RIGHT;
+
+        this.setMode(mode, this.facingDir);
+        this.player.motion.setType(mode);                                   // no importance, but aligned with mode, just in case                
+
+        this.player.sprite.setDirRef(this.facingDir);
+        this.player.sprite.update(this.facingDir);
+
         this.player.motion.setVelocity({ x: dir.x * INI.SWIMMING_SPEED, y: dir.y * INI.SWIMMING_SPEED });
         this.player.motion.setAcceleration({ x: 0, y: 0 });
         this.player.motion.activate();
