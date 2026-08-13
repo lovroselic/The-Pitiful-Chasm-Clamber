@@ -17,6 +17,7 @@ LoadSheetSequences = [
     { srcName: "PrincessFall.png", count: 11, name: "PrincessFall", trim: false },
     { srcName: "PrincessJump.png", count: 20, name: "PrincessJump", trim: false },
     { srcName: "PrincessClimb.png", count: 20, name: "PrincessClimb", trim: false },
+    { srcName: "PrincessRope.png", count: 2, name: "PrincessRope", trim: false },
 
     //borders
     { srcName: "MossyBorders.png", count: 5, name: "MossyBorders", trim: false },

@@ -1,4 +1,4 @@
-/* LS CSS v0.10.2 */
+/* LS CSS v0.10.3 */
 
 @charset "utf-8";
 
@@ -164,8 +164,8 @@ a, a:visited {
 
 /* LS theme */
 
-h1, h2 {
-    color: #FF0000;
+h1, h2, h3 {
+    color: #FF0000 !important; 
 }
 
 .LS {
@@ -238,8 +238,8 @@ h1, h2 {
 }
 
 
-h3, h4, h5, h6, p, section, fieldset {
-    color: #DDE0DD;
+h4, h5, h6, p, section, fieldset {
+    color: #DDE0DD !important;
 }
 
 p {

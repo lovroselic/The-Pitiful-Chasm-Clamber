@@ -51,6 +51,7 @@ const INI = {
     WALKING_SPEED: 64 * 1.6,
     CLIMBING_SPEED: 64 * 1.5,
     SWIMMING_SPEED: 64 * 1.5,
+    RELEASE_JUMP_SPEED: 64 * 2.0,
     TEXT_SIZE: 13,
     JUMP_SPEED: 64 * 4.0,               // converts charged power into pixels/second
     LADDER_EXIT: 64 * 2.0,              // converts charged power into pixels/second
@@ -59,7 +60,7 @@ const INI = {
 };
 
 const PRG = {
-    VERSION: "0.4.0",
+    VERSION: "0.4.1",
     NAME: "The Pitiful Chasm Clamber",
     YEAR: "2026",
     SG: "ThePitifulChasmClamber",
@@ -127,9 +128,9 @@ const PRG = {
         if (DEBUG.VERBOSE) {
             WebGL.VERBOSE = true;
             ENGINE.verbose = true;
-            GRID.VERBOSE = true;
+            //GRID.VERBOSE = true;
             MAP_TOOLS.INI.VERBOSE = true;
-            AI.VERBOSE = true;
+            //AI.VERBOSE = true;
         }
     },
     start() {
@@ -150,7 +151,6 @@ const HERO = {
         this.player = null;
         this.dead = false;
         this.setMode("idle", RIGHT);
-
 
         //binds
         this.handleFinishedJump = this.handleFinishedJump.bind(this);
@@ -180,6 +180,7 @@ const HERO = {
                 this.player.sprite.setDirRef(dir);
                 break;
 
+            case "releasing":
             case "jumping":
                 this.player.sprite.setAsset("PrincessJump");
                 this.player.sprite.setDirRef(dir);
@@ -200,12 +201,16 @@ const HERO = {
                 this.player.sprite.setDirRef(dir);
                 break;
 
+            case "gripping":
+                this.player.sprite.setAsset("PrincessRope");
+                this.player.sprite.setDirRef(dir);
+                break;
 
             default: throw new Error(`Hero mode not suported: ${this.mode}`);
         }
 
         this.player?.sprite.update(dir);
-        console.warn("set mode", this.mode, "pos", this.player?.sprite.pos);
+        //console.warn("set mode", this.mode, "pos", this.player?.sprite.pos, "dir", dir);
     },
     concludeAction() {
 
@@ -225,10 +230,8 @@ const HERO = {
     die() {
         if (DEBUG.VERBOSE) console.red("HERO.die");
 
-
         if (HERO.dead) return;
         HERO.dead = true;
-        //this.row = INI.MAX_ROW;
     },
     async death() {
         ENGINE.GAME.ANIMATION.stop();
@@ -249,6 +252,9 @@ const HERO = {
         //console.warn("manage", lapsedTime);
         await GRID.translateSpritePosition(HERO.player, lapsedTime, HERO.handleFinishedJump, true, false);
         this.player.collisionToEntity();
+
+        if (this.mode === "jumping") this.player.collisionToCarrier();
+        if (this.mode === "gripping") this.player.transferCarryierMovement(lapsedTime);
 
         //update animations even if not moving for selected modes
         // modes not updated: climbing,
@@ -349,15 +355,25 @@ const HERO = {
         GAME.drawFirstFrame(level);
         return { finished: false, pos: this.player.sprite.pos };
     },
-    handleCarry() { },
+    handleCarry(entity) {
+        console.log("handleCarry->carrier", entity, "this.player.sprite.dir", this.player.sprite.dir);
+        this.setMode("gripping");
+        this.player.carrier = entity;
+        this.player.motion.deactivate();
+        //this.player.sprite.updateModelMatrix();
+    },
     handleDuck() {
         this.setMode("ducking", this.player.sprite.dir);
     },
     handleJump(dir) {
+        ENGINE.GAME.keymap[ENGINE.KEY.map.ctrl] = false;                    // needs to be cleared
         if (this.mode === "swimming") return;
+        if (this.mode === "gripping") return this.releaaseRope(dir);
         this.performJump(dir, INI.JUMP_SPEED);
     },
     handleMove(dir) {
+        if (["gripping"].includes(this.mode)) return;
+
         if (this.mode === "swimming") {
             return this.handleSwimming(dir);
         }
@@ -420,11 +436,10 @@ const HERO = {
         this.setMode(mode, dir);
         this.player.motion.setType(mode);                           // no importance, but aligned with mode, just in case
         this.player.motion.setVelocity({ x: 0, y: dir.y * speed });
-        console.log("velocity", this.player.motion.velocity.y);
+        //console.log("velocity", this.player.motion.velocity.y);
         this.player.motion.setAcceleration({ x: 0, y: 0 });
         this.player.motion.activate();
     },
-    handleNothingWasPressed() { },
     startWalking(dir) {
         //console.info("startWalking", this.player.sprite.pos);
         this.player.sprite.setDir(dir);
@@ -435,6 +450,20 @@ const HERO = {
         this.player.motion.setVelocity({ x: dir.x * speed, y: 0 });
         this.player.motion.setAcceleration({ x: 0, y: 0 });
         this.player.motion.activate();
+    },
+    releaaseRope(dir) {
+        console.warn("releasing rope", dir);
+        const sprite = this.player.sprite;
+        const mode = "releasing";
+        const carrierGripVelocity = this.player.carrier.gripVelocity;
+        this.setMode(mode, dir);
+        this.player.motion.setType(mode);
+        this.player.motion.setVelocity({ x: carrierGripVelocity.x, y: carrierGripVelocity.y - INI.RELEASE_JUMP_SPEED });
+        this.player.motion.setAcceleration({ x: 0, y: INI.GRAVITY });
+        this.player.motion.activate();
+        sprite.forceRotation(dir);
+        sprite.updateModelMatrix(this.useViewport);
+        this.player.carrier = null;
     },
     performJump(dir, speed = INI.JUMP_SPEED) {
         if (this.player.motion.active) return;
@@ -472,6 +501,7 @@ const HERO = {
                         this.player.motion.deactivate();
                         return { finished: false, pos: context.currentPos, };
                     case "jumping":
+                    case "releasing":
                         motion.velocity.x = 0;                                                                      // stop side movement
                         motion.velocity.y = Math.abs(motion.velocity.y);                                            // keep speed down or revert from up
                         this.setMode("falling", DOWN);

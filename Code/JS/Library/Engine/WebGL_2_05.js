@@ -2767,6 +2767,10 @@ class $2D_Sprite {
         this.dir = dir;
         if (!this.preventRotation) this.rotation = dir.radAngleBetweenVectors(this.dirRef);   // don't rotate and flip
     }
+    forceRotation(dir) {
+        this.dir = dir;
+        this.rotation = dir.radAngleBetweenVectors(this.dirRef);   // don't rotate and flip
+    }
     reset() {
         this.frame = 0;
         this.currentSpriteTime = 0;
@@ -2865,6 +2869,9 @@ class $2D_Entity {
         this.sprite.rotationFromDir(dir);
     }
     continueMove(lapsedTime) {
+        /**
+         * this is Froggess legacy function, should not be used like this
+         */
         if (!this.moveState.moving) return;
         GRID.translateMove2D(this, lapsedTime, null, true, false);
     }
@@ -2900,14 +2907,15 @@ class $2D_player extends $2D_Entity {
         super(grid, dir, type, GA, useViewport);
         this.parent = parent;
         this.setMap(map);
+        this.carrier = null;
+
+        //binds
         this.checkEndMove = this.checkEndMove.bind(this);
     }
     setGrid(grid) {
         /** player exist, but we need relocation */
-        console.log("setting grid to player", grid);
         this.moveState.reset(grid);
         const pos = GRID.gridToCenterPX(grid);
-        console.log("setting pos to player", pos);
         this.sprite.setPosition(pos);
         this.sprite.vPos = pos;
         console.info("..ms", this.moveState.pos);
@@ -3051,7 +3059,28 @@ class $2D_player extends $2D_Entity {
                 if (playerArea.overlap(enityArea)) this.parent.die?.();
             }
         }
-
+    }
+    collisionToCarrier() {
+        const IA = this.map.carrierIA;
+        if (IA) {
+            const who = IA.unroll(this.moveState.homeGrid)[0] || null;
+            if (who) {
+                const entity = CARRIER2D.show(who);
+                this.parent.handleCarry?.(entity);
+            }
+        }
+    }
+    transferCarryierMovement(lapsedTime) {
+        const sprite = this.sprite;
+        sprite.pos = this.carrier.gripPos;
+        sprite.rotation = this.carrier.sprite.rotation;
+        const dir = this.carrier.swingDir < 0 ? LEFT : RIGHT;
+        sprite.setDir(dir);
+        sprite.updateAnimation(lapsedTime);
+        sprite.updateModelMatrix(this.useViewport);
+        this.moveState.reset(sprite.pos.toGrid());
+        ENGINE.VIEWPORT.alignToPosition(this.actor.pos, this.actor.vPos);
+        //console.error("transferCarryierMovement", sprite.pos, "HG", this.moveState.homeGrid, "this.carrier", this.carrier);
     }
 }
 
@@ -3143,7 +3172,6 @@ class $2D_Grid_Cycling_Entity_Part {
 class $2D_SwingingRope {
     constructor(hookGrid, type, startDir = LEFT, useViewport = false) {
         this.hookGrid = hookGrid;
-        //this.hookPos = GRID.gridToCenterPX(hookGrid);
         this.hookPos = GRID.gridToTopCenterPX(hookGrid);
         ImportTypeToConstructor(this, type);
         this.ropeLengthPX = this.swingLength * ENGINE.INI.GRIDPIX;

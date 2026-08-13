@@ -19,7 +19,7 @@ known bugs:
 const GRID = {
     VERSION: "4.06",
     CSS: "color: #0AA",
-    VERBOSE: true,
+    VERBOSE: false,
     SETTING: {
         ALLOW_CROSS: false,
         EPSILON: 0.05,
@@ -36,14 +36,6 @@ const GRID = {
          * B - static item
          */
 
-        /*console.log("\n **************************");
-        console.log("x", A.min.x <= B.max.x && A.max.x >= B.min.x, A.min.x, B.max.x, A.max.x, B.min.x);
-        console.log("y", A.min.y <= B.max.y && A.max.y >= B.min.y, A.min.y, B.max.y, A.max.y, B.min.y);
-        console.log("z", A.min.z <= B.max.z && A.max.z >= B.min.z, A.min.z, B.max.z, A.max.z, B.min.z);
-        console.log("HERO.player.pos", HERO.player.pos);
-        console.warn("HERO pos y", HERO.player.pos.y, "HERO.player.pos.y - HERO.player.r", HERO.player.pos.y - HERO.player.r);
-        console.log("\n --------------------------");*/
-
         return (
             A.min.x <= B.max.x && A.max.x >= B.min.x &&
             A.min.y <= B.max.y && A.max.y >= B.min.y &&
@@ -54,7 +46,7 @@ const GRID = {
     collisionPosInBoundingBox(pos, BB, FPgrid3D = new FP_Grid3D(), verbose = false) {
         const origin = Vector3.from_grid3D(FPgrid3D);
 
-        if (verbose) {
+        if (verbose || GRID.VERBOSE) {
             console.log("\n **************************");
             console.log("x", pos.x >= origin.x + BB.min.x && pos.x <= origin.x + BB.max.x, "pos", pos.x, "min", origin.x + BB.min.x, "max", origin.x + BB.max.x);
             console.log("y", pos.z >= origin.z + BB.min.z && pos.z <= origin.z + BB.max.z, "pos", pos.z, "min", origin.z + BB.min.z, "max", origin.z + BB.max.z);
@@ -385,7 +377,7 @@ const GRID = {
 
             if (collision.hit) {
                 result = await GRID.resolveWallCollision(entity, collision, currentPos, candidatePos);
-                console.warn("fucking result", result);
+                //console.warn("fucking result", result);
                 //currentPos = result.pos ?? candidatePos;
                 currentPos = result.pos; //require that we await result
                 //console.info("currentPos = candidatePos ??", currentPos, result.pos, candidatePos);
@@ -457,7 +449,7 @@ const GRID = {
      * - `contact`: the tested position at which the collision occurred.
      */
     checkWallCollision(entity, candidatePos) {
-        console.info("--> checkWallCollision", candidatePos, "entity.mode", entity.parent.mode, "; level", GAME.level);
+        //console.info("--> checkWallCollision", candidatePos, "entity.mode", entity.parent.mode, "; level", GAME.level);
         const GA = entity.GA;
         const gs2 = (ENGINE.INI.GRIDPIX >>> 1) * GRID.SETTING.WALL_COLLISION_TOLERANCE;                         // slight tolerance. 
         const gs = (ENGINE.INI.GRIDPIX >>> 1) * GRID.SETTING.WALL_COLLISTION_OVERKILL;                          // underfeet check
@@ -482,9 +474,9 @@ const GRID = {
         console.line();
         const test = {
             current: createTest(NOWAY, gs2, ["climbing", "swimming"], "blocked", "current"),
-            top: createTest(UP, gs2, ["jumping"], "blocked", "top"),
-            side: createTest(dir, gs2, ["jumping", "sliding", "walking", "swimming"], "blocked", "side"),
-            bottom: createTest(DOWN, gs2, ["jumping", "sliding", "falling"], "surface", "bottom"),
+            top: createTest(UP, gs2, ["jumping", "releasing"], "blocked", "top"),
+            side: createTest(dir, gs2, ["jumping", "sliding", "walking", "swimming", "releasing"], "blocked", "side"),
+            bottom: createTest(DOWN, gs2, ["jumping", "sliding", "falling", "releasing"], "surface", "bottom"),
             down: createTest(DOWN, gs2, ["climbing", "swimming"], "blocked", "down"),
             bottom_support: createTest(DOWN, gs, ["walking"], "surface", "bottom_support"),
         };
