@@ -131,6 +131,12 @@ const GRID = {
         let y = (grid.y + 1) * ENGINE.INI.GRIDPIX;
         return new Point(x, y);
     },
+    gridToTopCenterPX(grid) {
+        const half = ENGINE.INI.GRIDPIX >>> 1;
+        let x = grid.x * ENGINE.INI.GRIDPIX + half;
+        let y = grid.y * ENGINE.INI.GRIDPIX;
+        return new Point(x, y);
+    },
     gridToCoord(grid, gs = ENGINE.INI.GRIDPIX) {
         let x = Math.round(grid.x * gs);
         let y = Math.round(grid.y * gs);

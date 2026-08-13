@@ -11,7 +11,7 @@ const MAP_TOOLS = {
     CSS: "color: #F9A",
     properties: ['start', 'decals', 'lights', 'gates', 'keys', 'monsters', 'scrolls', 'potions', 'gold', 'skills', 'containers',
         'shrines', 'doors', 'triggers', 'entities', 'objects', 'traps', 'oracles', 'movables', 'trainers', 'interactors', 'lairs',
-        'fires'],
+        'fires', 'carriers'],
     lists: ['monsterList'],
     INI: {
         FOG: true, //true
@@ -479,7 +479,7 @@ const SPAWN_TOOLS_2D = {
     spawn(level) {
         const map = MAP_TOOLS.MAP[level].map;
         const GA = map.GA;
-        const methods = ['monsters'];
+        const methods = ['monsters', 'carriers'];
 
         //map.TextureExclusion = {};                              //not applicable in 2D // used to exclude world textures, where they are superseeded with custom texture, reset
 
@@ -503,6 +503,18 @@ const SPAWN_TOOLS_2D = {
             ENEMY2D.add(entity);
         }
         console.log("ENEMY2D", ENEMY2D);
+    },
+    carriers(map, GA) {
+        for (const C of map.carriers) {
+
+            const grid = GA.indexToGrid(C[0]);
+            const type = SWINGING_ROPE_TYPE[C[1]];
+
+            console.log("C", C, "grid", grid, "type", type,);
+            const carrier = new $2D_SwingingRope(grid, type);
+            console.log("carrier", carrier);
+            CARRIER2D.add(carrier);
+        }
     },
 
     /**

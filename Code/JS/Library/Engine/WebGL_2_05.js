@@ -197,7 +197,7 @@ const WebGL = {
     dynamicLightSources: [MISSILE3D, EXPLOSION3D, FIRE3D],
     enemySources: [ENTITY3D],
     models: [$3D_MODEL],
-    sprite2D_list: [PLANE_GRID1D, ENEMY2D],
+    sprite2D_list: [PLANE_GRID1D, ENEMY2D, CARRIER2D],
     modelTextureSet: false,
     main_program: {
         vSource: "vShader",
@@ -369,10 +369,10 @@ const WebGL = {
         gl.clear(gl.COLOR_BUFFER_BIT);
         this.initPrograms2D(gl);
         this.initSpriteQuad(gl);
-        // no needs to set world textures, same reason
-        // no need to set camere, as it is static display
 
-        //working here
+        // no need to set camere, as it is static display
+        // no needs to set world textures, same reason
+
         if (this.VERBOSE) {
             console.log(`%cWebGL:`, this.CSS, this);
 
@@ -449,6 +449,7 @@ const WebGL = {
         //2D
         PLANE_GRID1D.init(map, hero);
         ENEMY2D.init(map, hero);
+        CARRIER2D.init(map, hero);
         //HERO, GAME
         this.hero = hero;
         this.game = game;
@@ -2730,7 +2731,7 @@ class $2D_Sprite {
         this.show();
     }
     setAsset(assetName, reset = true, recallFrame = true) {
-
+        if (!assetName) return;
         if (this.asset && this.assetName === assetName) return;
 
         if (this.asset) {
@@ -2832,7 +2833,6 @@ class $2D_Sprite {
 
 class $2D_Entity {
     constructor(grid, dir, type, GA, useViewport = false) {
-        this.use;
         ImportTypeToConstructor(this, type);
         this.sprite = new $2D_Sprite(grid, dir, type);
         this.actor = this.sprite;                               // legacy compatibility, redundant already? probably, but i like it, so ...
@@ -2846,7 +2846,6 @@ class $2D_Entity {
     }
     draw(gl, program, spriteQuad, texture = this.sprite.getSpriteTexture()) {
         const modelMatrix = this.sprite.updateModelMatrix(this.useViewport);
-        //console.log(this.sprite.name, modelMatrix);
         gl.uniformMatrix4fv(program.uniformLocations.modelMatrix, false, modelMatrix);
         gl.uniform4fv(program.uniformLocations.tint, this.sprite.tint);
         gl.uniform4fv(program.uniformLocations.uvRect, [0, 0, 1, 1]);                           // frames are presplit, keep this for future compatibility, like texture atlases
@@ -3133,6 +3132,73 @@ class $2D_Grid_Cycling_Entity_Part {
     setGrid(grid) {
         this.sprite.setGrid(grid);
         this.moveState.reset(grid);
+    }
+}
+
+class $2D_SwingingRope {
+    constructor(hookGrid, type, startDir = LEFT, useViewport = false) {
+        this.hookGrid = hookGrid;
+        //this.hookPos = GRID.gridToCenterPX(hookGrid);
+        this.hookPos = GRID.gridToTopCenterPX(hookGrid);
+        ImportTypeToConstructor(this, type);
+        this.gripGrid = this.hookGrid.add(DOWN, this.swingLength);
+        this.gripPos = GRID.gridToCenterPX(this.gripGrid);
+        this.angularSpeed = Math.PI * 2 / this.swingPeriod;
+        const halfWidth = (this.swingWidth - 1) / 2;
+        this.maxAngle = Math.asin(halfWidth / this.swingLength);
+        this.ropeLengthPX = this.swingLength * ENGINE.INI.GRIDPIX;
+        this.startDir = startDir.x;
+        this.swingDir = this.startDir;
+
+        this.elapsedTime = 0;
+        this.angle = 0;
+        this.angularVelocity = 0;
+
+        this.previousGripPos = Point.clone(this.gripPos);
+        this.gripDelta = new Point(0, 0);
+        this.gripVelocity = new Point(0, 0);
+
+        this.useViewport = useViewport;
+        type.h = this.ropeLengthPX;
+        this.sprite = new $2D_Sprite(hookGrid, this.dirRef, type);
+        this.actor = this.sprite;
+        this.updateSpriteTransform();
+        this.draw = $2D_Entity.prototype.draw;
+    }
+    updateSpriteTransform() {
+        const dx = this.gripPos.x - this.hookPos.x;
+        const dy = this.gripPos.y - this.hookPos.y;
+
+        // The quad's centre lies halfway along the rope.
+        this.sprite.pos.x = this.hookPos.x + dx / 2;
+        this.sprite.pos.y = this.hookPos.y + dy / 2;
+        this.sprite.rotation = Math.atan2(dy, dx) - Math.PI / 2;
+
+        if (this.useViewport) ENGINE.VIEWPORT.alignToPosition(this.sprite.pos, this.sprite.vPos);
+    }
+    update(lapsedTime) {
+        const deltaSeconds = lapsedTime / 1000;
+        this.elapsedTime = (this.elapsedTime + deltaSeconds) % this.swingPeriod;
+        const phase = this.elapsedTime * this.angularSpeed;
+        this.angle = this.startDir * this.maxAngle * Math.sin(phase);
+        this.angularVelocity = this.startDir * this.maxAngle * this.angularSpeed * Math.cos(phase);
+
+        if (this.angularVelocity < 0) this.swingDir = -1;
+        else if (this.angularVelocity > 0) this.swingDir = 1;
+
+        this.updateGrip(deltaSeconds);
+        this.updateSpriteTransform();
+    }
+    updateGrip(deltaSeconds) {
+        this.previousGripPos = Point.clone(this.gripPos);
+        this.gripPos.x = this.hookPos.x + this.ropeLengthPX * Math.sin(this.angle);
+        this.gripPos.y = this.hookPos.y + this.ropeLengthPX * Math.cos(this.angle);
+        this.gripDelta.x = this.gripPos.x - this.previousGripPos.x;
+        this.gripDelta.y = this.gripPos.y - this.previousGripPos.y;
+        this.gripVelocity.x = this.gripDelta.x / deltaSeconds;
+        this.gripVelocity.y = this.gripDelta.y / deltaSeconds;
+        this.gripGrid = this.gripPos.to_Grid();
+        this.grid = this.gripGrid;
     }
 }
 

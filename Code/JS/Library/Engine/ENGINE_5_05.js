@@ -3026,7 +3026,7 @@ const ENGINE = {
             }
             if (maze.containers) {
                 for (const container of maze.containers) {
-                    this.container(container, z)
+                    this.container(container, z);
                 }
             }
             if (maze.skills) {
@@ -3052,6 +3052,11 @@ const ENGINE = {
             if (maze.fires) {
                 for (const fire of maze.fires) {
                     this.fire(fire, z);
+                }
+            }
+            if (maze.carriers) {
+                for (const carrier of maze.carriers) {
+                    this.carrier(carrier, z);
                 }
             }
         },
@@ -3110,7 +3115,7 @@ const ENGINE = {
             let color = "green";
             ENGINE.drawCircle(this.CTX, start, this.decalWidth * 3, color);
             start = start.translate(LEFT, this.W / 2);
-            let pEnd = start.translate(RIGHT, this.W)
+            let pEnd = start.translate(RIGHT, this.W);
             ENGINE.drawLine(this.CTX, start, pEnd, color, this.decalWidth);
             this.write(mid, shrine[2]);
         },
@@ -3193,7 +3198,7 @@ const ENGINE = {
             this.CTX.font = "8px Arial";
             this.CTX.textAlign = "center";
             this.CTX.textBaseLine = "middle";
-            this.CTX.fillStyle = "white"
+            this.CTX.fillStyle = "white";
             this.CTX.fillText(gate[3], mid.x, mid.y);
         },
         lair(lair, z) {
@@ -3319,6 +3324,14 @@ const ENGINE = {
             this.dotOrLine(grid, dir, "#FF8800");
             let mid = GRID.gridToCenterPX(grid);
             this.write(mid, fire[2]);
+        },
+        carrier(carrier, z) {
+            let grid = this.GA.indexTo2DGridSlice(carrier[0], z);
+            if (!grid) return;
+            const start = GRID.gridToCenterPX(grid);
+            const L = SWINGING_ROPE_TYPE[carrier[1]].swingLength;
+            const end = start.translate(DOWN, L * ENGINE.INI.GRIDPIX);
+            ENGINE.drawLine(this.CTX, start, end, "#F44", 2);
         }
     },
     BLOCKGRID: {
@@ -3332,7 +3345,7 @@ const ENGINE = {
                     let grid = new Grid(x, y);
                     let value = maze.GA.getValue(grid);
                     //value &= 2 ** maze.GA.gridSizeBit - 1 - MAPDICT.FOG - MAPDICT.RESERVED;
-                    value &= 2 ** maze.GA.gridSizeBit - 1  - MAPDICT.RESERVED;
+                    value &= 2 ** maze.GA.gridSizeBit - 1 - MAPDICT.RESERVED;
                     if (maze.GA.isBlockWall(grid) || maze.GA.isPillar(grid)) {
                         ENGINE.BLOCKGRID.wall(x, y, CTX, value);
                     } else if (maze.GA.isMazeWall(grid)) {
@@ -3394,7 +3407,7 @@ const ENGINE = {
         corr(x, y, CTX, value, corr, off = 0) {
             let FS;
             switch (value) {
-                 case MAPDICT.WATER:
+                case MAPDICT.WATER:
                     FS = "#4306f9";
                     break;
                 case MAPDICT.HOLE:
@@ -3661,7 +3674,7 @@ const ENGINE = {
                 CTX.stroke();
 
                 CTX.fillStyle = "blue";
-                CTX.fillText(monster.id, point.x, point.y)
+                CTX.fillText(monster.id, point.x, point.y);
             }
 
         },

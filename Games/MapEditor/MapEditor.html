@@ -28,7 +28,7 @@
                 <p class="c64">MapEditor used for building maps for Froggess, Booga, The Pitiful Chasm Clamber and maybe
                     some other
                     games.</p>
-                <p> Based on TrackBuiler and MazEditor, which get deprecated.</p>
+                <p> Based on TrackBuilder and MazEditor, both of which got deprecated.</p>
                 <p> Added mask painter.</p>
             </div>
 
@@ -355,6 +355,12 @@
                                 <hr>
                             </div>
 
+                            <div class="use_ropes">
+                                <input type="radio" name="painter" value="rope"> Rope <br />
+                                <br />
+                                <hr>
+                            </div>
+
 
                             <div class="use_monsters"><input type="radio" name="painter" value="monster"> Monster
                                 <br />
@@ -641,6 +647,17 @@
                                     West:<input name="connection_west" id="connection_west" type="text" size="3"
                                         maxlength="3" value="-1"></br>
 
+                                </div>
+                            </fieldset>
+                        </div>
+
+                        <div class="use_ropes">
+                            <fieldset>
+                                <legend>
+                                    Rope
+                                </legend>
+                                <div class="d-flex justify-content-center align-items-center">
+                                    Rope:<select id="rope_type"> </select>
                                 </div>
                             </fieldset>
                         </div>
@@ -1152,6 +1169,7 @@ name: "Pool",
 data: '{"width":"17","height":"12","map":"BB2AA38BAA45BAA6$AA16BAA18BAA5BB10ABB2ABB4ABB3AA2BB12聁聁2BABB9聁聁19BB2"}',
 wall: "BrownishMossy_128",
 start: '[72,1]',
+carriers: '[[27,"BasicRope"]]',
 mask: '[]',
 maskdecals: '[[158,0,8,0,64],[159,0,8,0,64],[160,0,8,0,64],[161,0,8,0,64],[162,0,8,0,64],[163,0,8,0,64],[164,0,8,0,64],[165,0,8,0,64],[166,0,8,0,64],[167,0,8,0,64],[175,0,8,0,64],[176,0,8,0,64],[177,0,8,0,64],[178,0,8,0,64],[179,0,8,0,64],[180,0,8,0,64],[181,0,8,0,64],[182,0,8,0,64],[183,0,8,0,64],[184,0,8,0,64],[185,0,8,0,64],[0,0,1,0,320],[13,0,4,0,320]]',
 connections: '["-1","4","-1","1"]',

@@ -38,6 +38,7 @@ const INI = {
     USE_WORLD: false,
     USE_SPAWN: false,
     USE_CONNECTIONS: true,
+    USE_ROPES: true,
 
     //download flags
     DOWNLOAD_MASK: false,
@@ -224,6 +225,9 @@ const PRG = {
 
         if (!INI.USE_CONNECTIONS) {
             $(".use_connections").hide();
+        }
+        if (!INI.USE_ROPES) {
+            $(".use_ropes").hide();
         }
     },
     start() {
@@ -586,6 +590,13 @@ const GAME = {
 
         GAME.updateTextures();                  //common to textures and panorama
 
+
+        /** ropes */
+        if (typeof SWINGING_ROPE_TYPE !== "undefined" && Object.keys(SWINGING_ROPE_TYPE).length > 0) {
+            for (const rope in SWINGING_ROPE_TYPE) {
+                $("#rope_type").append(`<option value="${rope}">${rope}</option>`);
+            }
+        }
 
         /** borders */
 
@@ -1809,6 +1820,18 @@ const GAME = {
                 dir = GAME.getSelectedDir();
                 $MAP.map.fires.push(Array(gridIndex, dir.toInt(), $("#fire_type")[0].value));
                 console.info("FIRE", Array(gridIndex, dir.toInt(), $("#fire_type")[0].value));
+                break;
+
+            case "rope":
+                switch (currentValue) {
+                    case MAPDICT.EMPTY:
+                        break;
+                    default:
+                        $("#error_message").html(`Rope placement not supported on value: ${currentValue}`);
+                        return;
+                }
+                $MAP.map.carriers.push(Array(gridIndex, $("#rope_type")[0].value));
+                console.info("carriers", Array(gridIndex, $("#rope_type")[0].value));
                 break;
 
         }

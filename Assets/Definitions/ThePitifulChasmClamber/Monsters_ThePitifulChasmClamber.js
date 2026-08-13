@@ -49,3 +49,17 @@ const MONSTER_TYPE = {
     }, */
 
 };
+
+const SWINGING_ROPE_TYPE = {
+    BasicRope: {
+        swingLength: 3.5,        // grids
+        swingWidth: 5,          // grids
+        assetName: "Rope",  
+        swingPeriod: 4,         // not tuned
+        w: 6,
+        dirRef: DOWN,
+        animate: false,
+        static: true,
+        preventRotation: true,
+    }
+};

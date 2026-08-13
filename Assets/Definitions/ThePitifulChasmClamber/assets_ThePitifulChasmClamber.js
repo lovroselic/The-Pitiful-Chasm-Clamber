@@ -17,6 +17,7 @@ LoadSheetSequences = [
     { srcName: "PrincessFall.png", count: 11, name: "PrincessFall", trim: false },
     { srcName: "PrincessJump.png", count: 20, name: "PrincessJump", trim: false },
     { srcName: "PrincessClimb.png", count: 20, name: "PrincessClimb", trim: false },
+    { srcName: "Rope.webp", count: 1, name: "Rope", trim: false },
 
     //borders
     { srcName: "MossyBorders.png", count: 5, name: "MossyBorders", trim: false },
@@ -56,6 +57,8 @@ LoadShaders = [
 ];
 
 LoadSprites = [
+    //items
+    //{ srcName: "Items/Rope.webp", name: "Rope" },
     //UI
     //{ srcName: "UI/Booga.png", name: "Lives" },
     //

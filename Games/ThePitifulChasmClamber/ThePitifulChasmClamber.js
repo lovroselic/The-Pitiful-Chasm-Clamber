@@ -23,7 +23,7 @@ const DEBUG = {
     SETTING: true,
     FPS: true,
     VERBOSE: true,
-    _2D_display: false,
+    _2D_display: true,
     INVINCIBLE: false,
     keys: false,
     max17: false,
@@ -59,7 +59,7 @@ const INI = {
 };
 
 const PRG = {
-    VERSION: "0.3.7",
+    VERSION: "0.3.8",
     NAME: "The Pitiful Chasm Clamber",
     YEAR: "2026",
     SG: "ThePitifulChasmClamber",
@@ -705,6 +705,7 @@ const GAME = {
         ENGINE.TIMERS.update();
         await HERO.manage(lapsedTime);
         ENEMY2D.manage(lapsedTime, HERO.player);
+        CARRIER2D.manage(lapsedTime);
         GAME.frameDraw(lapsedTime);
         HERO.concludeAction(lapsedTime);
         if (HERO.dead) IAM.checkIfProcessesComplete([EXPLOSION3D], HERO.death);

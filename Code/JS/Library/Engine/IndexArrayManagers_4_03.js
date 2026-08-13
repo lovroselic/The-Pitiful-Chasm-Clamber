@@ -1234,6 +1234,26 @@ class PlaneGridEntity1D extends IAM {
     }
 }
 
+/** Carrier 2D */
+
+class Carrier2D extends IAM {
+    constructor() {
+        super();
+        this.IA = "carrierIA";
+    }
+    poolToIA(IA) {
+        for (const obj of this.POOL) {
+            if (obj) IA.next(obj.grid, obj.id);
+        }
+    }
+    manage(lapsedTime) {
+        let map = this.map;
+        map[this.IA] = new IndexArray(map.width, map.height, 4, 4);
+        this.update(lapsedTime);
+        this.poolToIA(map[this.IA]);
+    }
+}
+
 /** GLOBAL ID */
 
 const GLOBAL_ID_MANAGER = {
@@ -1316,5 +1336,6 @@ const DYNAMIC_ITEM3D = new Decal3D(256, "dynamic_item3d");
 const LAIR = new Lair3D();
 const ITEM_DROPPER3D = new ItemDropper3D();
 const PLANE_GRID1D = new PlaneGridEntity1D();
+const CARRIER2D = new Carrier2D();
 /** *********************************************** */
 console.log(`%cIndexArrayManagers (IAM) ${IndexArrayManagers.VERSION} ready.`, "color: #7FFFD4");

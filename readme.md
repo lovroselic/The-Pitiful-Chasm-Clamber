@@ -1,8 +1,9 @@
 Will I bother to write it?
 
 # swinging rope
-- start grid
-- grip grid, common y amplitude  -2x +2x
+- origin grid/pos to center of grid
+- grip grid, 
+    - common y amplitude  -2x +2x
 - linear rope??
 - hook for rope
 - rope graphics
