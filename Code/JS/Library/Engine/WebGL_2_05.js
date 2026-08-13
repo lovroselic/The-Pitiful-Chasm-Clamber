@@ -3141,12 +3141,16 @@ class $2D_SwingingRope {
         //this.hookPos = GRID.gridToCenterPX(hookGrid);
         this.hookPos = GRID.gridToTopCenterPX(hookGrid);
         ImportTypeToConstructor(this, type);
-        this.gripGrid = this.hookGrid.add(DOWN, this.swingLength);
-        this.gripPos = GRID.gridToCenterPX(this.gripGrid);
+        this.ropeLengthPX = this.swingLength * ENGINE.INI.GRIDPIX;
+
+        this.gripPos = new Point(this.hookPos.x, this.hookPos.y + this.ropeLengthPX);
+        this.gripGrid = this.gripPos.toGrid();
+        this.grid = this.gripGrid;
+
         this.angularSpeed = Math.PI * 2 / this.swingPeriod;
         const halfWidth = (this.swingWidth - 1) / 2;
         this.maxAngle = Math.asin(halfWidth / this.swingLength);
-        this.ropeLengthPX = this.swingLength * ENGINE.INI.GRIDPIX;
+
         this.startDir = startDir.x;
         this.swingDir = this.startDir;
 
@@ -3195,8 +3199,8 @@ class $2D_SwingingRope {
         this.gripPos.y = this.hookPos.y + this.ropeLengthPX * Math.cos(this.angle);
         this.gripDelta.x = this.gripPos.x - this.previousGripPos.x;
         this.gripDelta.y = this.gripPos.y - this.previousGripPos.y;
-        this.gripVelocity.x = this.gripDelta.x / deltaSeconds;
-        this.gripVelocity.y = this.gripDelta.y / deltaSeconds;
+        this.gripVelocity.x = this.ropeLengthPX * Math.cos(this.angle) * this.angularVelocity;
+        this.gripVelocity.y = -this.ropeLengthPX * Math.sin(this.angle) * this.angularVelocity;
         this.gripGrid = this.gripPos.to_Grid();
         this.grid = this.gripGrid;
     }
