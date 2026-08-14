@@ -60,7 +60,7 @@ const INI = {
 };
 
 const PRG = {
-    VERSION: "0.4.2",
+    VERSION: "0.5.0",
     NAME: "The Pitiful Chasm Clamber",
     YEAR: "2026",
     SG: "ThePitifulChasmClamber",
@@ -435,7 +435,8 @@ const HERO = {
         this.startClimbing(dir);
     },
     startClimbing(dir) {
-        this.player.sprite.setDir(dir);
+        //this.player.sprite.setDir(dir);
+        this.player.sprite.update(dir);
         const speed = INI.CLIMBING_SPEED;
         const mode = "climbing";
         this.setMode(mode, dir);
@@ -447,7 +448,8 @@ const HERO = {
     },
     startWalking(dir) {
         //console.info("startWalking", this.player.sprite.pos);
-        this.player.sprite.setDir(dir);
+        //this.player.sprite.setDir(dir);
+        this.player.sprite.update(dir);
         const speed = INI.WALKING_SPEED;
         const mode = "walking";
         this.setMode(mode, dir);
@@ -596,7 +598,7 @@ const GAME = {
         ENGINE.GAME.setGameLoop(GAME.run);
         ENGINE.GAME.start(16);
         GAME.extraLife = SCORE.extraLife.clone();
-        GAME.level = 2; //1
+        GAME.level = 1; //1
         GAME.lives = 3; //3
         GAME.score = 0;
 
