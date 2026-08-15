@@ -431,7 +431,6 @@ const AI = {
         let finalDirections = GRID.directionsFromPath(path, 1);
         return finalDirections;
     },
-
 };
 
 class Behaviour {

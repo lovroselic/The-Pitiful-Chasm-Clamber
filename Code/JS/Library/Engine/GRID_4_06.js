@@ -1709,9 +1709,7 @@ class GridArray extends Classes([ArrayBasedDataStructure, GA_Dimension_Agnostic_
         nodeMap: path found, extract from nodeMap
         */
 
-        if (GRID.same(start, finish)) {
-            return 0;
-        }
+        if (GRID.same(start, finish)) return 0;
 
         var Q = new NodeQ("priority");
         let NodeMap = this.setNodeMap("AStar", path, type, block);
@@ -1865,11 +1863,8 @@ class GridArray extends Classes([ArrayBasedDataStructure, GA_Dimension_Agnostic_
     }
     findNextCrossroad(start, dir, fly) {
         let exlusion = GROUND_MOVE_GRID_EXCLUSION.sum();
-        if (fly) {
-            exlusion = AIR_MOVE_GRID_EXCLUSION.sum();
-        }
+        if (fly) exlusion = AIR_MOVE_GRID_EXCLUSION.sum();
         let directions = this.getDirectionsIfNot(start, exlusion, dir.mirror());
-        //console.log("....findNextCrossroad", start, dir, directions);
         let lastDir = dir;
         while (directions.length <= 1) {
             if (directions.length === 0) return [null, null]; //dead end!
@@ -2431,9 +2426,7 @@ class GridArray3D extends Classes([ArrayBasedDataStructure3D, GA_Dimension_Agnos
         nodeMap: path found, extract from nodeMap
         */
 
-        if (GRID.same(start, finish)) {
-            return 0;
-        }
+        if (GRID.same(start, finish)) return 0;
 
         var Q = new NodeQ("priority");
         let NodeMap = this.setNodeMap("AStar", path, type, block);
@@ -2459,11 +2452,9 @@ class GridArray3D extends Classes([ArrayBasedDataStructure3D, GA_Dimension_Agnos
                         nextNode.prev = node.grid;
                         nextNode.distance = nextNode.grid.distance(finish);
                         nextNode.setPriority();
-                        //console.log("next node", nextNode);
                         Q.queueSimple(nextNode);
-                        if (nextNode.distance === 0) {
-                            return NodeMap;
-                        }
+                        if (nextNode.distance === 0) return NodeMap;
+
                     }
                 }
             }

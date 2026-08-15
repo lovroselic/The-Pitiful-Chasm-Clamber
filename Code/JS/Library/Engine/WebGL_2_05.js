@@ -2719,6 +2719,7 @@ class $2D_Sprite {
         this.vPos = GRID.gridToCenterPX(grid);                      // Point - viewport support
         this.dir = dir;
         this.preventRotation = false;
+        this.innerH = null;
         ImportTypeToConstructor(this, type);
         this.tint = tint;
         this.asset = null;
@@ -2782,7 +2783,7 @@ class $2D_Sprite {
     getArea() {
         //rotation is ignored ... fuck it
         this.topLeft = this.pos.toTopLeft();
-        this.area = new RectArea(Math.round(this.topLeft.x), Math.round(this.topLeft.y), this.w, this.h);
+        this.area = new RectArea(Math.round(this.topLeft.x), Math.round(this.topLeft.y), this.w, this.innerH || this.h);
         return this.area;
     }
     update(dir) {

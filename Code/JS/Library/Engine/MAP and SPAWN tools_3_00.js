@@ -476,7 +476,7 @@ const SPAWN_TOOLS_2D = {
      * for 2D games
      */
 
-    spawn(level) {
+    spawn(level, useVieport = false) {
         const map = MAP_TOOLS.MAP[level].map;
         const GA = map.GA;
         const methods = ['monsters', 'carriers'];
@@ -484,27 +484,28 @@ const SPAWN_TOOLS_2D = {
         //map.TextureExclusion = {};                              //not applicable in 2D // used to exclude world textures, where they are superseeded with custom texture, reset
 
         methods.forEach(method => {
-            this[method](map, GA);
+            this[method](map, GA, useVieport);
         });
 
         //MAP_TOOLS.setOcclusionMap(level); //not applicable in 2D
         //ITEM3D.setup("3D", 4, 1); //
         console.info(`Level ${level} spawned. 2D spawner`);
     },
-    monsters(map, GA) {
+    monsters(map, GA, useVieport) {
         for (const M of map.monsters) {
             //console.log("M", M);
 
             const grid = GA.indexToGrid(M[0]);
             const type = MONSTER_TYPE[M[1]];
-            const entity = new $2D_Entity(grid, type.dirRef, type, GA, true);
+            let dir = type.dirRef
+            if (M[2]) dir = Vector.fromInt(M[2]);
+            const entity = new $2D_Entity(grid, dir, type, GA, useVieport);
 
-            //console.log(".. grid", grid, "type", type, "entity", entity);
             ENEMY2D.add(entity);
         }
         console.log("ENEMY2D", ENEMY2D);
     },
-    carriers(map, GA) {
+    carriers(map, GA, useVieport) {
         for (const C of map.carriers) {
 
             const grid = GA.indexToGrid(C[0]);

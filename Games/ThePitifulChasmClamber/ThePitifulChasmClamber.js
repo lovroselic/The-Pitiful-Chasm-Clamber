@@ -24,6 +24,7 @@ const DEBUG = {
     FPS: true,
     VERBOSE: true,
     _2D_display: true,
+    pos_display: true,
     INVINCIBLE: false,
     keys: false,
     max17: false,
@@ -60,7 +61,7 @@ const INI = {
 };
 
 const PRG = {
-    VERSION: "0.5.0",
+    VERSION: "0.5.1",
     NAME: "The Pitiful Chasm Clamber",
     YEAR: "2026",
     SG: "ThePitifulChasmClamber",
@@ -168,42 +169,50 @@ const HERO = {
             case "idle":
                 this.player?.sprite.setAsset("PrincessIdle");
                 this.player?.sprite.setDirRef(dir);
+                if (this.player) this.player.sprite.innerH = 64;
                 break;
 
             case "walking":
                 this.player.sprite.setAsset("PrincessWalking", false);
                 this.player.sprite.setDirRef(dir);
+                this.player.sprite.innerH = 64;
                 break;
 
             case "climbing":
                 this.player.sprite.setAsset("PrincessClimb", false);
                 this.player.sprite.setDirRef(dir);
+                this.player.sprite.innerH = 64;
                 break;
 
             case "releasing":
             case "jumping":
                 this.player.sprite.setAsset("PrincessJump");
                 this.player.sprite.setDirRef(dir);
+                this.player.sprite.innerH = 64;
                 break;
 
             case "falling":
                 this.player.sprite.setAsset("PrincessFall");
                 this.player.sprite.setDirRef(DOWN);
+                this.player.sprite.innerH = nul64l;
                 break;
 
             case "ducking":
                 this.player.sprite.setAsset("PrincessDuck");
                 this.player.sprite.setDirRef(DOWN);
+                this.player.sprite.innerH = 45;
                 break;
 
             case "swimming":
                 this.player.sprite.setAsset("PrincessSwim");
                 this.player.sprite.setDirRef(dir);
+                this.player.sprite.innerH = 20;
                 break;
 
             case "gripping":
                 this.player.sprite.setAsset("PrincessRope");
                 this.player.sprite.setDirRef(dir);
+                this.player.sprite.innerH = 64;
                 break;
 
             default: throw new Error(`Hero mode not suported: ${this.mode}`);
@@ -261,7 +270,7 @@ const HERO = {
         if (["idle", "ducking"].includes(this.mode)) this.player.sprite.updateAnimation(lapsedTime);
 
         //debug
-        this.paintLanding([this.player.sprite.pos]);
+        if (DEBUG.pos_display) this.paintLanding([this.player.sprite.pos]);
     },
     completeLevel() {
         GAME.levelComplete = true;

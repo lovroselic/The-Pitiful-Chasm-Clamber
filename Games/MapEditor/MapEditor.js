@@ -83,7 +83,7 @@ const $MAP = {
 };
 
 const PRG = {
-    VERSION: "0.22.2",
+    VERSION: "0.22.3",
     NAME: "MapEditor",
     YEAR: "2026",
     CSS: "color: #239AFF;",
@@ -1185,7 +1185,9 @@ const GAME = {
                 switch (currentValue) {
                     case MAPDICT.EMPTY:
                         let monsterValue = $("#monster_type")[0].value;
-                        $MAP.map.monsters.push(Array(gridIndex, monsterValue));
+                        dir = GAME.getSelectedDir();
+                        dirIndex = dir.toInt();
+                        $MAP.map.monsters.push(Array(gridIndex, monsterValue, dirIndex));
                         break;
                     default:
                         $("#error_message").html(`Monster placement not supported on value: ${currentValue}`);
