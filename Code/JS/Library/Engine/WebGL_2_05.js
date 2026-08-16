@@ -2719,7 +2719,9 @@ class $2D_Sprite {
         this.vPos = GRID.gridToCenterPX(grid);                      // Point - viewport support
         this.dir = dir;
         this.preventRotation = false;
-        this.innerH = null;
+        this.innerH = ENGINE.INI.GRIDPIX;
+        this.innerW = ENGINE.INI.GRIDPIX;
+        this.fly = false;                                           // default
         ImportTypeToConstructor(this, type);
         this.tint = tint;
         this.asset = null;
@@ -2783,7 +2785,14 @@ class $2D_Sprite {
     getArea() {
         //rotation is ignored ... fuck it
         this.topLeft = this.pos.toTopLeft();
-        this.area = new RectArea(Math.round(this.topLeft.x), Math.round(this.topLeft.y), this.w, this.innerH || this.h);
+        let offsetH = (ENGINE.INI.GRIDPIX - this.innerH);
+        if (this.fly) offsetH >>>= 1;
+        this.area = new RectArea(Math.round(
+            this.topLeft.x + ((ENGINE.INI.GRIDPIX - this.innerW) >>> 1)),
+            Math.round(this.topLeft.y + offsetH),
+            this.innerW || this.w,
+            this.innerH || this.h
+        );
         return this.area;
     }
     update(dir) {
@@ -2875,6 +2884,7 @@ class $2D_Entity {
          */
         if (!this.moveState.moving) return;
         GRID.translateMove2D(this, lapsedTime, null, true, false);
+        this.sprite.getArea();
     }
     setSpeed(speed) {
         this.speed = speed;

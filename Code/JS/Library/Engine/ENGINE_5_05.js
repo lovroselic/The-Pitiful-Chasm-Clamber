@@ -539,6 +539,11 @@ const ENGINE = {
         CTX.fillStyle = color;
         CTX.fill();
     },
+    drawArea(CTX, area, color, width = 1) {
+        CTX.strokeStyle = color;
+        CTX.lineWidth = width;
+        CTX.strokeRect(area.x, area.y, area.w, area.h);
+    },
     trimCanvas(data) {
         let top = 0;
         let bottom = data.height;

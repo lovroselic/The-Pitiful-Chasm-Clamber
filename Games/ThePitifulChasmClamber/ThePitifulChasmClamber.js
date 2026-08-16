@@ -25,6 +25,7 @@ const DEBUG = {
     VERBOSE: true,
     _2D_display: true,
     pos_display: true,
+    BB_display: true,
     INVINCIBLE: false,
     keys: false,
     max17: false,
@@ -44,6 +45,9 @@ const DEBUG = {
             .join("\n");
 
         console.log(stack);
+    },
+    displaySpriteArea(area, layer = "fill") {
+        ENGINE.drawArea(LAYER[layer], area, "#FF0000");
     }
 };
 
@@ -61,7 +65,7 @@ const INI = {
 };
 
 const PRG = {
-    VERSION: "0.5.2",
+    VERSION: "0.5.3",
     NAME: "The Pitiful Chasm Clamber",
     YEAR: "2026",
     SG: "ThePitifulChasmClamber",
@@ -169,19 +173,24 @@ const HERO = {
             case "idle":
                 this.player?.sprite.setAsset("PrincessIdle");
                 this.player?.sprite.setDirRef(dir);
-                if (this.player) this.player.sprite.innerH = 64;
+                if (this.player) {
+                    this.player.sprite.innerH = 64;
+                    this.player.sprite.innerW = 14;
+                }
                 break;
 
             case "walking":
                 this.player.sprite.setAsset("PrincessWalking", false);
                 this.player.sprite.setDirRef(dir);
                 this.player.sprite.innerH = 64;
+                this.player.sprite.innerW = 26;
                 break;
 
             case "climbing":
                 this.player.sprite.setAsset("PrincessClimb", false);
                 this.player.sprite.setDirRef(dir);
-                this.player.sprite.innerH = 64;
+                this.player.sprite.innerH = 32;
+                this.player.sprite.innerW = 26;
                 break;
 
             case "releasing":
@@ -189,30 +198,35 @@ const HERO = {
                 this.player.sprite.setAsset("PrincessJump");
                 this.player.sprite.setDirRef(dir);
                 this.player.sprite.innerH = 64;
+                this.player.sprite.innerW = 50;
                 break;
 
             case "falling":
                 this.player.sprite.setAsset("PrincessFall");
                 this.player.sprite.setDirRef(DOWN);
-                this.player.sprite.innerH = nul64l;
+                this.player.sprite.innerH = 64;
+                this.player.sprite.innerW = 54;
                 break;
 
             case "ducking":
                 this.player.sprite.setAsset("PrincessDuck");
                 this.player.sprite.setDirRef(DOWN);
                 this.player.sprite.innerH = 45;
+                this.player.sprite.innerW = 39;
                 break;
 
             case "swimming":
                 this.player.sprite.setAsset("PrincessSwim");
                 this.player.sprite.setDirRef(dir);
                 this.player.sprite.innerH = 20;
+                this.player.sprite.innerW = 64;
                 break;
 
             case "gripping":
                 this.player.sprite.setAsset("PrincessRope");
                 this.player.sprite.setDirRef(dir);
                 this.player.sprite.innerH = 64;
+                this.player.sprite.innerW = 26;
                 break;
 
             default: throw new Error(`Hero mode not suported: ${this.mode}`);
@@ -763,6 +777,13 @@ const GAME = {
         TITLE.time();
         if (DEBUG.FPS) {
             GAME.FPS(lapsedTime);
+        }
+        if (DEBUG.BB_display) {
+            DEBUG.displaySpriteArea(HERO.player.sprite.area);
+
+            for (const entity of ENEMY2D.POOL) {
+                DEBUG.displaySpriteArea(entity.sprite.area);
+            }
         }
     },
     updateVieport() {

@@ -20,20 +20,22 @@ const HERO_TYPE = {
 };
 
 const MONSTER_TYPE = {
-     DinoDragon: {
-         name: "DinoDragon",
-         category: "enemy",
-         assetName: "DinoDragon",
-         w: 64,
-         h: 64,
-         innerH: 42,
-         dirRef: RIGHT,
-         animate: true,
-         fps: 60,
-         speed: 1.0 * 64,
-         behaviourArguments: [Infinity, ["wanderer"], 10000, ["wanderer1D"]],
-         preventRotation: true,
-     }, 
+    DinoDragon: {
+        name: "DinoDragon",
+        category: "enemy",
+        assetName: "DinoDragon",
+        w: 64,
+        h: 64,
+        innerH: 42,
+        innerW: 64,
+        dirRef: RIGHT,
+        animate: true,
+        fps: 60,
+        speed: 2.0 * 64,
+        behaviourArguments: [Infinity, ["wanderer"], 10000, ["wanderer1D"]],
+        preventRotation: true,
+        fly: true,
+    },
     /* CarniPlant: {
         name: "CarniPlant",
         category: "enemy",
