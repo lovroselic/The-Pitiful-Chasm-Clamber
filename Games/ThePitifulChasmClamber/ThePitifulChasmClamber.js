@@ -65,7 +65,7 @@ const INI = {
 };
 
 const PRG = {
-    VERSION: "0.5.3",
+    VERSION: "0.5.4",
     NAME: "The Pitiful Chasm Clamber",
     YEAR: "2026",
     SG: "ThePitifulChasmClamber",
@@ -189,8 +189,8 @@ const HERO = {
             case "climbing":
                 this.player.sprite.setAsset("PrincessClimb", false);
                 this.player.sprite.setDirRef(dir);
-                this.player.sprite.innerH = 32;
-                this.player.sprite.innerW = 26;
+                this.player.sprite.innerH = 64;
+                this.player.sprite.innerW = 32;
                 break;
 
             case "releasing":
@@ -297,8 +297,7 @@ const HERO = {
         const start_dir = map.startPosition.vector;
         const start_grid = Grid.toClass(map.startPosition.grid);
         HERO.player = new $2D_player(start_grid, start_dir, HERO_TYPE.Princess, map.GA, map, true);
-        //HERO.player.addDeathTexture(SPRITE.FleaSkeleton);
-        //this.row = INI.MAX_ROW;
+        HERO.player.addDeathTexture(SPRITE.Skeleton);
         if (GAME.time) GAME.time.unregister();
         if (DEBUG.VERBOSE) console.note("playerSetUp, HERO set to start grid");
     },
@@ -625,7 +624,7 @@ const GAME = {
         GAME.lives = 3; //3
         GAME.score = 0;
 
-        const storeList = ["ENEMY2D"];
+        const storeList = ["ENEMY2D", "CARRIER2D"];
         GAME.STORE = new Store(storeList);
 
         GAME.fps = new FPS_short_term_measurement(300);

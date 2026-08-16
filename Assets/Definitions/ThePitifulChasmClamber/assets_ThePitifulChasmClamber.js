@@ -63,7 +63,7 @@ LoadSprites = [
     //UI
     //{ srcName: "UI/Booga.png", name: "Lives" },
     //
-    //{ srcName: "Items/FleaSkeleton.png", name: "FleaSkeleton" },
+    { srcName: "Items/Skeleton.png", name: "Skeleton" },
     //mask decals
     { srcName: "MaskDecals/Flower1.png", name: "Flower1" },
     { srcName: "MaskDecals/Fungi1.png", name: "Fungi1" },
