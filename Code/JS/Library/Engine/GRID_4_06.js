@@ -1778,6 +1778,12 @@ class GridArray extends Classes([ArrayBasedDataStructure, GA_Dimension_Agnostic_
         }
         return false;
     }
+    continueOrFlip(dir, grid, value) {
+        let newGrid = grid.add(dir);
+        if (this.isOutOfBounds(newGrid)) return dir.mirror();
+        if (this.check(newGrid, value)) return dir.mirror();
+        return dir;
+    }
     getDirectionsIfNot(grid, value, leaveOut = null) {
         var directions = [];
         for (let D = 0; D < ENGINE.directions.length; D++) {

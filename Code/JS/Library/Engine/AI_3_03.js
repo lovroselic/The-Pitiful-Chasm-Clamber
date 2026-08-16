@@ -26,7 +26,7 @@ knownBugs:
 /////////////////////////////////////////
 
 const AI = {
-    VERSION: "3.02",
+    VERSION: "3.03",
     CSS: "color: silver",
     VERBOSE: false,
     INI: {
@@ -79,6 +79,13 @@ const AI = {
             if (enemy.parent.map.GA.check(newGrid, gridValue)) return this.immobile(enemy, true);
             return [fallBackDir];
         }
+    },
+    wanderer1D(enemy, ARG) {
+        //ARG not used
+        const gridValue = GRID2D_SIDEVIEW.sum();         //1D wandered expects to be used only in 2D games
+        const enemyGrid = this.getPosition(enemy);
+        const dir = enemy.parent.map.GA.continueOrFlip(enemy.moveState.dir, enemyGrid, gridValue);
+        return [dir];
     },
     immobile(enemy, wasWandering = false) {
         //if (this.VERBOSE) console.warn(`${enemy.name}-${enemy.id} IMMOBILE`);
@@ -193,7 +200,7 @@ const AI = {
         orto = orto.toVector3D();                                               // adding z=0 for 3D compatibility, but this still only works on the plane!!!
         const landingGrid = Grid3D.toClass(enemy.moveState.endPos.add(orto));   //move was just completed, so endPos!!
         const GA = enemy.parent.map.GA;
-        const nextGridBlocked = GA.check(landingGrid, GROUND_MOVE_GRID_EXCLUSION.sum())
+        const nextGridBlocked = GA.check(landingGrid, GROUND_MOVE_GRID_EXCLUSION.sum());
         if (nextGridBlocked) return this.immobile(enemy);
 
         if (this.VERBOSE) console.log("pPos", pPos, "ePos", ePos, "direction", direction, "enemy.distance", enemy.distance, "enemy.moveState.startPos", enemy.moveState.startPos, "orto", orto, "landingGrid", landingGrid, "nextGridBlocked", nextGridBlocked);

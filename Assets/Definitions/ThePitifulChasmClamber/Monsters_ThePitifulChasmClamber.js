@@ -31,7 +31,7 @@ const MONSTER_TYPE = {
          animate: true,
          fps: 60,
          speed: 1.0 * 64,
-         behaviourArguments: [Infinity, ["wanderer"], 10000, ["hunter2D"]],
+         behaviourArguments: [Infinity, ["wanderer"], 10000, ["wanderer1D"]],
          preventRotation: true,
      }, 
     /* CarniPlant: {
