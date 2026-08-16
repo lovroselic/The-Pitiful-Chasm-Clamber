@@ -20,7 +20,7 @@ retests:
 ////////////////////////////////////////////////////
 
 const DEBUG = {
-    SETTING: true,
+    //SETTING: true,
     FPS: true,
     VERBOSE: true,
     _2D_display: true,
@@ -48,7 +48,11 @@ const DEBUG = {
     },
     displaySpriteArea(area, layer = "fill") {
         ENGINE.drawArea(LAYER[layer], area, "#FF0000");
-    }
+    },
+    halt(message = "HERE") {
+        ENGINE.GAME.stopAnimation = true;
+        throw new Error(message);
+    },
 };
 
 const INI = {
@@ -65,7 +69,7 @@ const INI = {
 };
 
 const PRG = {
-    VERSION: "0.5.4",
+    VERSION: "0.5.5",
     NAME: "The Pitiful Chasm Clamber",
     YEAR: "2026",
     SG: "ThePitifulChasmClamber",

@@ -356,8 +356,26 @@ class Enemy2D extends IAM {
     }
     poolToIA(IA) {
         for (const obj of this.POOL) {
-            IA.next(obj.moveState.startGrid, obj.id);
-            IA.next(obj.moveState.endGrid, obj.id);
+            if (!obj) continue;
+
+            const area = obj.sprite.area;
+            const corners = [
+                new Point(area.x, area.y),                              // TL
+                new Point(area.x + area.w - 1, area.y),                 // TR
+                new Point(area.x + area.w - 1, area.y + area.h - 1),    // BR
+                new Point(area.x, area.y + area.h - 1)                  // BL
+            ];
+
+            const occupied = new Set();
+
+            for (const corner of corners) {
+                const grid = corner.to_Grid();
+                const key = `${grid.x},${grid.y}`;
+                if (occupied.has(key)) continue;
+
+                occupied.add(key);
+                IA.next(grid, obj.id);
+            }
         }
     }
     manage(lapsedTime, reference = null) {
@@ -1241,11 +1259,6 @@ class Carrier2D extends IAM {
         super();
         this.IA = "carrierIA";
     }
-   /*  poolToIA(IA) {
-        for (const obj of this.POOL) {
-            if (obj) IA.next(obj.grid, obj.id);
-        }
-    } */
     manage(lapsedTime) {
         let map = this.map;
         map[this.IA] = new IndexArray(map.width, map.height, 4, 4);
