@@ -61,7 +61,7 @@ LoadSprites = [
     //items
     { srcName: "Items/Rope.webp", name: "Rope" },
     //UI
-    //{ srcName: "UI/Booga.png", name: "Lives" },
+    { srcName: "UI/PrincessLives64.png", name: "Lives" },
     //
     { srcName: "Items/Skeleton.png", name: "Skeleton" },
     //mask decals

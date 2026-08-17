@@ -69,7 +69,7 @@ const INI = {
 };
 
 const PRG = {
-    VERSION: "0.6.0",
+    VERSION: "0.6.1",
     NAME: "The Pitiful Chasm Clamber",
     YEAR: "2026",
     SG: "ThePitifulChasmClamber",
@@ -1048,7 +1048,7 @@ const TITLE = {
         TITLE.score();
         TITLE.stage();
         TITLE.hiscore();
-        //TITLE.lives();
+        TITLE.lives();
         //TITLE.time();
         //TITLE.jumpPower();
         TITLE.smalTitle();
@@ -1056,16 +1056,6 @@ const TITLE = {
     music() {
         AUDIO.Title.play();
     },
-    /* jumpPower() {
-        const CTX = LAYER.time;
-        ENGINE.clearLayer("jump");
-        const x = 64;
-        const h = 12;
-        const y = ENGINE.titleHEIGHT - h - 1 - 16;
-        const w = ENGINE.gameWIDTH;
-        const fraction = HERO.jumpPower / INI.MAX_JUMP_POWER;
-        ENGINE.percentBar(fraction, y, CTX, w, ["green", "yellow", "red"], h, x, 0);
-    }, */
     time() {
         const CTX = LAYER.time;
         ENGINE.clearLayer("time");
