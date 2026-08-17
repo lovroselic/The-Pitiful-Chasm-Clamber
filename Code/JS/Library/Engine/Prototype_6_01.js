@@ -947,11 +947,11 @@ class Point extends MasterGridClass {
         this.x = this.x + ENGINE.VIEWPORT.vx;
         this.y = this.y + ENGINE.VIEWPORT.vy;
     }
-    toTopLeft() {
+    toTopLeft(offX = 0, offY = 0) {
         //change to offset
         const half = ENGINE.INI.GRIDPIX >>> 1;
-        const x = this.x - half;
-        const y = this.y - half;
+        const x = this.x - half + offX;
+        const y = this.y - half + offY;
         return new Point(x, y);
     }
     add(vector, len = 1) {
@@ -1533,7 +1533,7 @@ class Vector3D extends MasterVectorClass3D {
         this.z = Math.floor(z);
     }
     static fromVector2D(vector2d, z) {
-        return new Vector3D(vector2d.x, vector2d.y, z)
+        return new Vector3D(vector2d.x, vector2d.y, z);
     }
     static toVector2D(vector) {
         return new Vector(vector.x, vector.y);

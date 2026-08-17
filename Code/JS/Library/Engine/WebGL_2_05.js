@@ -2721,8 +2721,11 @@ class $2D_Sprite {
         this.preventRotation = false;
         this.innerH = ENGINE.INI.GRIDPIX;
         this.innerW = ENGINE.INI.GRIDPIX;
-        this.fly = false;                                           // default
+        this.fly = false;
+        this.flyOffsetY = 0;                                       // default
+        this.flyOffsetX = 0;
         ImportTypeToConstructor(this, type);
+        this.flyOffset();
         this.tint = tint;
         this.asset = null;
         this.state = {};
@@ -2733,6 +2736,13 @@ class $2D_Sprite {
         this.setDirRef(this.dirRef);
         this.update(dir);
         this.show();
+    }
+    flyOffset() {
+        if (this.fly) {
+            this.pos = this.pos.translate(UP, this.flyOffsetY);
+            ENGINE.VIEWPORT.alignToPosition(this.pos, this.vPos);
+            this.grid = this.pos.toGrid();
+        }
     }
     setSpriteTexture(spriteName) {
         if (!spriteName) return;

@@ -295,11 +295,10 @@ const GRID = {
      */
     translateMove2D(entity, lapsedTime, onFinish = null, animate = true, changeView = false) {
         let length = (lapsedTime / 1000) * entity.speed;
-        //entity.actor.pos = entity.actor.pos.translate(entity.actor.dir, length);
         entity.actor.pos = entity.actor.pos.translate(entity.moveState.dir, length);
         if (animate) entity.actor.updateAnimation(lapsedTime);
         entity.moveState.homeGrid = GRID.pointToGrid(entity.actor.pos);
-        entity.moveState.pos = entity.actor.pos.toTopLeft().to_FP_Grid();
+        entity.moveState.pos = entity.actor.pos.toTopLeft(entity.actor.flyOffsetX, entity.actor.flyOffsetY).to_FP_Grid();
         const overallDistance = entity.moveState.pos.distance(entity.moveState.startGrid);
 
         if (changeView) ENGINE.VIEWPORT.check(entity.actor.pos);
@@ -311,6 +310,7 @@ const GRID = {
             entity.moveState.homeGrid = entity.moveState.startGrid;
             entity.moveState.pos = FP_Grid.toClass(entity.moveState.homeGrid);
             entity.actor.pos = GRID.gridToCenterPX(entity.moveState.startGrid);
+            if (entity.actor.fly) entity.actor.flyOffset();                         // fly offset adjustment
             if (onFinish) onFinish.call();
         }
     },

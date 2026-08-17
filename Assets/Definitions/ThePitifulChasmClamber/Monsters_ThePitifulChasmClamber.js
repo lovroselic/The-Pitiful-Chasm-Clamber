@@ -32,9 +32,12 @@ const MONSTER_TYPE = {
         animate: true,
         fps: 60,
         speed: 2.0 * 64,
-        behaviourArguments: [Infinity, ["wanderer"], 10000, ["wanderer1D"]],
+        //speed: 0.5 * 64,
+        behaviourArguments: [Infinity, ["wanderer1D"], 10000, ["wanderer1D"]],
         preventRotation: true,
         fly: true,
+        flyOffsetY: 40,
+        //flyOffsetY: 1,
     },
     /* CarniPlant: {
         name: "CarniPlant",
