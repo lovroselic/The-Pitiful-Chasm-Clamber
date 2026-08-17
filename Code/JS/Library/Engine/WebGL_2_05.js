@@ -2939,7 +2939,7 @@ class $2D_player extends $2D_Entity {
         const pos = GRID.gridToCenterPX(grid);
         this.sprite.setPosition(pos);
         this.sprite.vPos = pos;
-        console.info("..ms", this.moveState.pos);
+        //console.info("..ms", this.moveState.pos);
     }
     setMap(map) {
         this.map = map;

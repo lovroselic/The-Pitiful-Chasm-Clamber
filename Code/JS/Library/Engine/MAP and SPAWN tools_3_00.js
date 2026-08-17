@@ -121,7 +121,7 @@ const MAP_TOOLS = {
 
         this.MAP[level].unpacked = true;
         if (ENGINE.verbose) {
-            console.note(`Unpacked MAP level: ${level}`);
+            console.note(`Unpacked MAP level: ${level}, unpacked: ${this.MAP[level].unpacked}`);
             console.log("map:", this.MAP[level].map);
         }
 
@@ -487,7 +487,6 @@ const SPAWN_TOOLS_2D = {
             this[method](map, GA, useVieport);
         });
 
-        //MAP_TOOLS.setOcclusionMap(level); //not applicable in 2D
         //ITEM3D.setup("3D", 4, 1); //
         console.info(`Level ${level} spawned. 2D spawner`);
     },

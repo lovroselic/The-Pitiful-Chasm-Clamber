@@ -290,12 +290,12 @@ const HERO = {
         //debug
         if (DEBUG.pos_display) this.paintLanding([this.player.sprite.pos]);
     },
-    completeLevel() {
+    /* completeLevel() {
         GAME.levelComplete = true;
         GAME.level = Math.min(INI.MAX_LEVEL, ++GAME.level);
         if (DEBUG.VERBOSE) console.ok(`level completed, next one: ${GAME.level}`);
         GAME.levelStart(GAME.level);
-    },
+    }, */
     playerSetUp() {
         const map = MAP[GAME.level].map;
         const start_dir = map.startPosition.vector;
@@ -354,6 +354,7 @@ const HERO = {
             GAME.STORE.clearPools();
             await GAME.loadNewLevel(level);
             GAME.STORE.linkMap(MAP[level].map);
+            SPAWN_TOOLS_2D.spawn(level);
         } else {
             await GAME.createBitmaps(level);
             console.log("reloading map");
@@ -707,7 +708,6 @@ const GAME = {
     },
     newDungeon(level) {
         MAP_TOOLS.unpack(level);
-        MAP[level].unpacked = false;
     },
     prepareForRestart() {
         let clear = ["background", "text", "FPS", "button", "bottomText", "fill"];
