@@ -32,27 +32,27 @@ const MONSTER_TYPE = {
         animate: true,
         fps: 60,
         speed: 2.0 * 64,
-        //speed: 0.5 * 64,
         behaviourArguments: [Infinity, ["wanderer1D"], 10000, ["wanderer1D"]],
         preventRotation: true,
         fly: true,
         flyOffsetY: 40,
-        //flyOffsetY: 1,
     },
-    /* CarniPlant: {
-        name: "CarniPlant",
+    Cat: {
+        name: "Cat",
         category: "enemy",
-        assetName: "CarniPlant",
+        assetName: "Cat",
         w: 64,
         h: 64,
+        innerH: 42,
+        innerW: 60,
         dirRef: RIGHT,
         animate: true,
-        fps: 12,
-        //speed: 1.0 * 64,
-        static: true,
-        //behaviourArguments: [Infinity, ["wanderer"], 10000, ["hunter2D"]],
+        fps: 60,
+        speed: 2.0 * 64,
+        behaviourArguments: [Infinity, ["wanderer1D"], 10000, ["wanderer1D"]],
         preventRotation: true,
-    }, */
+        fly: false,
+    },
 
 };
 

@@ -62,14 +62,17 @@ const INI = {
     SWIMMING_SPEED: 64 * 1.5,
     RELEASE_JUMP_SPEED: 64 * 2.0,
     TEXT_SIZE: 13,
-    JUMP_SPEED: 64 * 4.0,               // converts charged power into pixels/second
-    LADDER_EXIT: 64 * 2.0,              // converts charged power into pixels/second
+    JUMP_SPEED: 64 * 4.0,                       // converts charged power into pixels/second
+    JUMP_X_SPEED: 64 * 4.0 * Math.SQRT1_2,      // 181.02 px/s — unchanged
+    JUMP_Y_SPEED: 265,                          // gives approximately 48 px height
+    LADDER_EXIT: 64 * 2.0,                      // converts charged power into pixels/second
     SIDE_DRIFT: 64 * 0.25,
-    GRAVITY: 500,                       // pixels/second² 500
+    GRAVITY: 500,                               // pixels/second² 500
+    JUMP_GRAVITY: 732,                        // preserves existing airtime/range
 };
 
 const PRG = {
-    VERSION: "0.6.1",
+    VERSION: "0.6.2",
     NAME: "The Pitiful Chasm Clamber",
     YEAR: "2026",
     SG: "ThePitifulChasmClamber",
@@ -290,12 +293,6 @@ const HERO = {
         //debug
         if (DEBUG.pos_display) this.paintLanding([this.player.sprite.pos]);
     },
-    /* completeLevel() {
-        GAME.levelComplete = true;
-        GAME.level = Math.min(INI.MAX_LEVEL, ++GAME.level);
-        if (DEBUG.VERBOSE) console.ok(`level completed, next one: ${GAME.level}`);
-        GAME.levelStart(GAME.level);
-    }, */
     playerSetUp() {
         const map = MAP[GAME.level].map;
         const start_dir = map.startPosition.vector;
@@ -501,12 +498,23 @@ const HERO = {
     },
     performJump(dir, speed = INI.JUMP_SPEED) {
         if (this.player.motion.active) return;
-        const component = speed * Math.SQRT1_2;                     // cos(45°) and sin(45°)
+
+        const power = speed / INI.JUMP_SPEED;
         const mode = "jumping";
+
         this.setMode(mode, dir);
-        this.player.motion.setType(mode);                           // no importance, but aligned with mode, just in case
-        this.player.motion.setVelocity({ x: dir.x * component, y: -component });
-        this.player.motion.setAcceleration({ x: 0, y: INI.GRAVITY });
+        this.player.motion.setType(mode);
+
+        this.player.motion.setVelocity({
+            x: dir.x * INI.JUMP_X_SPEED * power,
+            y: -INI.JUMP_Y_SPEED * power,
+        });
+
+        this.player.motion.setAcceleration({
+            x: 0,
+            y: INI.JUMP_GRAVITY,
+        });
+
         this.player.motion.activate();
     },
     handlePositionCollision(context) {
@@ -625,7 +633,7 @@ const GAME = {
         ENGINE.GAME.setGameLoop(GAME.run);
         ENGINE.GAME.start(16);
         GAME.extraLife = SCORE.extraLife.clone();
-        GAME.level = 1; //1
+        GAME.level = 4; //1
         GAME.lives = 3; //3
         GAME.score = 0;
 

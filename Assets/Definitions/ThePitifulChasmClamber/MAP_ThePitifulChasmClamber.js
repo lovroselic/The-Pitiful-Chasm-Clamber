@@ -42,9 +42,10 @@ const MAP = {
     ,
     4: {
         name: "Just East",
-        data: '{"width":17,"height":12,"map":"B$AA34BAA100BB33ABB33A"}',
+        data: '{"width":"17","height":"12","map":"B$AA34BAA100BB33ABB33A"}',
         wall: "BrownishMossy_128",
-        start: '[136,1]',
+        start: '[68,5]',
+        monsters: '[[84,"Cat",3]]',
         mask: '[]',
         maskdecals: '[]',
         connections: '["-1","-1","-1","2"]',
