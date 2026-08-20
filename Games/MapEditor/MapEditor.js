@@ -31,7 +31,7 @@ const INI = {
     USE_MONSTERS: true,
     USE_STEPS: false,
     USE_ENTITIES: false,
-    USE_ITEMS: false,
+    USE_ITEMS: true,
     USE_MAZE: false,
     USE_SAVEGAME: false,
     USE_3D: false,

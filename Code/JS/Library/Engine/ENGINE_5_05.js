@@ -3491,7 +3491,8 @@ const ENGINE = {
                             ENGINE.BLOCKGRID.block(x, y, "#FFFFFF");
                             break;
                         case MAPDICT.MASK:
-                            //do nothing for those
+                            ENGINE.BLOCKGRID.block(x, y, "#000000");
+                            //do nothing for those, just paint it black - important!
                             break;
                         default:
                             ENGINE.BLOCKGRID.block(x, y, "#000000");
@@ -3593,7 +3594,8 @@ const ENGINE = {
                             ENGINE.BLOCKGRID3D.block(x, y, "#FFFFFF");
                             break;
                         case MAPDICT.MASK:
-                            //do nothing for those
+                            ENGINE.BLOCKGRID.block(x, y, "#000000");
+                            //do nothing for those, just paint it black - important!
                             break;
                         default:
                             console.warn(`BLOCKGRID3D.drawMask not supported for value: ${value}. Ignoring!`);

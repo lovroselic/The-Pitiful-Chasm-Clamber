@@ -479,7 +479,7 @@ const SPAWN_TOOLS_2D = {
     spawn(level, useVieport = false) {
         const map = MAP_TOOLS.MAP[level].map;
         const GA = map.GA;
-        const methods = ['monsters', 'carriers'];
+        const methods = ['monsters', 'carriers', 'gold'];
 
         //map.TextureExclusion = {};                              //not applicable in 2D // used to exclude world textures, where they are superseeded with custom texture, reset
 
@@ -487,19 +487,16 @@ const SPAWN_TOOLS_2D = {
             this[method](map, GA, useVieport);
         });
 
-        //ITEM3D.setup("3D", 4, 1); //
+        FLOOR_OBJECT.setup("2D", 1, 1);                         //setting up IA
         console.info(`Level ${level} spawned. 2D spawner`);
     },
     monsters(map, GA, useVieport) {
         for (const M of map.monsters) {
-            //console.log("M", M);
-
             const grid = GA.indexToGrid(M[0]);
             const type = MONSTER_TYPE[M[1]];
-            let dir = type.dirRef
+            let dir = type.dirRef;
             if (M[2]) dir = Vector.fromInt(M[2]);
             const entity = new $2D_Entity(grid, dir, type, GA, useVieport);
-
             ENEMY2D.add(entity);
         }
         console.log("ENEMY2D", ENEMY2D);
@@ -511,10 +508,19 @@ const SPAWN_TOOLS_2D = {
             const type = SWINGING_ROPE_TYPE[C[1]];
 
             console.log("C", C, "grid", grid, "type", type,);
-            const carrier = new $2D_SwingingRope(grid, type);
+            const carrier = new $2D_SwingingRope(grid, type, LEFT, useVieport);
             console.log("carrier", carrier);
             CARRIER2D.add(carrier);
         }
+    },
+    gold(map, GA, useVieport) {
+        for (const G of map.gold) {
+            const grid = GA.indexToGrid(G[0]);
+            const item = new FloorItem2D(grid, GOLD_ITEM_TYPE[G[1]], useVieport);
+            FLOOR_OBJECT.add(item);
+            console.log("item", item);
+        }
+        console.log("FLOOR_OBJECT", FLOOR_OBJECT);
     },
 
     /**

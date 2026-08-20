@@ -61,6 +61,7 @@ LoadShaders = [
 LoadSprites = [
     //items
     { srcName: "Items/Rope.webp", name: "Rope" },
+    { srcName: "Items/GoldIngot.png", name: "Gold" },
     //UI
     { srcName: "UI/PrincessLives64.png", name: "Lives" },
     //
@@ -123,6 +124,7 @@ LoadSprites = [
     { srcName: "MaskDecals/Water64_249.webp", name: "Water64_249" },
     { srcName: "MaskDecals/Water64_250.webp", name: "Water64_250" },
     { srcName: "MaskDecals/Water64_251.webp", name: "Water64_251" },
+    { srcName: "MaskDecals/SkyGradient.jpg", name: "SkyGradient" },
 
     //mask elements
     { srcName: "MaskElements/AnotherLedge.png", name: "AnotherLedge" },

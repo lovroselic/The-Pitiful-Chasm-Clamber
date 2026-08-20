@@ -72,7 +72,7 @@ const INI = {
 };
 
 const PRG = {
-    VERSION: "0.6.2",
+    VERSION: "0.6.3",
     NAME: "The Pitiful Chasm Clamber",
     YEAR: "2026",
     SG: "ThePitifulChasmClamber",
@@ -637,7 +637,7 @@ const GAME = {
         GAME.lives = 3; //3
         GAME.score = 0;
 
-        const storeList = ["ENEMY2D", "CARRIER2D"];
+        const storeList = ["ENEMY2D", "CARRIER2D", "FLOOR_OBJECT"];
         GAME.STORE = new Store(storeList);
 
         GAME.fps = new FPS_short_term_measurement(300);

@@ -197,7 +197,7 @@ const WebGL = {
     dynamicLightSources: [MISSILE3D, EXPLOSION3D, FIRE3D],
     enemySources: [ENTITY3D],
     models: [$3D_MODEL],
-    sprite2D_list: [PLANE_GRID1D, ENEMY2D, CARRIER2D],
+    sprite2D_list: [PLANE_GRID1D, ENEMY2D, CARRIER2D, FLOOR_OBJECT],
     modelTextureSet: false,
     main_program: {
         vSource: "vShader",
@@ -450,6 +450,7 @@ const WebGL = {
         PLANE_GRID1D.init(map, hero);
         ENEMY2D.init(map, hero);
         CARRIER2D.init(map, hero);
+        FLOOR_OBJECT.init(map, hero);
         //HERO, GAME
         this.hero = hero;
         this.game = game;
@@ -2860,6 +2861,36 @@ class $2D_Sprite {
     }
 }
 
+class $2D_Static_Sprite {
+    constructor(grid, spriteName, tint = [1, 1, 1, 1]) {
+        this.grid = grid;
+        this.spriteName = spriteName;
+        this.tint = tint;
+        this.setSpriteTexture(spriteName);
+        this.pos = GRID.gridToCenterPX(grid);                       // Point
+        this.vPos = GRID.gridToCenterPX(grid);                      // Point - viewport support
+        this.innerH = ENGINE.INI.GRIDPIX;
+        this.innerW = ENGINE.INI.GRIDPIX;
+        this.w = ENGINE.INI.GRIDPIX;
+        this.h = ENGINE.INI.GRIDPIX;
+        this.fly = false;
+        this.dir = NOWAY;                                           // for scaling purpose in model matrix
+        this.rotation = 0;                                          // for model matrix
+        this.show = $2D_Sprite.prototype.show;
+        this.hide = $2D_Sprite.prototype.hide;
+        this.updateModelMatrix = $2D_Sprite.prototype.updateModelMatrix;
+        this.getArea = $2D_Sprite.prototype.getArea;
+        this.show();
+        this.getArea();
+    }
+    setSpriteTexture(spriteName) {
+        this.spriteTexture = WebGL.createTexture(SPRITE[spriteName]);
+    }
+    getSpriteTexture() {
+        return this.spriteTexture;
+    }
+}
+
 class $2D_Entity {
     constructor(grid, dir, type, GA, useViewport = false) {
         ImportTypeToConstructor(this, type);
@@ -3188,6 +3219,25 @@ class $2D_Grid_Cycling_Entity_Part {
         this.sprite.setGrid(grid);
         this.moveState.reset(grid);
     }
+}
+
+class FloorItem2D {
+    constructor(grid, type, useViewport = false) {
+        this.grid = grid;                                   // vanilla 2d Grid()
+        this.useViewport = useViewport;
+        ImportTypeToConstructor(this, type);
+        this.sprite = new $2D_Static_Sprite(this.grid, this.spriteName);
+        this.draw = $2D_Entity.prototype.draw;
+    }
+    /* draw(gl, program, spriteQuad, texture = this.sprite.getSpriteTexture()) {
+        const modelMatrix = this.sprite.updateModelMatrix(this.useViewport);
+        gl.uniformMatrix4fv(program.uniformLocations.modelMatrix, false, modelMatrix);
+        gl.uniform4fv(program.uniformLocations.tint, this.sprite.tint);
+        gl.uniform4fv(program.uniformLocations.uvRect, [0, 0, 1, 1]);                           // frames are presplit, keep this for future compatibility, like texture atlases
+        gl.activeTexture(gl.TEXTURE0);
+        gl.bindTexture(gl.TEXTURE_2D, texture);
+        gl.drawArrays(gl.TRIANGLES, 0, spriteQuad.count);
+    } */
 }
 
 class $2D_SwingingRope {

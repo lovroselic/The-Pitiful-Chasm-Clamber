@@ -46,8 +46,9 @@ const MAP = {
         wall: "BrownishMossy_128",
         start: '[68,5]',
         monsters: '[[84,"Cat",3]]',
+        gold: '[[75,"Gold"]]',
         mask: '[]',
-        maskdecals: '[]',
+        maskdecals: '[[0,0,10,0,256],[4,0,10,0,256],[8,0,10,0,256],[12,0,10,0,256],[14,0,10,0,256]]',
         connections: '["-1","-1","-1","2"]',
     }
 };

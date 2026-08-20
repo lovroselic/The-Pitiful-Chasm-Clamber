@@ -43,7 +43,7 @@ const MONSTER_TYPE = {
         assetName: "Cat",
         w: 64,
         h: 64,
-        innerH: 42,
+        innerH: 34,
         innerW: 60,
         dirRef: RIGHT,
         animate: true,
@@ -67,5 +67,13 @@ const SWINGING_ROPE_TYPE = {
         animate: false,
         static: true,
         preventRotation: true,
+    }
+};
+
+const GOLD_ITEM_TYPE = {
+    Gold: {
+        name: "Gold",
+        spriteName: "Gold",
+        score: 1,
     }
 };

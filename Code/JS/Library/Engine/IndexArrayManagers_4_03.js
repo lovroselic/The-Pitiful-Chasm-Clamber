@@ -110,7 +110,7 @@ class IAM {
         this.POOL = [];
         this.linkMap(map);
         this.hero = hero || null;
-        this.game = game;
+        this.game = game || null;
     }
     isGridFree(grid) {
         return this.map[this.IA].empty(grid);
@@ -498,18 +498,6 @@ class Floor_Object extends IAM {
             obj.id = index + 1;
         }
         this.reIndexRequired = false;
-    }
-    init(map) {
-        this.POOL = [];
-        this.linkMap(map);
-        this.manage();
-    }
-    manage() {
-        let map = this.map;
-        map[this.IA] = new IndexArray(map.width, map.height, this.byte, this.banks);
-        this.reIndex();
-        this.poolToIA(map[this.IA]);
-        this.size = this.POOL.length;
     }
 }
 
