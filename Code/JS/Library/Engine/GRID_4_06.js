@@ -471,7 +471,7 @@ const GRID = {
             return { position, grid, value: GA.getValue(grid), app, type, cat, };
         };
 
-        console.line();
+        //console.line();
         const test = {
             current: createTest(NOWAY, gs2, ["climbing", "swimming"], "blocked", "current"),
             top: createTest(UP, gs2, ["jumping", "releasing"], "blocked", "top"),
@@ -480,7 +480,7 @@ const GRID = {
             down: createTest(DOWN, gs2, ["climbing", "swimming"], "blocked", "down"),
             bottom_support: createTest(DOWN, gs, ["walking"], "surface", "bottom_support"),
         };
-        console.line();
+        //console.line();
 
         /**
         * special cases

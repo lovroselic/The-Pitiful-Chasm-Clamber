@@ -74,6 +74,7 @@ const GOLD_ITEM_TYPE = {
     Gold: {
         name: "Gold",
         spriteName: "Gold",
+        category: "gold",
         score: 1,
     }
 };

@@ -19,41 +19,14 @@ retests:
  */
 ////////////////////////////////////////////////////
 
-const DEBUG = {
-    //SETTING: true,
-    FPS: true,
-    VERBOSE: true,
-    _2D_display: true,
-    pos_display: true,
-    BB_display: true,
-    INVINCIBLE: false,
-    keys: false,
-    max17: false,
-    calledFunction() {
-        const caller = new Error().stack
-            ?.split("\n")[2]
-            ?.trim();
-
-        console.log("Called by:", caller);
-    },
-    calledStack(begin = 0, end = 3) {
-        const off = 2;
-        const stack = new Error().stack
-            ?.split("\n")
-            .filter(line => !/^Error\b/.test(line))
-            .slice(off + begin, off + end)
-            .join("\n");
-
-        console.log(stack);
-    },
-    displaySpriteArea(area, layer = "fill") {
-        ENGINE.drawArea(LAYER[layer], area, "#FF0000");
-    },
-    halt(message = "HERE") {
-        ENGINE.GAME.stopAnimation = true;
-        throw new Error(message);
-    },
-};
+DEBUG.FPS = true;
+DEBUG.VERBOSE = true;
+DEBUG._2D_display = true;
+DEBUG.pos_display = true;
+DEBUG.BB_display = true;
+DEBUG.INVINCIBLE = false;
+DEBUG.keys = false;
+DEBUG.max17 = false;
 
 const INI = {
     SCREEN_BORDER: 64,
@@ -72,7 +45,7 @@ const INI = {
 };
 
 const PRG = {
-    VERSION: "0.6.3",
+    VERSION: "0.6.4",
     NAME: "The Pitiful Chasm Clamber",
     YEAR: "2026",
     SG: "ThePitifulChasmClamber",
@@ -290,6 +263,22 @@ const HERO = {
         // modes not updated: climbing,
         if (["idle", "ducking"].includes(this.mode)) this.player.sprite.updateAnimation(lapsedTime);
 
+        //item picking
+        const picked = FLOOR_OBJECT.checkCollisionToHero();
+        if (picked) {
+            console.warn("picked", picked);
+            const category = picked.category;
+            switch (category) {
+                case "gold":
+                    AUDIO.Pick.play();
+                    GAME.addScore(picked.score);
+                    GAME.goldCount--;                                                   //GAME may end here!!!!!!!!!!!!!!
+                    TITLE.stage();
+                    break;
+                default: throw new Error(`unsupported category: ${category}`);
+            }
+        }
+
         //debug
         if (DEBUG.pos_display) this.paintLanding([this.player.sprite.pos]);
     },
@@ -325,7 +314,6 @@ const HERO = {
     },
     async handleOutOfBounds(context) {
         console.warn("handleOutOfBounds", context);
-        //ENGINE.GAME.ANIMATION.stop();                                       // not sure if really required
         let map = MAP[GAME.level].map;
         const pos = this.player.sprite.pos;
         let grid = GRID.pointToGrid(pos);
@@ -636,6 +624,7 @@ const GAME = {
         GAME.level = 4; //1
         GAME.lives = 3; //3
         GAME.score = 0;
+        GAME.goldCount = GAME.countGold();
 
         const storeList = ["ENEMY2D", "CARRIER2D", "FLOOR_OBJECT"];
         GAME.STORE = new Store(storeList);
@@ -644,6 +633,21 @@ const GAME = {
         if (DEBUG._2D_display) GRID.grid();
 
         GAME.levelStart(GAME.level);
+    },
+    countGold() {
+        let goldCount = 0;
+        const levels = Object.keys(MAP).filter(key => typeof MAP[key] !== "function");
+
+        for (const L of levels) {
+            const level = MAP[L];
+            if (level.gold) {
+                const G = JSON.parse(level.gold);
+                goldCount += G.length;
+            }
+        }
+
+        console.info("counting gold", goldCount);
+        return goldCount;
     },
     WebGL_settings() {
         WebGL.INI.BACKGROUND_ALPHA = 0.0;
@@ -857,6 +861,10 @@ const GAME = {
         EXPLOSION3D.manage(date);
         ENTITY3D.manage(lapsedTime, date, [HERO.invisible, HERO.dead]);
         GAME.lifeLostFrameDraw(lapsedTime);
+    },
+    addScore(score) {
+        GAME.score += score;
+        TITLE.score();
     },
     checkScore() {
         SCORE.checkScore(GAME.score);
@@ -1116,7 +1124,7 @@ const TITLE = {
         CTX.shadowOffsetX = 1;
         CTX.shadowOffsetY = 1;
         CTX.shadowBlur = 1;
-        CTX.fillText(`Room: ${GAME.level.toString().padStart(1, "0")}`, x, y);
+        CTX.fillText(`Gold: ${GAME.goldCount.toString().padStart(2, "0")}`, x, y);
     },
     hiscore() {
         ENGINE.clearLayer("hiscore");

@@ -256,7 +256,6 @@ const SPAWN_TOOLS = {
                 position = WORLD.surfaceLightPosition(quadNode, face, WebGL.INI.SURFACE_WALL_HEIGHT);
                 position = Vector3.from_array(position);
             }
-
             LIGHTS3D.add(new LightDecal(grid, face, sprite, category, picture, LIGHT_COLORS[type], expand, position));
         }
     },
@@ -467,8 +466,6 @@ const SPAWN_TOOLS = {
     spawnSunFromCamera(position, lightColor) {
         SUN3D.add(new LightSource(position, DIR_DOWN, lightColor));
     },
-
-
 };
 
 const SPAWN_TOOLS_2D = {
@@ -503,13 +500,9 @@ const SPAWN_TOOLS_2D = {
     },
     carriers(map, GA, useVieport) {
         for (const C of map.carriers) {
-
             const grid = GA.indexToGrid(C[0]);
             const type = SWINGING_ROPE_TYPE[C[1]];
-
-            console.log("C", C, "grid", grid, "type", type,);
             const carrier = new $2D_SwingingRope(grid, type, LEFT, useVieport);
-            console.log("carrier", carrier);
             CARRIER2D.add(carrier);
         }
     },
@@ -518,9 +511,7 @@ const SPAWN_TOOLS_2D = {
             const grid = GA.indexToGrid(G[0]);
             const item = new FloorItem2D(grid, GOLD_ITEM_TYPE[G[1]], useVieport);
             FLOOR_OBJECT.add(item);
-            console.log("item", item);
         }
-        console.log("FLOOR_OBJECT", FLOOR_OBJECT);
     },
 
     /**

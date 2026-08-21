@@ -491,13 +491,32 @@ class Floor_Object extends IAM {
         this.byte = byte;
         this.banks = banks;
     }
-    reIndex() {
-        if (!this.reIndexRequired) return;
-        this.POOL = this.POOL.filter((el) => el !== null);
-        for (const [index, obj] of this.POOL.entries()) {
-            obj.id = index + 1;
+    checkCollisionToHero() {
+        const IA = this.map[this.IA];
+        const heroGrid = this.hero.player.moveState.homeGrid;
+
+        //console.log("heroGrid", heroGrid, IA.empty(heroGrid), IA.unroll(heroGrid));
+
+        if (!IA.empty(heroGrid)) {
+            const itemID = IA.unroll(heroGrid);                     // by design it can be only single item
+            const item = this.show(itemID);
+
+            if (item) {
+                const heroArea = this.hero.player.sprite.getArea();
+                const itemArea = item.sprite.getArea();
+                const hit = heroArea.overlap(itemArea);
+
+                //console.warn("area", heroArea, itemArea, "hit", hit);
+
+                if (hit) {
+                    this.remove(itemID);
+                    return item;
+                }
+
+            }
+
         }
-        this.reIndexRequired = false;
+        return null;
     }
 }
 
