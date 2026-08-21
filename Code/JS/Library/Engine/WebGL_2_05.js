@@ -197,7 +197,7 @@ const WebGL = {
     dynamicLightSources: [MISSILE3D, EXPLOSION3D, FIRE3D],
     enemySources: [ENTITY3D],
     models: [$3D_MODEL],
-    sprite2D_list: [PLANE_GRID1D, ENEMY2D, CARRIER2D, FLOOR_OBJECT],
+    sprite2D_list: [PLANE_GRID1D, CARRIER2D, FLOOR_OBJECT, ENEMY2D],
     modelTextureSet: false,
     main_program: {
         vSource: "vShader",

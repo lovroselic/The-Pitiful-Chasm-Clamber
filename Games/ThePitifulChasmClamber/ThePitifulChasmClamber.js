@@ -45,7 +45,7 @@ const INI = {
 };
 
 const PRG = {
-    VERSION: "0.6.5",
+    VERSION: "0.6.6",
     NAME: "The Pitiful Chasm Clamber",
     YEAR: "2026",
     SG: "ThePitifulChasmClamber",
@@ -249,7 +249,11 @@ const HERO = {
         if (GAME.lives > 0) return GAME.continueLevel(GAME.level);
         GAME.checkScore();
         TITLE.hiscore();
-        TITLE.startTitle();
+        ENGINE.TEXT.centeredText("Rest In Peace", ENGINE.gameWIDTH, ENGINE.gameHEIGHT / 2);
+        ENGINE.TEXT.centeredText("(ENTER)", ENGINE.gameWIDTH, ENGINE.gameHEIGHT / 2 + ENGINE.TEXT.RD.fs * 1.2);
+        ENGINE.GAME.ANIMATION.resetTimer();
+        ENGINE.GAME.ANIMATION.next(GAME.gameOverRun);
+        GAME.restarted = true;
     },
     async manage(lapsedTime) {
         //console.warn("manage", lapsedTime);
@@ -596,6 +600,7 @@ const HERO = {
 };
 
 const GAME = {
+    /** */
     time: null,
     realSpeed: null,
     highSpeed: null,
@@ -603,6 +608,7 @@ const GAME = {
     timerRunning: false,
     levelComplete: false,
     timeRemains: null,
+    /** */
     start() {
         if (DEBUG.VERBOSE) console.log("GAME started");
         if (AUDIO.Title) {
@@ -623,7 +629,7 @@ const GAME = {
         ENGINE.GAME.start(16);
         GAME.extraLife = SCORE.extraLife.clone();
         GAME.level = 4; //1
-        GAME.lives = 3; //3
+        GAME.lives = 1; //3
         GAME.score = 0;
         GAME.goldCount = GAME.countGold();
         GAME.complete = false;
@@ -901,12 +907,14 @@ const GAME = {
         if (ENGINE.GAME.stopAnimation) return;
         GAME.endingCreditText.process(lapsedTime);
         GAME.wonFrameDraw();
-        if (ENGINE.GAME.keymap[ENGINE.KEY.map.enter]) {
-            ENGINE.GAME.ANIMATION.next(TITLE.startTitle);
-        }
+        if (ENGINE.GAME.keymap[ENGINE.KEY.map.enter]) ENGINE.GAME.ANIMATION.next(TITLE.startTitle);
     },
     wonFrameDraw() {
         GAME.endingCreditText.draw();
+    },
+    gameOverRun(lapsedTime) {
+        if (ENGINE.GAME.stopAnimation) return;
+        if (ENGINE.GAME.keymap[ENGINE.KEY.map.enter]) ENGINE.GAME.ANIMATION.waitThen(TITLE.startTitle);
     },
 };
 
