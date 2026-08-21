@@ -45,7 +45,7 @@ const INI = {
 };
 
 const PRG = {
-    VERSION: "0.6.4",
+    VERSION: "0.6.5",
     NAME: "The Pitiful Chasm Clamber",
     YEAR: "2026",
     SG: "ThePitifulChasmClamber",
@@ -274,6 +274,7 @@ const HERO = {
                     GAME.addScore(picked.score);
                     GAME.goldCount--;                                                   //GAME may end here!!!!!!!!!!!!!!
                     TITLE.stage();
+                    if (GAME.goldCount === 0) return GAME.won();
                     break;
                 default: throw new Error(`unsupported category: ${category}`);
             }
@@ -625,6 +626,7 @@ const GAME = {
         GAME.lives = 3; //3
         GAME.score = 0;
         GAME.goldCount = GAME.countGold();
+        GAME.complete = false;
 
         const storeList = ["ENEMY2D", "CARRIER2D", "FLOOR_OBJECT"];
         GAME.STORE = new Store(storeList);
@@ -775,6 +777,7 @@ const GAME = {
     },
     async run(lapsedTime) {
         if (ENGINE.GAME.stopAnimation) return;
+        if (GAME.complete) return;
         const date = Date.now();
         GAME.respond(lapsedTime);
         ENGINE.TIMERS.update();
@@ -787,6 +790,7 @@ const GAME = {
         if (GAME.completed) GAME.won();
     },
     frameDraw(lapsedTime) {
+        if (GAME.complete) return;
         GAME.updateVieport();
         WebGL.render2DScene(MAP[GAME.level].map);
         TITLE.time();
@@ -870,27 +874,40 @@ const GAME = {
         SCORE.checkScore(GAME.score);
         SCORE.hiScore();
     },
-    completedTime() {
-        console.error("completed time", GAME.time.remains());
-        //
+    won() {
+        if (DEBUG.VERBOSE) console.info("GAME WON");
+        GAME.complete = true;
+        ENGINE.GAME.ANIMATION.resetTimer();
+        TITLE.setEndingCreditsScroll();
+        ENGINE.GAME.pauseBlock();
+        const layersToClear = ["FPS", "info", "background", "grid", "lives", "coord", "fill"];
+        layersToClear.forEach(item => ENGINE.layersToClear.add(item));
+        ENGINE.clearLayerStack();
+        ENGINE.GAME.ANIMATION.stop();
+        const delay = 4000;
+        WebGL.black();
+        WebGL.transparent();
+        ENGINE.fillLayer("background", "#000");
+
+        ENGINE.draw("background", (ENGINE.gameWIDTH - SPRITE.WinPic.width) / 2, (ENGINE.gameHEIGHT - SPRITE.WinPic.height) / 2, SPRITE.WinPic);
+        GAME.checkScore();
+        setTimeout(function () {
+            ENGINE.clearLayer("subtitle");
+            TITLE.music();
+            ENGINE.GAME.ANIMATION.next(GAME.wonRun);
+        }, delay);
     },
-    goalReachedRun() {
+    wonRun(lapsedTime) {
         if (ENGINE.GAME.stopAnimation) return;
-        if (GAME.timeRemains > 0) {
-            GAME.timeRemains--;
-            GAME.score += INI.SCORE_PER_SECOND;
-            GAME.goalReachedFrameDraw();
-        } else {
-            GAME.timeRemains = null;
-            HERO.completeLevel();
-            HERO.playerSetUp();
-            ENGINE.GAME.resume();
+        GAME.endingCreditText.process(lapsedTime);
+        GAME.wonFrameDraw();
+        if (ENGINE.GAME.keymap[ENGINE.KEY.map.enter]) {
+            ENGINE.GAME.ANIMATION.next(TITLE.startTitle);
         }
     },
-    goalReachedFrameDraw() {
-        TITLE.time();
-        TITLE.score();
-    }
+    wonFrameDraw() {
+        GAME.endingCreditText.draw();
+    },
 };
 
 const TITLE = {
@@ -1159,7 +1176,47 @@ const TITLE = {
         for (let x of spread) {
             ENGINE.spriteDraw("lives", x, y, SPRITE.Lives);
         }
-    }
+    },
+    setEndingCreditsScroll() {
+        const text = this.generateEndingCredits();
+        const RD = new RenderData("Chasm", 28, "#DAA520", "text", "#c69b2d", 2, 2, 1);
+        GAME.endingCreditText = new VerticalScrollingText(text, 1, RD);
+    },
+    generateEndingCredits() {
+        const text = `Congratulations!
+
+        You have completed 
+        ${PRG.NAME}
+        in ${GAME.time.timeString()}.
+
+        ...blah ... blah ... blah
+
+        CREDITS:
+        Code and direction, Lovro Selic
+        Written in JavaScript and GLSL
+
+        jQuery: John Resig et al
+        glMatrix: Brandon Jones and
+        Colin MacKenzie IV
+
+        Graphics from free sources,
+        plus PiskelApp and Blender
+        Textures and images by AI:
+        Stable Diffusion, Ideogram,
+        Flux.1D, Flux.2D and Klein,
+
+        Supplementary tools,
+        JavaScript, Python, C++
+
+        Music, 'Arise'
+        written and performed 
+        by LaughingSkull,
+        (C) 2007 Lovro Selic
+
+        Thanks for sticking it out
+        ....`;
+        return text;
+    },
 };
 
 // -- main --

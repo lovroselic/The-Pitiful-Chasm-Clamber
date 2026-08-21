@@ -52,7 +52,7 @@ LoadAudio = [
     { srcName: "death.mp3", name: "Death" },
     { srcName: "thud.mp3", name: "Thud" },
     { srcName: "Chew.mp3", name: "Chew" },
-     { srcName: "Pick up gold.mp3", name: "Pick" },
+    { srcName: "Pick up gold.mp3", name: "Pick" },
 ];
 
 LoadShaders = [
@@ -60,6 +60,9 @@ LoadShaders = [
 ];
 
 LoadSprites = [
+
+    { srcName: "EntityPictures/TaxxonEnd.webp", name: "WinPic" },
+
     //items
     { srcName: "Items/Rope.webp", name: "Rope" },
     { srcName: "Items/GoldIngot.png", name: "Gold" },
