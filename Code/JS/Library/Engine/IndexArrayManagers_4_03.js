@@ -423,7 +423,6 @@ class Enemy2D extends IAM {
             }
         }
     }
-
     enemy_enemy_collision_resolution(entity, map, lapsedTime) {
         const ThisGrid = entity.moveState.homeGrid;
         const EndGrid = entity.moveState.endGrid;
@@ -456,6 +455,11 @@ class Enemy2D extends IAM {
             if (wait) return true;
         }
         return false;
+    }
+    resetToInitial() {
+        for (const entity of this.POOL) {
+            if (entity) entity.resetToInitial();[]
+        }
     }
 }
 
@@ -495,8 +499,6 @@ class Floor_Object extends IAM {
         const IA = this.map[this.IA];
         const heroGrid = this.hero.player.moveState.homeGrid;
 
-        //console.log("heroGrid", heroGrid, IA.empty(heroGrid), IA.unroll(heroGrid));
-
         if (!IA.empty(heroGrid)) {
             const itemID = IA.unroll(heroGrid);                     // by design it can be only single item
             const item = this.show(itemID);
@@ -506,15 +508,11 @@ class Floor_Object extends IAM {
                 const itemArea = item.sprite.getArea();
                 const hit = heroArea.overlap(itemArea);
 
-                //console.warn("area", heroArea, itemArea, "hit", hit);
-
                 if (hit) {
                     this.remove(itemID);
                     return item;
                 }
-
             }
-
         }
         return null;
     }

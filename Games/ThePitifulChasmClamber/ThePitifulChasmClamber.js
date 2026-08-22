@@ -45,7 +45,7 @@ const INI = {
 };
 
 const PRG = {
-    VERSION: "0.6.6",
+    VERSION: "0.7.0",
     NAME: "The Pitiful Chasm Clamber",
     YEAR: "2026",
     SG: "ThePitifulChasmClamber",
@@ -288,6 +288,22 @@ const HERO = {
         if (DEBUG.pos_display) this.paintLanding([this.player.sprite.pos]);
     },
     playerSetUp() {
+        if (HERO.player) {
+            let grid = HERO.player.moveState.startGrid.add(UP);
+            const sprite = HERO.player.sprite;
+            const player = HERO.player;
+            player.moveState.reset(grid);
+            sprite.setGrid(grid);
+            const mode = "falling";
+            HERO.setMode(mode, player.moveState.dir);
+            player.motion.setType(mode);
+            player.motion.setVelocity({ x: 0, y: 0 });
+            player.motion.setAcceleration({ x: 0, y: INI.JUMP_GRAVITY });
+            player.motion.activate();
+            if (DEBUG.VERBOSE) console.note("Player aready set up, position corrected");
+            return;
+        }
+
         const map = MAP[GAME.level].map;
         const start_dir = map.startPosition.vector;
         const start_grid = Grid.toClass(map.startPosition.grid);
@@ -497,17 +513,8 @@ const HERO = {
 
         this.setMode(mode, dir);
         this.player.motion.setType(mode);
-
-        this.player.motion.setVelocity({
-            x: dir.x * INI.JUMP_X_SPEED * power,
-            y: -INI.JUMP_Y_SPEED * power,
-        });
-
-        this.player.motion.setAcceleration({
-            x: 0,
-            y: INI.JUMP_GRAVITY,
-        });
-
+        this.player.motion.setVelocity({ x: dir.x * INI.JUMP_X_SPEED * power, y: -INI.JUMP_Y_SPEED * power });
+        this.player.motion.setAcceleration({ x: 0, y: INI.JUMP_GRAVITY });
         this.player.motion.activate();
     },
     handlePositionCollision(context) {
@@ -629,7 +636,7 @@ const GAME = {
         ENGINE.GAME.start(16);
         GAME.extraLife = SCORE.extraLife.clone();
         GAME.level = 4; //1
-        GAME.lives = 1; //3
+        GAME.lives = 3; //3
         GAME.score = 0;
         GAME.goldCount = GAME.countGold();
         GAME.complete = false;
@@ -676,7 +683,7 @@ const GAME = {
     },
     continueLevel(level) {
         if (DEBUG.VERBOSE) console.log("Continue level", level);
-        GAME.clearPools();
+        GAME.resetToInitial();
         SPAWN_TOOLS_2D.spawn(level);
         HERO.dead = false;
         HERO.setMode("idle", RIGHT);
@@ -687,8 +694,8 @@ const GAME = {
         AI.initialize(HERO.player, "2D");
         AI.immobileWander = false;
     },
-    clearPools() {
-        ENEMY2D.clearAll();
+    resetToInitial() {
+        ENEMY2D.resetToInitial();
     },
     levelExecute() {
         if (DEBUG.VERBOSE) {

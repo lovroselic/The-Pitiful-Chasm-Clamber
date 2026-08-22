@@ -2835,6 +2835,7 @@ class $2D_Sprite {
     setGrid(grid) {
         this.grid = grid;
         this.pos = GRID.gridToCenterPX(grid);
+        this.vPos = this.pos;
         this.getArea();
         this.updateModelMatrix();
     }
@@ -2894,6 +2895,8 @@ class $2D_Static_Sprite {
 class $2D_Entity {
     constructor(grid, dir, type, GA, useViewport = false) {
         ImportTypeToConstructor(this, type);
+        this.initialGrid = grid;
+        this.initialDir = dir;
         this.sprite = new $2D_Sprite(grid, dir, type);
         this.actor = this.sprite;                               // legacy compatibility, redundant already? probably, but i like it, so ...
         this.moveState = new MoveState(grid, dir, GA);
@@ -2903,6 +2906,11 @@ class $2D_Entity {
         if (this.sprite.speed) this.speed = this.sprite.speed;  // legacy compatibility
         this.motion = new Motion2D();
         if (!this.static && this.behaviourArguments) this.behaviour = new Behaviour(...this.behaviourArguments);
+    }
+    resetToInitial() { 
+        this.moveState.reset(this.initialGrid);
+        this.moveState.dir = this.initialDir;
+        this.sprite.setGrid(this.initialGrid);
     }
     draw(gl, program, spriteQuad, texture = this.sprite.getSpriteTexture()) {
         const modelMatrix = this.sprite.updateModelMatrix(this.useViewport);
@@ -3229,15 +3237,6 @@ class FloorItem2D {
         this.sprite = new $2D_Static_Sprite(this.grid, this.spriteName);
         this.draw = $2D_Entity.prototype.draw;
     }
-    /* draw(gl, program, spriteQuad, texture = this.sprite.getSpriteTexture()) {
-        const modelMatrix = this.sprite.updateModelMatrix(this.useViewport);
-        gl.uniformMatrix4fv(program.uniformLocations.modelMatrix, false, modelMatrix);
-        gl.uniform4fv(program.uniformLocations.tint, this.sprite.tint);
-        gl.uniform4fv(program.uniformLocations.uvRect, [0, 0, 1, 1]);                           // frames are presplit, keep this for future compatibility, like texture atlases
-        gl.activeTexture(gl.TEXTURE0);
-        gl.bindTexture(gl.TEXTURE_2D, texture);
-        gl.drawArrays(gl.TRIANGLES, 0, spriteQuad.count);
-    } */
 }
 
 class $2D_SwingingRope {

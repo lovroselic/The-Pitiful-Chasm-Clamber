@@ -475,6 +475,10 @@ const SPAWN_TOOLS_2D = {
 
     spawn(level, useVieport = false) {
         const map = MAP_TOOLS.MAP[level].map;
+        if (map.spawned) {
+            console.info(`map level ${level} already spawned`);
+            return;
+        }
         const GA = map.GA;
         const methods = ['monsters', 'carriers', 'gold'];
 
@@ -485,6 +489,7 @@ const SPAWN_TOOLS_2D = {
         });
 
         FLOOR_OBJECT.setup("2D", 1, 1);                         //setting up IA
+        map.spawned = true;
         console.info(`Level ${level} spawned. 2D spawner`);
     },
     monsters(map, GA, useVieport) {
@@ -505,6 +510,7 @@ const SPAWN_TOOLS_2D = {
             const carrier = new $2D_SwingingRope(grid, type, LEFT, useVieport);
             CARRIER2D.add(carrier);
         }
+        console.log("CARRIER2D", CARRIER2D);
     },
     gold(map, GA, useVieport) {
         for (const G of map.gold) {
@@ -512,6 +518,7 @@ const SPAWN_TOOLS_2D = {
             const item = new FloorItem2D(grid, GOLD_ITEM_TYPE[G[1]], useVieport);
             FLOOR_OBJECT.add(item);
         }
+        console.error("FLOOR_OBJECT", FLOOR_OBJECT, FLOOR_OBJECT.POOL.length);
     },
 
     /**

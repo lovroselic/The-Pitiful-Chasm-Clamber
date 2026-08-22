@@ -61,7 +61,7 @@ LoadShaders = [
 
 LoadSprites = [
 
-    { srcName: "EntityPictures/TaxxonEnd.webp", name: "WinPic" },
+    { srcName: "EntityPictures/PCCEnd_768.webp", name: "WinPic" },
 
     //items
     { srcName: "Items/Rope.webp", name: "Rope" },
