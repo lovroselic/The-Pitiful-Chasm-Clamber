@@ -21,7 +21,7 @@ retests:
 
 DEBUG.FPS = true;
 DEBUG.VERBOSE = true;
-DEBUG._2D_display = true;
+DEBUG._2D_display = false;
 DEBUG.pos_display = true;
 DEBUG.BB_display = true;
 DEBUG.INVINCIBLE = false;
@@ -30,7 +30,7 @@ DEBUG.max17 = false;
 
 const INI = {
     SCREEN_BORDER: 64,
-    WALKING_SPEED: 64 * 1.6,
+    WALKING_SPEED: 64 * 1.75,
     CLIMBING_SPEED: 64 * 1.5,
     SWIMMING_SPEED: 64 * 1.5,
     RELEASE_JUMP_SPEED: 64 * 2.0,
@@ -45,7 +45,7 @@ const INI = {
 };
 
 const PRG = {
-    VERSION: "0.7.0",
+    VERSION: "0.7.1",
     NAME: "The Pitiful Chasm Clamber",
     YEAR: "2026",
     SG: "ThePitifulChasmClamber",
@@ -148,6 +148,7 @@ const HERO = {
          */
         if (mode === this.mode) return;
         this.mode = mode;
+        if (this.player) this.player.sprite.fly = false;
 
         switch (this.mode) {
             case "idle":
@@ -198,8 +199,9 @@ const HERO = {
             case "swimming":
                 this.player.sprite.setAsset("PrincessSwim");
                 this.player.sprite.setDirRef(dir);
-                this.player.sprite.innerH = 20;
+                this.player.sprite.innerH = 22;
                 this.player.sprite.innerW = 64;
+                this.player.sprite.fly = true;
                 break;
 
             case "gripping":
@@ -424,7 +426,7 @@ const HERO = {
         this.startWalking(dir);
     },
     handleSwimming(dir) {
-        console.warn("handleSwimming", dir, "this.player.motion", this.player.motion);
+        //console.warn("handleSwimming", dir, "this.player.motion", this.player.motion);
         const mode = "swimming";
 
         if (dir.x !== 0) this.facingDir = dir.x < 0 ? LEFT : RIGHT;
@@ -635,7 +637,7 @@ const GAME = {
         ENGINE.GAME.setGameLoop(GAME.run);
         ENGINE.GAME.start(16);
         GAME.extraLife = SCORE.extraLife.clone();
-        GAME.level = 4; //1
+        GAME.level = 1; //1
         GAME.lives = 3; //3
         GAME.score = 0;
         GAME.goldCount = GAME.countGold();

@@ -66,6 +66,7 @@ LoadSprites = [
     //items
     { srcName: "Items/Rope.webp", name: "Rope" },
     { srcName: "Items/GoldIngot.png", name: "Gold" },
+    { srcName: "Items/GoldPrincess.png", name: "GoldPrincess" },
     //UI
     { srcName: "UI/PrincessLives64.png", name: "Lives" },
     //

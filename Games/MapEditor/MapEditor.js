@@ -83,7 +83,7 @@ const $MAP = {
 };
 
 const PRG = {
-    VERSION: "0.22.3",
+    VERSION: "0.22.4",
     NAME: "MapEditor",
     YEAR: "2026",
     CSS: "color: #239AFF;",
@@ -1541,6 +1541,7 @@ const GAME = {
             case 'gold':
                 switch (currentValue) {
                     case MAPDICT.EMPTY:
+                    case MAPDICT.WATER:
                         let goldValue = $("#gold_type")[0].value;
                         $MAP.map.gold.push(Array(gridIndex, goldValue));
                         break;
