@@ -1448,6 +1448,7 @@ const GAME = {
                 if ($("input[name='expand_sprite']")[0].checked) gs = parseInt($("#spritesize").val(), 10);                 //if expansion is forced
                 $MAP.mask_decal_moves.push([gridIndex, rotation, elIndex, flip, gs]);
                 break;
+
             case "deletemaskdecal":
                 for (let [index, mask] of $MAP.mask_decal_moves.entries()) {
                     if (mask[0] === gridIndex) {
@@ -1828,13 +1829,16 @@ const GAME = {
             case "rope":
                 switch (currentValue) {
                     case MAPDICT.EMPTY:
+                    case MAPDICT.MASK:
                         break;
                     default:
                         $("#error_message").html(`Rope placement not supported on value: ${currentValue}`);
                         return;
                 }
-                $MAP.map.carriers.push(Array(gridIndex, $("#rope_type")[0].value));
-                console.info("carriers", Array(gridIndex, $("#rope_type")[0].value));
+                dir = GAME.getSelectedDir();
+                dirIndex = dir.toInt();
+                $MAP.map.carriers.push(Array(gridIndex, $("#rope_type")[0].value, dirIndex));
+                console.info("carriers", Array(gridIndex, $("#rope_type")[0].value, dirIndex));
                 break;
 
         }

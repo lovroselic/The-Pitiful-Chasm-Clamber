@@ -20,6 +20,7 @@ LoadSheetSequences = [
     { srcName: "PrincessRope.png", count: 2, name: "PrincessRope", trim: false },
     { srcName: "DinoDragon.png", count: 15, name: "DinoDragon", trim: false },
     { srcName: "Cat.png", count: 17, name: "Cat", trim: false },
+    { srcName: "Bat.png", count: 21, name: "Bat", trim: false },
 
     //borders
     { srcName: "MossyBorders.png", count: 5, name: "MossyBorders", trim: false },
@@ -45,6 +46,8 @@ LoadTextures = [
     { srcName: "Mask/Level_2.webp", name: "Level_2" },
     { srcName: "Mask/Level_3.webp", name: "Level_3" },
     { srcName: "Mask/Level_4.webp", name: "Level_4" },
+    { srcName: "Mask/Level_5.webp", name: "Level_5" },
+    { srcName: "Mask/Level_6.webp", name: "Level_6" },
 ];
 
 LoadAudio = [
@@ -130,6 +133,12 @@ LoadSprites = [
     { srcName: "MaskDecals/Water64_250.webp", name: "Water64_250" },
     { srcName: "MaskDecals/Water64_251.webp", name: "Water64_251" },
     { srcName: "MaskDecals/SkyGradient.jpg", name: "SkyGradient" },
+    { srcName: "MaskDecals/Bush_300.webp", name: "Bush_300" },
+    { srcName: "MaskDecals/Bush_301.webp", name: "Bush_301" },
+    { srcName: "MaskDecals/Bush_302.webp", name: "Bush_302" },
+    { srcName: "MaskDecals/Bush_303.webp", name: "Bush_303" },
+    { srcName: "MaskDecals/Bush_304.webp", name: "Bush_304" },
+    { srcName: "MaskDecals/Bush_305.webp", name: "Bush_305" },
 
     //mask elements
     { srcName: "MaskElements/AnotherLedge.png", name: "AnotherLedge" },

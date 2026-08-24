@@ -2897,6 +2897,7 @@ class $2D_Entity {
         ImportTypeToConstructor(this, type);
         this.initialGrid = grid;
         this.initialDir = dir;
+        this.facingDir = dir;
         this.sprite = new $2D_Sprite(grid, dir, type);
         this.actor = this.sprite;                               // legacy compatibility, redundant already? probably, but i like it, so ...
         this.moveState = new MoveState(grid, dir, GA);
@@ -2907,7 +2908,7 @@ class $2D_Entity {
         this.motion = new Motion2D();
         if (!this.static && this.behaviourArguments) this.behaviour = new Behaviour(...this.behaviourArguments);
     }
-    resetToInitial() { 
+    resetToInitial() {
         this.moveState.reset(this.initialGrid);
         this.moveState.dir = this.initialDir;
         this.sprite.setGrid(this.initialGrid);
@@ -3116,7 +3117,7 @@ class $2D_player extends $2D_Entity {
                 const entity = ENEMY2D.show(who);
                 const enityArea = entity.sprite.getArea();
                 const playerArea = this.sprite.getArea();
-                if (playerArea.overlap(enityArea)) this.parent.die?.();
+                if (playerArea.overlap(enityArea)) this.parent.die?.(entity);
             }
         }
     }

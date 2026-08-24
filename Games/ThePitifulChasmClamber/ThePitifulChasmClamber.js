@@ -33,7 +33,7 @@ const INI = {
     WALKING_SPEED: 64 * 1.75,
     CLIMBING_SPEED: 64 * 1.5,
     SWIMMING_SPEED: 64 * 1.5,
-    RELEASE_JUMP_SPEED: 64 * 2.0,
+    RELEASE_JUMP_SPEED: 64 * 2.0, //2.0
     TEXT_SIZE: 13,
     JUMP_SPEED: 64 * 4.0,                       // converts charged power into pixels/second
     JUMP_X_SPEED: 64 * 4.0 * Math.SQRT1_2,      // 181.02 px/s — unchanged
@@ -45,7 +45,7 @@ const INI = {
 };
 
 const PRG = {
-    VERSION: "0.7.1",
+    VERSION: "0.7.2",
     NAME: "The Pitiful Chasm Clamber",
     YEAR: "2026",
     SG: "ThePitifulChasmClamber",
@@ -136,6 +136,7 @@ const HERO = {
         this.player = null;
         this.dead = false;
         this.setMode("idle", RIGHT);
+        this.killedBy = null;
 
         //binds
         this.handleFinishedJump = this.handleFinishedJump.bind(this);
@@ -146,6 +147,8 @@ const HERO = {
          * jumping
          * falling, idle but straight
          */
+
+        DEBUG.calledStack();
         if (mode === this.mode) return;
         this.mode = mode;
         if (this.player) this.player.sprite.fly = false;
@@ -215,7 +218,7 @@ const HERO = {
         }
 
         this.player?.sprite.update(dir);
-        //console.warn("set mode", this.mode, "pos", this.player?.sprite.pos, "dir", dir);
+        console.warn("set mode", this.mode, "pos", this.player?.sprite.pos, "dir", dir);
     },
     concludeAction() {
 
@@ -232,11 +235,18 @@ const HERO = {
             return;
         }
     },
-    die() {
-        if (DEBUG.VERBOSE) console.red("HERO.die");
+    die(entity) {
+        if (DEBUG.VERBOSE) {
+            console.red(`HERO.die`);
+            console.log(`....killed by`, entity);
+        }
 
         if (HERO.dead) return;
         HERO.dead = true;
+        HERO.killedBy = {
+            IAM: entity.IAM,
+            id: entity.id,
+        };
     },
     async death() {
         ENGINE.GAME.ANIMATION.stop();
@@ -244,10 +254,12 @@ const HERO = {
         if (DEBUG.VERBOSE) console.red(`HERO.death, lives: ${GAME.lives}`);
         await AUDIO_TOOLS.playAndWait(AUDIO.Chew);
         await AUDIO_TOOLS.playAndWait(AUDIO.Death);
+        if (DEBUG.VERBOSE) console.log("HERO killed by", HERO.killedBy);
+        HERO.killedBy.IAM.remove(HERO.killedBy.id);                         // get rid of the murderous bastard
         HERO.finalDeath();
     },
     finalDeath() {
-        console.red("HERO.finalDeath");
+        if (DEBUG.VERBOSE) console.red("HERO.finalDeath");
         if (GAME.lives > 0) return GAME.continueLevel(GAME.level);
         GAME.checkScore();
         TITLE.hiscore();
@@ -349,7 +361,8 @@ const HERO = {
         else if (grid.y === map.height - 1) connectionIndex = 2;            // south
 
         const nextLevel = parseInt(MAP[GAME.level].connections[connectionIndex], 10);
-        if (nextLevel <= 0) throw new Error(`wrong or not existing connection ${nextLevel}`);
+        //if (nextLevel <= 0) throw new Error(`wrong or not existing connection ${nextLevel}`);
+        if (nextLevel <= 0) DEBUG.halt(`wrong or not existing connection ${nextLevel}`);
 
         GAME.STORE.storeIAM(MAP[GAME.level].map);                           // store old map
         GAME.level = nextLevel;
@@ -379,10 +392,13 @@ const HERO = {
         //console.log("level", level, "new grid", grid);
 
         this.player.setGrid(grid);
-        if (this.mode !== "falling") {
+
+        // modes that needs to be continued after entering new room
+        if (!["swimming", "falling", "jumping"].includes(this.mode)) {
             this.setMode("idle", this.player.sprite.dir);
             this.player.motion.deactivate();
         }
+
         this.player.setMap(MAP[level].map);
 
         //console.error(" new pos:  this.player.sprite.pos", this.player.sprite.pos, "grid", this.player.sprite.pos.toGrid());
@@ -426,10 +442,10 @@ const HERO = {
         this.startWalking(dir);
     },
     handleSwimming(dir) {
-        //console.warn("handleSwimming", dir, "this.player.motion", this.player.motion);
+        console.warn("handleSwimming", dir, "this.player.motion", this.player.motion, "this.facingDir", this.facingDir);
         const mode = "swimming";
-
         if (dir.x !== 0) this.facingDir = dir.x < 0 ? LEFT : RIGHT;
+        console.info("this.facingDir", this.facingDir);
 
         this.setMode(mode, this.facingDir);
         this.player.motion.setType(mode);                                   // no importance, but aligned with mode, just in case                
@@ -477,7 +493,6 @@ const HERO = {
         this.setMode(mode, dir);
         this.player.motion.setType(mode);                           // no importance, but aligned with mode, just in case
         this.player.motion.setVelocity({ x: 0, y: dir.y * speed });
-        //console.log("velocity", this.player.motion.velocity.y);
         this.player.motion.setAcceleration({ x: 0, y: 0 });
         this.player.motion.activate();
     },
@@ -637,7 +652,7 @@ const GAME = {
         ENGINE.GAME.setGameLoop(GAME.run);
         ENGINE.GAME.start(16);
         GAME.extraLife = SCORE.extraLife.clone();
-        GAME.level = 1; //1
+        GAME.level = 5; //1
         GAME.lives = 3; //3
         GAME.score = 0;
         GAME.goldCount = GAME.countGold();
@@ -688,7 +703,8 @@ const GAME = {
         GAME.resetToInitial();
         SPAWN_TOOLS_2D.spawn(level);
         HERO.dead = false;
-        HERO.setMode("idle", RIGHT);
+        HERO.killedBy = null;
+        //HERO.setMode("idle", RIGHT);                                //moved to level start ?? in construct
         HERO.playerSetUp();
         GAME.setCameraView();
         GAME.setWorld();
@@ -817,6 +833,10 @@ const GAME = {
 
             for (const entity of ENEMY2D.POOL) {
                 DEBUG.displaySpriteArea(entity.sprite.area);
+            }
+
+            for (const carrier of CARRIER2D.POOL) {
+                DEBUG.displayGridBoundaries(carrier.grid);
             }
         }
     },

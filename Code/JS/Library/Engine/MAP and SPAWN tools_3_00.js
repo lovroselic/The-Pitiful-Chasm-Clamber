@@ -85,7 +85,7 @@ const MAP_TOOLS = {
         if (this.INI.FOG && !this.MAP[level].map.rebuilt) {
             GA.massSet(MAPDICT.FOG);
         }
-        const start = JSON.parse(this.MAP[level].start) || null;
+        const start = JSON.parse(this.MAP[level].start ?? "null");
         if (start) {
             this.MAP[level].map.startPosition = new Pointer_3DGrid(GA.indexToGrid(start[0]), Vector.fromInt(start[1]));
             this.MAP[level].map.start = start;
@@ -507,7 +507,8 @@ const SPAWN_TOOLS_2D = {
         for (const C of map.carriers) {
             const grid = GA.indexToGrid(C[0]);
             const type = SWINGING_ROPE_TYPE[C[1]];
-            const carrier = new $2D_SwingingRope(grid, type, LEFT, useVieport);
+            const dir = Vector.fromInt(C[2]);
+            const carrier = new $2D_SwingingRope(grid, type, dir, useVieport);
             CARRIER2D.add(carrier);
         }
         console.log("CARRIER2D", CARRIER2D);

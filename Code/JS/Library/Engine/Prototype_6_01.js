@@ -855,6 +855,10 @@ class Grid extends MasterGridClass {
         } else y = this.y;
         return new Grid(x, y);
     }
+    toArea() {
+        const TL = GRID.gridToCoord(this);
+        return new Area(TL.x, TL.y, ENGINE.INI.GRIDPIX, ENGINE.INI.GRIDPIX);
+    }
 }
 
 /**

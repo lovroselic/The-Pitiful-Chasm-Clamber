@@ -18,7 +18,7 @@ from PIL import Image, UnidentifiedImageError
 
 INPUT_FILENAME = (
     r"C:\Users\Uporabnik\Documents\JS\The Pitiful Chasm Clamber"
-    r"\Assets\Graphics\SheetSequences\Cat.png"
+    r"\Assets\Graphics\SheetSequences\Bat.png"
 )
 
 FRAME_WIDTH = 64

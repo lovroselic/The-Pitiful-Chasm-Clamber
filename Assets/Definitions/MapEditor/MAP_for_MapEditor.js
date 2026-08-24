@@ -52,11 +52,11 @@ const MASK_DECALS = [
     "GnarlyTree_243", "GnarlyTree_244", "GnarlyTree_245", "GnarlyTree_246",
     "Water64_247", "Water64_248", "Water64_249", "Water64_250", "Water64_251",
     "SkyGradient",
-    //
     "Flower1", "Fungi1", "Fungi101", "Fungi101103", "Fungi101123", "Fungi1011231111", "Fungi1011232", "Fungi1011232aa", "Fungi10113213122", "Fungi101543", "Fungi102", "Fungi1023",
     "Fungi104", "Fungi121", "Fungi2", "Fungi201", "Fungi22221", "Fungus1", "Fungus3", "Fungus4", "GreenWallFungi1", "Lichen", "Moss1",
     "Moss2", "Moss432", "Mushroom_233", "Mushroom_234", "Mushroom_235", "Mushroom_236", "Mushroom_237", "Mushroom_238", "Mushroom_239", "Mushroom_240", "Mushroom_242", "Plant1",
-    "Plant2", "SideFungus", "Spider126", "Spider129", "Spider4", "Spider5", "WallFungi1", "WallFungi2", "WallFungi3", "WallFungi4", "WallFungi5", "YellowPlant1"
+    "Plant2", "SideFungus", "Spider126", "Spider129", "Spider4", "Spider5", "WallFungi1", "WallFungi2", "WallFungi3", "WallFungi4", "WallFungi5", "YellowPlant1",
+    "Bush_300", "Bush_301", "Bush_302", "Bush_303", "Bush_304", "Bush_305"
 
 ];
 

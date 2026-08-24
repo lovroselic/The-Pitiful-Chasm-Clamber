@@ -36,6 +36,10 @@ const DEBUG = {
     displaySpriteArea(area, layer = "fill") {
         ENGINE.drawArea(LAYER[layer], area, "#FF0000");
     },
+    displayGridBoundaries(grid, layer = "fill") {
+        const area = grid.toArea();
+         ENGINE.drawArea(LAYER[layer], area, "#2e15c0");
+    },
     halt(message = "HERE") {
         ENGINE.GAME.stopAnimation = true;
         throw new Error(message);

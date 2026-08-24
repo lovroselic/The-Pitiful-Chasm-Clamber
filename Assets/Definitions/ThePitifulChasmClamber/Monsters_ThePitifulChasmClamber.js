@@ -53,7 +53,23 @@ const MONSTER_TYPE = {
         preventRotation: true,
         fly: false,
     },
-
+    Bat: {
+        name: "Bat",
+        category: "enemy",
+        assetName: "Bat",
+        w: 64,
+        h: 64,
+        innerH: 40,
+        innerW: 51,
+        dirRef: RIGHT,
+        animate: true,
+        fps: 60,
+        speed: 2.5 * 64,
+        behaviourArguments: [Infinity, ["wanderer1D"], 10000, ["wanderer1D"]],
+        preventRotation: true,
+        fly: true,
+        flyOffsetY: 40,
+    },
 };
 
 const SWINGING_ROPE_TYPE = {
