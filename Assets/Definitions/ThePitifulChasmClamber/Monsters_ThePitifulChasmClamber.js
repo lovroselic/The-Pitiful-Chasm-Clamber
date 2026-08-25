@@ -132,6 +132,7 @@ const SWINGING_ROPE_TYPE = {
         animate: false,
         static: true,
         preventRotation: true,
+        constructor: $2D_SwingingRope,
     }
 };
 

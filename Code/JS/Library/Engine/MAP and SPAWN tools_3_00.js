@@ -508,7 +508,7 @@ const SPAWN_TOOLS_2D = {
             const grid = GA.indexToGrid(C[0]);
             const type = SWINGING_ROPE_TYPE[C[1]];
             const dir = Vector.fromInt(C[2]);
-            const carrier = new $2D_SwingingRope(grid, type, dir, useVieport);
+            const carrier = new type.constructor(grid, type, dir, useVieport);
             CARRIER2D.add(carrier);
         }
         console.log("CARRIER2D", CARRIER2D);
