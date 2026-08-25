@@ -21,7 +21,7 @@ retests:
 
 DEBUG.FPS = true;
 DEBUG.VERBOSE = true;
-DEBUG._2D_display = true;
+DEBUG._2D_display = false;
 DEBUG.pos_display = true;
 DEBUG.BB_display = true;
 DEBUG.INVINCIBLE = false;
@@ -45,7 +45,7 @@ const INI = {
 };
 
 const PRG = {
-    VERSION: "0.7.3",
+    VERSION: "0.7.4",
     NAME: "The Pitiful Chasm Clamber",
     YEAR: "2026",
     SG: "ThePitifulChasmClamber",
@@ -148,7 +148,7 @@ const HERO = {
          * falling, idle but straight
          */
 
-        DEBUG.calledStack();
+        //DEBUG.calledStack();
         if (mode === this.mode) return;
         this.mode = mode;
         if (this.player) this.player.sprite.fly = false;
@@ -218,7 +218,7 @@ const HERO = {
         }
 
         this.player?.sprite.update(dir);
-        console.warn("set mode", this.mode, "pos", this.player?.sprite.pos, "dir", dir);
+        //console.warn("set mode", this.mode, "pos", this.player?.sprite.pos, "dir", dir);
     },
     concludeAction() {
 

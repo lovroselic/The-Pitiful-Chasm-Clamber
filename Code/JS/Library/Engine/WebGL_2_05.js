@@ -3116,9 +3116,11 @@ class $2D_player extends $2D_Entity {
             const who = IA.unroll(this.moveState.homeGrid)[0] || null;
             if (who) {
                 const entity = ENEMY2D.show(who);
-                const enityArea = entity.sprite.getArea();
-                const playerArea = this.sprite.getArea();
-                if (playerArea.overlap(enityArea)) this.parent.die?.(entity);
+                if (entity) {
+                    const enityArea = entity.sprite.getArea();
+                    const playerArea = this.sprite.getArea();
+                    if (playerArea.overlap(enityArea)) this.parent.die?.(entity);
+                }
             }
         }
     }

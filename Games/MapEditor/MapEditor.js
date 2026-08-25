@@ -627,7 +627,10 @@ const GAME = {
             }
             $("#mask_decal").on("change",
                 () => {
-                    ENGINE.drawRotatedToId("maskdecalcanvas", 0, 0, SPRITE[$("#mask_decal").val()], parseInt($("#mask_rotation").val(), 10) || 0, true, parseInt($("#mask_flip").val(), 10) || 0);
+                    const sprite = SPRITE[$("#mask_decal").val()];
+                    ENGINE.drawRotatedToId("maskdecalcanvas", 0, 0, sprite, parseInt($("#mask_rotation").val(), 10) || 0, true, parseInt($("#mask_flip").val(), 10) || 0);
+                    $("#mask_sprite_width").html(sprite.width);
+                    $("#mask_sprite_heigth").html(sprite.height);
                 });
             $("#mask_decal").trigger("change");
         }

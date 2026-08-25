@@ -29,6 +29,7 @@ const GRID = {
         WALL_COLLISTION_OVERKILL: 1.1,
         COLLISION_STEP: 2,
         MAX_MOTION_SPEED: 3500,
+        MASK_SUPPORTING_MOVEMENT: false,
     },
     collisionBoundingBox(A, B) {
         /**
@@ -507,17 +508,19 @@ const GRID = {
                 case false: return { hit: true, type: "outOfBounds", contact: T.position, };            // out ouf bounds
 
                 case MAPDICT.EMPTY:
-                    if (T.app.includes("climbing") && T.cat === "current") return { hit: true, type: T.type, contact: T.position, };    // don't 'climb' over empty grids
-                    if (T.app.includes("swimming") && T.cat === "current") return { hit: true, type: T.type, contact: T.position, };    // don't 'swim' over empty grids
-                    if (T.cat === "bottom_support") return { hit: true, type: "unsupported", contact: test.side.position, };            // no support, falling from a side candidate
+                    if (T.app.includes("climbing") && T.cat === "current") return { hit: true, type: T.type, contact: T.position, };                                            // don't 'climb' over empty grids
+                    if (T.app.includes("swimming") && T.cat === "current") return { hit: true, type: T.type, contact: T.position, };                                            // don't 'swim' over empty grids
+                    if (T.cat === "bottom_support") return { hit: true, type: "unsupported", contact: test.side.position, };                                                    // no support, falling from a side candidate
                     continue;
                 case MAPDICT.STAIR + MAPDICT.RESERVED: continue;
                 case MAPDICT.STAIR + MAPDICT.MASK + MAPDICT.RESERVED: continue;
                 case MAPDICT.RESERVED: continue;
                 case MAPDICT.MASK:
-                    if (T.cat === "bottom_support") continue;
-                    const result = GRID.checkMaskedGrid(T, maskdata);
-                    if (result.hit) return result;
+                    if (T.cat === "bottom_support" && !GRID.SETTING.MASK_SUPPORTING_MOVEMENT) return { hit: true, type: "unsupported", contact: test.side.position, };          // sam as falling when walking, just walking over unsupporting mask
+                    if (GRID.SETTING.MASK_SUPPORTING_MOVEMENT) {
+                        const result = GRID.checkMaskedGrid(T, maskdata);
+                        if (result.hit) return result;
+                    }
                     continue;
                 case MAPDICT.WALL:
                     if (T.cat === "bottom_support") continue;

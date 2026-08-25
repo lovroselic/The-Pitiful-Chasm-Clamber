@@ -57,7 +57,11 @@ const MASK_DECALS = [
     "Fungi104", "Fungi121", "Fungi2", "Fungi201", "Fungi22221", "Fungus1", "Fungus3", "Fungus4", "GreenWallFungi1", "Lichen", "Moss1",
     "Moss2", "Moss432", "Mushroom_233", "Mushroom_234", "Mushroom_235", "Mushroom_236", "Mushroom_237", "Mushroom_238", "Mushroom_239", "Mushroom_240", "Mushroom_242", "Plant1",
     "Plant2", "SideFungus", "Spider126", "Spider129", "Spider4", "Spider5", "WallFungi1", "WallFungi2", "WallFungi3", "WallFungi4", "WallFungi5", "YellowPlant1",
-    "Bush_300", "Bush_301", "Bush_302", "Bush_303", "Bush_304", "Bush_305"
+    "Bush_300", "Bush_301", "Bush_302", "Bush_303", "Bush_304", "Bush_305",
+    "Amphor1", "Amphor2", "Amphor3", "Fern1", "Fern2", "Flowers21", "Flowers22", "Log1", "Log13", "Log2", "Log4", "OldSkull",
+    "Palm1", "Palm2", "Palm3", "Palm4", "Pot1", "Pot2", "Pot3", "Rock1", "Rock2", "ScaryTree1", "ScaryTree18", "ScaryTree2",
+    "ScaryTree3", "ScaryTree4", "ScaryTree5", "ScaryTree6", "ScaryTree7", "SpiderWeb1", "SpiderWeb2", "Stalac1", "Stalac2", "Stalac3", "Trunk1", "Trunk2",
+    "Trunk3", "Trunk4", "Vines1", "Vines2", "Vines3", "Vines4", "Vines5", "Vines6"
 
 ];
 
