@@ -2949,6 +2949,7 @@ class $2D_Entity {
     setDistanceFromNodeMap(nodemap, prop = "distance") {
         let gridPosition = this.moveState.homeGrid;
         //console.info("set distance from nodemap", nodemap, "grid", gridPosition);
+        if (!nodemap[gridPosition.x][gridPosition.y]) DEBUG.halt(`out of nodemap ${gridPosition.x}, ${gridPosition.y}`);
 
         let distance = nodemap[gridPosition.x][gridPosition.y].distance;
         if (distance >= 0 && distance < Infinity) {

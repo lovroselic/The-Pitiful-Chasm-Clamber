@@ -70,6 +70,23 @@ const MONSTER_TYPE = {
         fly: true,
         flyOffsetY: 40,
     },
+    Shark: {
+        name: "Shark",
+        category: "enemy",
+        assetName: "Shark",
+        w: 64,
+        h: 64,
+        innerH: 30,
+        innerW: 64,
+        dirRef: RIGHT,
+        animate: true,
+        fps: 60,
+        speed: 3.0 * 64,
+        behaviourArguments: [Infinity, ["wanderer1D"], 10000, ["wanderer1D"]],
+        preventRotation: true,
+        fly: true,
+        flyOffsetY: 0,
+    },
 };
 
 const SWINGING_ROPE_TYPE = {

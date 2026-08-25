@@ -1184,6 +1184,7 @@ const GAME = {
             case "monster":
                 switch (currentValue) {
                     case MAPDICT.EMPTY:
+                    case MAPDICT.WATER:
                         let monsterValue = $("#monster_type")[0].value;
                         dir = GAME.getSelectedDir();
                         dirIndex = dir.toInt();

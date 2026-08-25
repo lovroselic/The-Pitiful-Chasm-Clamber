@@ -21,7 +21,7 @@ retests:
 
 DEBUG.FPS = true;
 DEBUG.VERBOSE = true;
-DEBUG._2D_display = false;
+DEBUG._2D_display = true;
 DEBUG.pos_display = true;
 DEBUG.BB_display = true;
 DEBUG.INVINCIBLE = false;
@@ -30,9 +30,9 @@ DEBUG.max17 = false;
 
 const INI = {
     SCREEN_BORDER: 64,
-    WALKING_SPEED: 64 * 1.75,
+    WALKING_SPEED: 64 * 2.0,
     CLIMBING_SPEED: 64 * 1.5,
-    SWIMMING_SPEED: 64 * 1.5,
+    SWIMMING_SPEED: 64 * 2.0,
     RELEASE_JUMP_SPEED: 64 * 2.0, //2.0
     TEXT_SIZE: 13,
     JUMP_SPEED: 64 * 4.0,                       // converts charged power into pixels/second
@@ -45,7 +45,7 @@ const INI = {
 };
 
 const PRG = {
-    VERSION: "0.7.2",
+    VERSION: "0.7.3",
     NAME: "The Pitiful Chasm Clamber",
     YEAR: "2026",
     SG: "ThePitifulChasmClamber",
@@ -445,7 +445,7 @@ const HERO = {
         console.warn("handleSwimming", dir, "this.player.motion", this.player.motion, "this.facingDir", this.facingDir);
         const mode = "swimming";
         if (dir.x !== 0) this.facingDir = dir.x < 0 ? LEFT : RIGHT;
-        console.info("this.facingDir", this.facingDir);
+        //console.info("this.facingDir", this.facingDir);
 
         this.setMode(mode, this.facingDir);
         this.player.motion.setType(mode);                                   // no importance, but aligned with mode, just in case                
@@ -528,7 +528,10 @@ const HERO = {
         const power = speed / INI.JUMP_SPEED;
         const mode = "jumping";
 
-        this.setMode(mode, dir);
+        let referenceDir = dir;
+        if (dir.x === 0) referenceDir = this.player.sprite.dir;             // previous dir
+
+        this.setMode(mode, referenceDir);
         this.player.motion.setType(mode);
         this.player.motion.setVelocity({ x: dir.x * INI.JUMP_X_SPEED * power, y: -INI.JUMP_Y_SPEED * power });
         this.player.motion.setAcceleration({ x: 0, y: INI.JUMP_GRAVITY });

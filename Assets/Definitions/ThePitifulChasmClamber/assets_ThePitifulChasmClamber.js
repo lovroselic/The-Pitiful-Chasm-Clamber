@@ -21,6 +21,7 @@ LoadSheetSequences = [
     { srcName: "DinoDragon.png", count: 15, name: "DinoDragon", trim: false },
     { srcName: "Cat.png", count: 17, name: "Cat", trim: false },
     { srcName: "Bat.png", count: 21, name: "Bat", trim: false },
+    { srcName: "Shark.png", count: 8, name: "Shark", trim: false },
 
     //borders
     { srcName: "MossyBorders.png", count: 5, name: "MossyBorders", trim: false },
@@ -175,6 +176,14 @@ LoadSprites = [
     { srcName: "MaskElements/Triangle.png", name: "Triangle" },
     { srcName: "MaskElements/highLedge2.png", name: "highLedge2" },
     { srcName: "MaskElements/highLedge3.png", name: "highLedge3" },
+    { srcName: "MaskElements/Rough1.png", name: "Rough1" },
+    { srcName: "MaskElements/Rough2.png", name: "Rough2" },
+    { srcName: "MaskElements/Rough3.png", name: "Rough3" },
+    { srcName: "MaskElements/Rough4.png", name: "Rough4" },
+    { srcName: "MaskElements/RoughCorner.png", name: "RoughCorner" },
+    { srcName: "MaskElements/RoughHalfCorner.png", name: "RoughHalfCorner" },
+    { srcName: "MaskElements/RoughThirdCorner.png", name: "RoughThirdCorner" },
+    { srcName: "MaskElements/RoughThirdToHalf.png", name: "RoughThirdToHalf" },
 
 ];
 
