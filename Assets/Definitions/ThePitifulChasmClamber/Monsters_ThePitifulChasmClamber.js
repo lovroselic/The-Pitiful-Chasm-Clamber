@@ -133,6 +133,19 @@ const SWINGING_ROPE_TYPE = {
         static: true,
         preventRotation: true,
         constructor: $2D_SwingingRope,
+    },
+    Baloon: {
+        swingLength: 1.5,        // grids 2.5
+        spriteName: "Rope",
+        parentSpriteName: "Baloon",
+        w: 5,
+        dirRef: DOWN,
+        animate: false,
+        static: false,
+        preventRotation: true,
+        constructor: $2D_Traveller,
+        behaviourArguments: [Infinity, ["wanderer1D"], 10000, ["wanderer1D"]],
+        speed: 2.0 * 64,
     }
 };
 
@@ -148,5 +161,41 @@ const GOLD_ITEM_TYPE = {
         spriteName: "GoldPrincess",
         category: "gold",
         score: 100,
-    }
+    },
+    SilverPrincess: {
+        name: "SilverPrincess",
+        spriteName: "SilverPrincess",
+        category: "gold",
+        score: 50,
+    },
+    BronzePrincess: {
+        name: "BronzePrincess",
+        spriteName: "BronzePrincess",
+        category: "gold",
+        score: 25,
+    },
+    Diamond: {
+        name: "Diamond",
+        spriteName: "Diamond",
+        category: "gold",
+        score: 15,
+    },
+    Emerald: {
+        name: "Emerald",
+        spriteName: "Emerald",
+        category: "gold",
+        score: 10,
+    },
+    Ruby: {
+        name: "Ruby",
+        spriteName: "Ruby",
+        category: "gold",
+        score: 5,
+    },
+    Amethyst: {
+        name: "Amethyst",
+        spriteName: "Amethyst",
+        category: "gold",
+        score: 2,
+    },
 };

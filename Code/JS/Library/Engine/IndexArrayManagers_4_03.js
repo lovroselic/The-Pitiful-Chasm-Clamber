@@ -458,7 +458,7 @@ class Enemy2D extends IAM {
     }
     resetToInitial() {
         for (const entity of this.POOL) {
-            if (entity) entity.resetToInitial();[]
+            if (entity) entity.resetToInitial();[];
         }
     }
 }
@@ -1263,6 +1263,12 @@ class Carrier2D extends IAM {
     constructor() {
         super();
         this.IA = "carrierIA";
+    }
+    poolToIA(IA) {
+        for (const obj of this.POOL) {
+            if (!obj) continue;
+            if (!IA.has(obj.grid, obj.id)) IA.next(obj.grid, obj.id);
+        }
     }
     manage(lapsedTime) {
         let map = this.map;

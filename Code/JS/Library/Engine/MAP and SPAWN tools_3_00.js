@@ -508,10 +508,13 @@ const SPAWN_TOOLS_2D = {
             const grid = GA.indexToGrid(C[0]);
             const type = SWINGING_ROPE_TYPE[C[1]];
             const dir = Vector.fromInt(C[2]);
-            const carrier = new type.constructor(grid, type, dir, useVieport);
+            console.log("dir", dir);
+            const carrier = new type.constructor(grid, type, dir, GA, useVieport);
+            console.warn("carrier", carrier);
             CARRIER2D.add(carrier);
         }
         console.log("CARRIER2D", CARRIER2D);
+        //DEBUG.halt();
     },
     gold(map, GA, useVieport) {
         for (const G of map.gold) {

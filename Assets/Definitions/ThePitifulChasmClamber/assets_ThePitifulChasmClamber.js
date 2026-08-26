@@ -35,6 +35,8 @@ LoadFonts = [
     { srcName: "Chasm.ttf", name: "Chasm" },
 ];
 
+const MAX_LEVEL = 8;
+
 LoadTextures = [
     { srcName: "Title/PCC_title_768.webp", name: "Title" },
 
@@ -44,14 +46,15 @@ LoadTextures = [
     { srcName: "Wall/DarkRedBricks_128.jpg", name: "DarkRedBricks_128" },
     { srcName: "Wall/DatkMossy_128.jpg", name: "DatkMossy_128" },
 
-    //levels
-    { srcName: "Mask/Level_1.webp", name: "Level_1" },
-    { srcName: "Mask/Level_2.webp", name: "Level_2" },
-    { srcName: "Mask/Level_3.webp", name: "Level_3" },
-    { srcName: "Mask/Level_4.webp", name: "Level_4" },
-    { srcName: "Mask/Level_5.webp", name: "Level_5" },
-    { srcName: "Mask/Level_6.webp", name: "Level_6" },
-    { srcName: "Mask/Level_7.webp", name: "Level_7" },
+    // Levels
+    ...Array.from({ length: MAX_LEVEL }, (_, index) => {
+        const name = `Level_${index + 1}`;
+
+        return {
+            srcName: `Mask/${name}.webp`,
+            name,
+        };
+    }),
 ];
 
 LoadAudio = [
@@ -74,6 +77,14 @@ LoadSprites = [
     { srcName: "Items/Rope.webp", name: "Rope" },
     { srcName: "Items/GoldIngot.png", name: "Gold" },
     { srcName: "Items/GoldPrincess.png", name: "GoldPrincess" },
+    { srcName: "Items/Amethyst_gold.png", name: "Amethyst" },
+    { srcName: "Items/BronzePrincess.png", name: "BronzePrincess" },
+    { srcName: "Items/Diamond_gold.png", name: "Diamond" },
+    { srcName: "Items/Emerald_gold.png", name: "Emerald" },
+    { srcName: "Items/Ruby_gold.png", name: "Ruby" },
+    { srcName: "Items/SilverPrincess.png", name: "SilverPrincess" },
+    { srcName: "Items/Baloon.png", name: "Baloon" },
+
     //UI
     { srcName: "UI/PrincessLives64.png", name: "Lives" },
     //

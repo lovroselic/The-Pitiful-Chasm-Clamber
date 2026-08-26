@@ -2722,6 +2722,8 @@ class $2D_Sprite {
         this.preventRotation = false;
         this.innerH = ENGINE.INI.GRIDPIX;
         this.innerW = ENGINE.INI.GRIDPIX;
+        this.w = ENGINE.INI.GRIDPIX;
+        this.h = ENGINE.INI.GRIDPIX;
         this.fly = false;
         this.flyOffsetY = 0;                                       // default
         this.flyOffsetX = 0;
@@ -2915,8 +2917,11 @@ class $2D_Entity {
     }
     draw(gl, program, spriteQuad, texture = this.sprite.getSpriteTexture()) {
         const modelMatrix = this.sprite.updateModelMatrix(this.useViewport);
+        this._drawArrays(gl, program, spriteQuad, texture, modelMatrix, this.sprite.tint);
+    }
+    _drawArrays(gl, program, spriteQuad, texture, modelMatrix, tint) {
         gl.uniformMatrix4fv(program.uniformLocations.modelMatrix, false, modelMatrix);
-        gl.uniform4fv(program.uniformLocations.tint, this.sprite.tint);
+        gl.uniform4fv(program.uniformLocations.tint, tint);
         gl.uniform4fv(program.uniformLocations.uvRect, [0, 0, 1, 1]);                           // frames are presplit, keep this for future compatibility, like texture atlases
         gl.activeTexture(gl.TEXTURE0);
         gl.bindTexture(gl.TEXTURE_2D, texture);
@@ -3155,9 +3160,7 @@ class $2D_Grid_Cycling_Entity_Part {
         this.moveState = new MoveState(grid, dir, GA);
         this.GA = GA;
         if (this.sprite.speed) this.speed = this.sprite.speed;  // legacy compatibility
-        this.draw = $2D_Entity.prototype.draw;
         this.dir = dir;
-
         this.canVanish = false;
         this.canBlink = false;
         this.perish = false;
@@ -3165,6 +3168,9 @@ class $2D_Grid_Cycling_Entity_Part {
         ImportTypeToConstructor(this, type);
         if (this.vanishTimer) this.vanishTimerSetting = this.vanishTimer;
         if (this.blinkTimer) this.blinkTimerSetting = this.blinkTimer;
+
+        /*  this.draw = $2D_Entity.prototype.draw;
+         this._drawArrays = $2D_Entity.prototype._drawArrays; */
     }
     update(lapsedTime) {
         const IA = this.parent.map.enemyIA;
@@ -3233,18 +3239,147 @@ class $2D_Grid_Cycling_Entity_Part {
     }
 }
 
+Object.assign($2D_Grid_Cycling_Entity_Part.prototype, {
+    draw: $2D_Entity.prototype.draw,
+    _drawArrays: $2D_Entity.prototype._drawArrays,
+});
+
 class FloorItem2D {
     constructor(grid, type, useViewport = false) {
         this.grid = grid;                                   // vanilla 2d Grid()
         this.useViewport = useViewport;
         ImportTypeToConstructor(this, type);
         this.sprite = new $2D_Static_Sprite(this.grid, this.spriteName);
-        this.draw = $2D_Entity.prototype.draw;
+
+        /* this.draw = $2D_Entity.prototype.draw;
+        this._drawArrays = $2D_Entity.prototype._drawArrays; */
     }
 }
 
+Object.assign(FloorItem2D.prototype, {
+    draw: $2D_Entity.prototype.draw,
+    _drawArrays: $2D_Entity.prototype._drawArrays,
+});
+
+
+class $2D_Traveller {
+    constructor(balloonGrid, type, dir, GA, useViewport = false) {
+        const hookGrid = balloonGrid.add(DOWN);                              // The hook is at the bottom of the balloon.
+        this.hookPos = GRID.gridToTopCenterPX(hookGrid);
+
+        ImportTypeToConstructor(this, type);
+        this.ropeLengthPX = this.swingLength * ENGINE.INI.GRIDPIX;
+        this.updateGrip();
+
+        this.GA = GA;
+        this.useViewport = useViewport;
+
+        const balloonType = {
+            ...type,
+            spriteName: type.parentSpriteName,
+            w: ENGINE.INI.GRIDPIX,
+            h: ENGINE.INI.GRIDPIX,
+        };
+
+        const ropeType = {
+            ...type,
+            h: this.ropeLengthPX,
+        };
+
+        this.moveState = new MoveState(balloonGrid, dir, GA);               //Movement belongs to the grid-centred balloon.
+        this.sprite = new $2D_Sprite(balloonGrid, dir, balloonType);        // Main, moving sprite: balloon.
+        this.actor = this.sprite;
+        this.ropeSprite = new $2D_Sprite(hookGrid, DOWN, ropeType);    // Secondary, derived sprite: rope.
+
+        this.dirStack = [];
+        if (this.sprite.speed) this.speed = this.sprite.speed;
+        this.motion = new Motion2D();
+
+        if (!this.static && this.behaviourArguments) this.behaviour = new Behaviour(...this.behaviourArguments);
+        this.gripVelocity = new Point(dir.x * this.speed, 0);
+        this.updateSpriteTransform();
+    }
+
+    updateSpriteTransform() {
+        this.updateMainSpriteTransform();
+        this.updateRopeSpriteTransform();
+    }
+
+    updateMainSpriteTransform() {
+        /*
+            Position is owned by translateMove2D().
+            We only update derived sprite data here.
+        */
+        this.sprite.rotation = 0;
+        this.sprite.getArea();
+
+        if (this.useViewport) ENGINE.VIEWPORT.alignToPosition(this.sprite.pos, this.sprite.vPos);
+    }
+
+    updateRopeSpriteTransform() {
+        const dx = this.gripPos.x - this.hookPos.x;
+        const dy = this.gripPos.y - this.hookPos.y;
+
+        this.ropeSprite.pos.x = this.hookPos.x + dx / 2;
+        this.ropeSprite.pos.y = this.hookPos.y + dy / 2;
+
+        this.ropeSprite.rotation = 0;
+        this.ropeSprite.getArea();
+
+        if (this.useViewport) ENGINE.VIEWPORT.alignToPosition(this.ropeSprite.pos, this.ropeSprite.vPos);
+    }
+
+    updateHook() {
+        this.hookPos.x = this.sprite.pos.x;                                                 // we updated baloon and hook from translated sprite position
+        this.hookPos.y = this.sprite.pos.y + this.sprite.h / 2;                             // Bottom centre of the balloon.
+    }
+
+    updateGrip() {
+        this.gripPos = new Point(this.hookPos.x, this.hookPos.y + this.ropeLengthPX);       // calc grip from hook
+        this.gripGrid = this.gripPos.toGrid();
+        this.grid = this.gripGrid;                                                          // Carrier2D indexes the grip.
+    }
+
+    update(lapsedTime) {
+        if (this.moveState.moving) {
+            this.continueMove(lapsedTime);
+        } else {
+            if (!this.hasStack()) {
+                this.dirStack = AI[this.behaviour.strategy](this, { player: null, block: [], });
+                this.makeMove();
+                this.gripVelocity.x = this.moveState.dir.x * this.speed;
+            }
+        }
+
+        // Everything derives from the moved balloon.
+        this.updateHook();
+        this.updateGrip();
+        this.updateSpriteTransform();
+    }
+
+    draw(gl, program, spriteQuad) {
+        // Rope first, so its upper end is behind the balloon.
+        const ropeModelMatrix = this.ropeSprite.updateModelMatrix(this.useViewport);
+        const ropeTexture = this.ropeSprite.getSpriteTexture();
+        this._drawArrays(gl, program, spriteQuad, ropeTexture, ropeModelMatrix, this.ropeSprite.tint);
+
+        // Main balloon sprite.
+        const balloonModelMatrix = this.sprite.updateModelMatrix(this.useViewport);
+        const balloonTexture = this.sprite.getSpriteTexture();
+        this._drawArrays(gl, program, spriteQuad, balloonTexture, balloonModelMatrix, this.sprite.tint);
+    }
+}
+
+Object.assign($2D_Traveller.prototype, {
+    startMoving: $2D_Entity.prototype.startMoving,
+    continueMove: $2D_Entity.prototype.continueMove,
+    makeMove: $2D_Entity.prototype.makeMove,
+    hasStack: $2D_Entity.prototype.hasStack,
+    _drawArrays: $2D_Entity.prototype._drawArrays,
+});
+
 class $2D_SwingingRope {
-    constructor(hookGrid, type, startDir = LEFT, useViewport = false) {
+    constructor(hookGrid, type, startDir, GA, useViewport = false) {
         this.hookGrid = hookGrid;
         this.hookPos = GRID.gridToTopCenterPX(hookGrid);
         ImportTypeToConstructor(this, type);
@@ -3274,7 +3409,9 @@ class $2D_SwingingRope {
         this.sprite = new $2D_Sprite(hookGrid, this.dirRef, type);
         this.actor = this.sprite;
         this.updateSpriteTransform();
-        this.draw = $2D_Entity.prototype.draw;
+
+        /* this.draw = $2D_Entity.prototype.draw;
+        this._drawArrays = $2D_Entity.prototype._drawArrays; */
     }
     updateSpriteTransform() {
         const dx = this.gripPos.x - this.hookPos.x;
@@ -3312,6 +3449,11 @@ class $2D_SwingingRope {
         this.grid = this.gripGrid;
     }
 }
+
+Object.assign($2D_SwingingRope.prototype, {
+    draw: $2D_Entity.prototype.draw,
+    _drawArrays: $2D_Entity.prototype._drawArrays,
+});
 
 class $3D_player {
     constructor(position, dir, map = null, type = null, size = null, parent = HERO) {

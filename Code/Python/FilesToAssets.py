@@ -26,9 +26,9 @@ Directory = 'C:/Users/Uporabnik/Downloads/Converted_AI_pic'
 # Directory = 'C:/Users/Uporabnik/Downloads/Lair'
 
 # Prefix = ''
-# Prefix = 'Items/'
+Prefix = 'Items/'
 # Prefix = 'MaskElements/'
-Prefix = 'MaskDecals/'
+# Prefix = 'MaskDecals/'
 # Prefix = 'Wall/'
 # Prefix = "Lights/"
 # Prefix = "Lairs/"
