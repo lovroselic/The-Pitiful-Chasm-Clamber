@@ -45,7 +45,7 @@ const INI = {
 };
 
 const PRG = {
-    VERSION: "0.8.0",
+    VERSION: "0.8.1",
     NAME: "The Pitiful Chasm Clamber",
     YEAR: "2026",
     SG: "ThePitifulChasmClamber",
@@ -413,6 +413,7 @@ const HERO = {
         this.player.motion.deactivate();
     },
     handleDuck() {
+        if (!["idle", "walking"].includes(this.mode)) return;
         this.setMode("ducking", this.player.sprite.dir);
     },
     handleJump(dir) {
@@ -655,7 +656,7 @@ const GAME = {
         ENGINE.GAME.setGameLoop(GAME.run);
         ENGINE.GAME.start(16);
         GAME.extraLife = SCORE.extraLife.clone();
-        GAME.level = 8; //1
+        GAME.level = 10; //1
         GAME.lives = 3; //3
         GAME.score = 0;
         GAME.goldCount = GAME.countGold();
