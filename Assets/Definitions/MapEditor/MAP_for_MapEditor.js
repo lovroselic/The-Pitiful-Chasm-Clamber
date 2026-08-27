@@ -8,6 +8,9 @@
 /** textures */
 const TEXTURE_LIST = [
     "BrownishMossy_128", "DarkRedBricks_128", "DatkMossy_128", "BrownishMossy_64",
+    "Wall128_306", "Wall128_307", "Wall128_308", "Wall128_309", "Wall128_310", "Wall128_311", "Wall128_312", "Wall128_313", "Wall128_314", "Wall128_315", "Wall128_316", "Wall128_317",
+    "Wall128_318", "Wall128_319", "Wall128_320", "Wall128_321", "Wall128_322", "Wall128_323", "Wall128_324", "Wall128_325", "Wall128_326", "Wall128_327", "Wall128_328", "Wall128_329",
+    "Wall128_330", "Wall128_331", "Wall128_332", "Wall128_333", "Wall128_334", "Wall128_335", "Wall128_336"
 ].sort();
 
 /** Decals */

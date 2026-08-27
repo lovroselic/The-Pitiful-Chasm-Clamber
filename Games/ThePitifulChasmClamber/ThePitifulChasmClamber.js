@@ -37,15 +37,40 @@ const INI = {
     TEXT_SIZE: 13,
     JUMP_SPEED: 64 * 4.0,                       // converts charged power into pixels/second
     JUMP_X_SPEED: 64 * 4.0 * Math.SQRT1_2,      // 181.02 px/s — unchanged
-    JUMP_Y_SPEED: 265,                          // gives approximately 48 px height
+    JUMP_Y_SPEED: 276,                          // 265 gives approximately 48 px height, 276 -> 50px
     LADDER_EXIT: 64 * 2.0,                      // converts charged power into pixels/second
     SIDE_DRIFT: 64 * 0.25,
     GRAVITY: 500,                               // pixels/second² 500
-    JUMP_GRAVITY: 732,                        // preserves existing airtime/range
+    JUMP_GRAVITY: 762,                          // preserves existing airtime/range: 732 for 48px, 762 for 50px
 };
 
+/*
+ * Projectile formulas, assuming take-off and landing at the same height:
+ *
+ * Maximum height:     H = Vy² / (2G)
+ * Total airtime:      T = 2Vy / G
+ * Horizontal range:   R = Vx * T
+ *
+ * To change the maximum height while preserving airtime and horizontal range:
+ *
+ * oldHeight = oldVy² / (2 * oldG)
+ * scale     = targetHeight / oldHeight
+ * newVy     = oldVy * scale
+ * newG      = oldG  * scale
+ *
+ * Scaling Vy and G equally preserves Vy / G, and therefore preserves airtime.
+ *
+ * Current calculation:
+ * oldHeight = 265² / (2 * 732) = 47.968 px
+ * scale     = 50 / 47.968      = 1.04236
+ * newVy     = 265 * 1.04236    = 276.226 px/s
+ * newG      = 732 * 1.04236    = 763.010 px/s²
+ *
+ * Practical rounded values: Vy = 276, G = 762
+ */
+
 const PRG = {
-    VERSION: "0.8.1",
+    VERSION: "0.8.2",
     NAME: "The Pitiful Chasm Clamber",
     YEAR: "2026",
     SG: "ThePitifulChasmClamber",
@@ -656,7 +681,7 @@ const GAME = {
         ENGINE.GAME.setGameLoop(GAME.run);
         ENGINE.GAME.start(16);
         GAME.extraLife = SCORE.extraLife.clone();
-        GAME.level = 10; //1
+        GAME.level = 13; //1
         GAME.lives = 3; //3
         GAME.score = 0;
         GAME.goldCount = GAME.countGold();

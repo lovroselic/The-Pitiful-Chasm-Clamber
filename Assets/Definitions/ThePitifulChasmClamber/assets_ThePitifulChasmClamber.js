@@ -35,7 +35,7 @@ LoadFonts = [
     { srcName: "Chasm.ttf", name: "Chasm" },
 ];
 
-const MAX_LEVEL = 10;
+const MAX_LEVEL = 13;
 
 LoadTextures = [
     { srcName: "Title/PCC_title_768.webp", name: "Title" },
@@ -45,6 +45,37 @@ LoadTextures = [
     { srcName: "Wall/BrownishMossy_64.jpg", name: "BrownishMossy_64" },
     { srcName: "Wall/DarkRedBricks_128.jpg", name: "DarkRedBricks_128" },
     { srcName: "Wall/DatkMossy_128.jpg", name: "DatkMossy_128" },
+    { srcName: "Wall/Wall128_306.webp", name: "Wall128_306" },
+    { srcName: "Wall/Wall128_307.webp", name: "Wall128_307" },
+    { srcName: "Wall/Wall128_308.webp", name: "Wall128_308" },
+    { srcName: "Wall/Wall128_309.webp", name: "Wall128_309" },
+    { srcName: "Wall/Wall128_310.webp", name: "Wall128_310" },
+    { srcName: "Wall/Wall128_311.webp", name: "Wall128_311" },
+    { srcName: "Wall/Wall128_312.webp", name: "Wall128_312" },
+    { srcName: "Wall/Wall128_313.webp", name: "Wall128_313" },
+    { srcName: "Wall/Wall128_314.webp", name: "Wall128_314" },
+    { srcName: "Wall/Wall128_315.webp", name: "Wall128_315" },
+    { srcName: "Wall/Wall128_316.webp", name: "Wall128_316" },
+    { srcName: "Wall/Wall128_317.webp", name: "Wall128_317" },
+    { srcName: "Wall/Wall128_318.webp", name: "Wall128_318" },
+    { srcName: "Wall/Wall128_319.webp", name: "Wall128_319" },
+    { srcName: "Wall/Wall128_320.webp", name: "Wall128_320" },
+    { srcName: "Wall/Wall128_321.webp", name: "Wall128_321" },
+    { srcName: "Wall/Wall128_322.webp", name: "Wall128_322" },
+    { srcName: "Wall/Wall128_323.webp", name: "Wall128_323" },
+    { srcName: "Wall/Wall128_324.webp", name: "Wall128_324" },
+    { srcName: "Wall/Wall128_325.webp", name: "Wall128_325" },
+    { srcName: "Wall/Wall128_326.webp", name: "Wall128_326" },
+    { srcName: "Wall/Wall128_327.webp", name: "Wall128_327" },
+    { srcName: "Wall/Wall128_328.webp", name: "Wall128_328" },
+    { srcName: "Wall/Wall128_329.webp", name: "Wall128_329" },
+    { srcName: "Wall/Wall128_330.webp", name: "Wall128_330" },
+    { srcName: "Wall/Wall128_331.webp", name: "Wall128_331" },
+    { srcName: "Wall/Wall128_332.webp", name: "Wall128_332" },
+    { srcName: "Wall/Wall128_333.webp", name: "Wall128_333" },
+    { srcName: "Wall/Wall128_334.webp", name: "Wall128_334" },
+    { srcName: "Wall/Wall128_335.webp", name: "Wall128_335" },
+    { srcName: "Wall/Wall128_336.webp", name: "Wall128_336" },
 
     // Levels
     ...Array.from({ length: MAX_LEVEL }, (_, index) => {
