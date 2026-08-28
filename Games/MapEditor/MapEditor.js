@@ -83,7 +83,7 @@ const $MAP = {
 };
 
 const PRG = {
-    VERSION: "0.22.4",
+    VERSION: "0.22.5",
     NAME: "MapEditor",
     YEAR: "2026",
     CSS: "color: #239AFF;",
@@ -1554,6 +1554,20 @@ const GAME = {
                         $("#error_message").html(`Gold placement not supported on value: ${currentValue}`);
                         return;
                 }
+                break;
+
+            case "item":
+                switch (currentValue) {
+                    case MAPDICT.EMPTY:
+                    case MAPDICT.MASK:
+                        let itemValue = $("#content_type")[0].value;
+                        $MAP.map.items.push(Array(gridIndex, itemValue));
+                        break;
+                    default:
+                        $("#error_message").html(`item placement not supported on value: ${currentValue}`);
+                        return;
+                }
+
                 break;
 
             case 'skill':

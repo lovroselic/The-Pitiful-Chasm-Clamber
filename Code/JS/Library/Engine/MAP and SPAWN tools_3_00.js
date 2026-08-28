@@ -11,7 +11,7 @@ const MAP_TOOLS = {
     CSS: "color: #F9A",
     properties: ['start', 'decals', 'lights', 'gates', 'keys', 'monsters', 'scrolls', 'potions', 'gold', 'skills', 'containers',
         'shrines', 'doors', 'triggers', 'entities', 'objects', 'traps', 'oracles', 'movables', 'trainers', 'interactors', 'lairs',
-        'fires', 'carriers'],
+        'fires', 'carriers', "items"],
     lists: ['monsterList'],
     INI: {
         FOG: true, //true
@@ -480,7 +480,7 @@ const SPAWN_TOOLS_2D = {
             return;
         }
         const GA = map.GA;
-        const methods = ['monsters', 'carriers', 'gold'];
+        const methods = ['monsters', 'carriers', 'gold', 'items'];
 
         //map.TextureExclusion = {};                              //not applicable in 2D // used to exclude world textures, where they are superseeded with custom texture, reset
 
@@ -522,7 +522,15 @@ const SPAWN_TOOLS_2D = {
             const item = new FloorItem2D(grid, GOLD_ITEM_TYPE[G[1]], useVieport);
             FLOOR_OBJECT.add(item);
         }
-        console.error("FLOOR_OBJECT", FLOOR_OBJECT, FLOOR_OBJECT.POOL.length);
+        console.error("FLOOR_OBJECT gold", FLOOR_OBJECT, FLOOR_OBJECT.POOL.length);
+    },
+    items(map, GA, useVieport) {
+        for (const G of map.items) {
+            const grid = GA.indexToGrid(G[0]);
+            const item = new FloorItem2D(grid, eval(G[1]), useVieport);
+            FLOOR_OBJECT.add(item);
+        }
+        console.error("FLOOR_OBJECT item", FLOOR_OBJECT, FLOOR_OBJECT.POOL.length);
     },
 
     /**

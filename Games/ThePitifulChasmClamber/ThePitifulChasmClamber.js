@@ -70,7 +70,7 @@ const INI = {
  */
 
 const PRG = {
-    VERSION: "0.8.2",
+    VERSION: "0.8.3",
     NAME: "The Pitiful Chasm Clamber",
     YEAR: "2026",
     SG: "ThePitifulChasmClamber",
@@ -318,6 +318,11 @@ const HERO = {
                     GAME.goldCount--;                                                   //GAME may end here!!!!!!!!!!!!!!
                     TITLE.stage();
                     if (GAME.goldCount === 0) return GAME.won();
+                    break;
+                case "lives":
+                    GAME.lives++;
+                    TITLE.lives();
+                    AUDIO.ExtraLife.play();
                     break;
                 default: throw new Error(`unsupported category: ${category}`);
             }

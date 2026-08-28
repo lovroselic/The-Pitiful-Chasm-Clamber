@@ -24,6 +24,7 @@ LoadSheetSequences = [
     { srcName: "Shark.png", count: 8, name: "Shark", trim: false },
     { srcName: "Spider.png", count: 30, name: "Spider", trim: false },
     { srcName: "Aligator.png", count: 20, name: "Aligator", trim: false },
+    { srcName: "Basilisk.png", count: 47, name: "Basilisk", trim: false },
 
     //borders
     { srcName: "MossyBorders.png", count: 5, name: "MossyBorders", trim: false },
@@ -94,6 +95,7 @@ LoadAudio = [
     { srcName: "thud.mp3", name: "Thud" },
     { srcName: "Chew.mp3", name: "Chew" },
     { srcName: "Pick up gold.mp3", name: "Pick" },
+    { srcName: "ExtraLife.mp3", name: "ExtraLife" },
 ];
 
 LoadShaders = [

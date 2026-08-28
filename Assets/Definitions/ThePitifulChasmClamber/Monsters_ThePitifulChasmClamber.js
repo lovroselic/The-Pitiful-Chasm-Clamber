@@ -153,6 +153,22 @@ const MONSTER_TYPE = {
         preventRotation: true,
         fly: false,
     },
+    Basilisk: {
+        name: "Basilisk",
+        category: "enemy",
+        assetName: "Basilisk",
+        w: 64,
+        h: 64,
+        innerH: 24,
+        innerW: 60,
+        dirRef: RIGHT,
+        animate: true,
+        fps: 60,
+        speed: 1.7 * 64,
+        behaviourArguments: [Infinity, ["wanderer1D"], 10000, ["wanderer1D"]],
+        preventRotation: true,
+        fly: false,
+    },
 };
 
 const SWINGING_ROPE_TYPE = {
@@ -233,3 +249,17 @@ const GOLD_ITEM_TYPE = {
         score: 2,
     },
 };
+
+const INTERACTION_ITEM = {
+    Lives: {
+        name: "Lives",
+        spriteName: "Lives",
+        category: "lives",
+        w: 22,
+        h: 64,
+    },
+};
+
+//container content
+const CONTAINER_CONTENT_TYPES = { INTERACTION_ITEM };
+const CONTAINER_CONTENT_LIST = stringifyObjectList(CONTAINER_CONTENT_TYPES);

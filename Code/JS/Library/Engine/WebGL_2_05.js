@@ -2865,17 +2865,17 @@ class $2D_Sprite {
 }
 
 class $2D_Static_Sprite {
-    constructor(grid, spriteName, tint = [1, 1, 1, 1]) {
+    constructor(grid, spriteName, w = ENGINE.INI.GRIDPIX, h = ENGINE.INI.GRIDPIX, tint = [1, 1, 1, 1]) {
         this.grid = grid;
         this.spriteName = spriteName;
         this.tint = tint;
         this.setSpriteTexture(spriteName);
         this.pos = GRID.gridToCenterPX(grid);                       // Point
         this.vPos = GRID.gridToCenterPX(grid);                      // Point - viewport support
-        this.innerH = ENGINE.INI.GRIDPIX;
-        this.innerW = ENGINE.INI.GRIDPIX;
-        this.w = ENGINE.INI.GRIDPIX;
-        this.h = ENGINE.INI.GRIDPIX;
+        this.innerH = w;
+        this.innerW = h;
+        this.w = w;
+        this.h = h;
         this.fly = false;
         this.dir = NOWAY;                                           // for scaling purpose in model matrix
         this.rotation = 0;                                          // for model matrix
@@ -3249,10 +3249,7 @@ class FloorItem2D {
         this.grid = grid;                                   // vanilla 2d Grid()
         this.useViewport = useViewport;
         ImportTypeToConstructor(this, type);
-        this.sprite = new $2D_Static_Sprite(this.grid, this.spriteName);
-
-        /* this.draw = $2D_Entity.prototype.draw;
-        this._drawArrays = $2D_Entity.prototype._drawArrays; */
+        this.sprite = new $2D_Static_Sprite(this.grid, this.spriteName, this.w, this.h);
     }
 }
 
