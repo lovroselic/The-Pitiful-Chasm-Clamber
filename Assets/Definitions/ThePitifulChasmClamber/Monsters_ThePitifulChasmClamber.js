@@ -169,6 +169,22 @@ const MONSTER_TYPE = {
         preventRotation: true,
         fly: false,
     },
+     Wolf: {
+        name: "Wolf",
+        category: "enemy",
+        assetName: "Wolf",
+        w: 64,
+        h: 64,
+        innerH: 38,
+        innerW: 64,
+        dirRef: RIGHT,
+        animate: true,
+        fps: 60,
+        speed: 1.7 * 64,
+        behaviourArguments: [Infinity, ["wanderer1D"], 10000, ["wanderer1D"]],
+        preventRotation: true,
+        fly: false,
+    },
 };
 
 const SWINGING_ROPE_TYPE = {

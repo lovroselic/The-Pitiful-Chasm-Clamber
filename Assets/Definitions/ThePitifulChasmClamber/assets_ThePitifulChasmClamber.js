@@ -25,6 +25,7 @@ LoadSheetSequences = [
     { srcName: "Spider.png", count: 30, name: "Spider", trim: false },
     { srcName: "Aligator.png", count: 20, name: "Aligator", trim: false },
     { srcName: "Basilisk.png", count: 47, name: "Basilisk", trim: false },
+    { srcName: "Wolf.png", count: 6, name: "Wolf", trim: false },
 
     //borders
     { srcName: "MossyBorders.png", count: 5, name: "MossyBorders", trim: false },
@@ -36,7 +37,7 @@ LoadFonts = [
     { srcName: "Chasm.ttf", name: "Chasm" },
 ];
 
-const MAX_LEVEL = 13;
+const MAX_LEVEL = 14;
 
 LoadTextures = [
     { srcName: "Title/PCC_title_768.webp", name: "Title" },
