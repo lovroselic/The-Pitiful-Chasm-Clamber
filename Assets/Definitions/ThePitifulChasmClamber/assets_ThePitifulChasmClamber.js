@@ -37,7 +37,7 @@ LoadFonts = [
     { srcName: "Chasm.ttf", name: "Chasm" },
 ];
 
-const MAX_LEVEL = 16;
+const MAX_LEVEL = 17;
 
 LoadTextures = [
     { srcName: "Title/PCC_title_768.webp", name: "Title" },
