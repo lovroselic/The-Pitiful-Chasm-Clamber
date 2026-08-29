@@ -166,14 +166,30 @@ const MAP = {
         connections: '["-1","-1","-1","12"]',
     }
     ,
-14 : {
-name: "No Juice Here",
-data: '{"width":"17","height":"12","map":"BB2AA16BB2AA100BB64ABAA2BB16$"}',
-wall: "Wall128_318",
-start: '[84,3]',
-monsters: '[[69,"Wolf",5]]',
-mask: '[]',
-maskdecals: '[]',
-connections: '["10","13","15","14"]',
-}
+    14: {
+        name: "No Juice Here",
+        data: '{"width":"17","height":"12","map":"BB2AA16BB2AA100BB64ABAA2BB16$"}',
+        wall: "Wall128_318",
+        start: '[84,3]',
+        monsters: '[[69,"Wolf",5],[120,"Cat",5],[171,"Spider",5],[74,"DinoDragon",3],[126,"Bat",3],[178,"Bat",3]]',
+        gold: '[[79,"Gold"],[128,"Amethyst"],[175,"Ruby"]]',
+        mask: '[]',
+        maskdecals: '[[49,0,97,0,64],[171,0,75,0,64],[36,0,3,0,192],[103,0,95,0,64],[185,0,83,0,64],[82,0,37,0,64],[107,0,88,0,128],[163,0,71,0,128],[115,0,103,0,64],[116,0,103,0,64],[41,0,92,0,192],[112,0,58,0,128],[69,0,41,0,64],[178,0,37,0,64],[121,0,44,0,64]]',
+        connections: '["-1","12","-1","16"]',
+    }
+    ,
+    15: {}
+    ,
+    16: {
+        name: "Just Another Day in Paradise",
+        data: '{"width":17,"height":12,"map":"BIAA21BAA12BAA60BAA33BAA4$AA22BB19ABB3ABB7ABB6ABB5AA2"}',
+        wall: "Wall128_318",
+        start: '[84,3]',
+        monsters: '[[81,"Cat",3],[134,"Aligator",3],[177,"Wolf",3],[119,"Bat",5],[171,"Bat",5],[160,"DinoDragonLow",5]]',
+        gold: '[[69,"Emerald"],[81,"Gold"],[133,"Gold"],[185,"Gold"],[171,"Gold"]]',
+        carriers: '[[23,"BasicRope",3]]',
+        mask: '[[23,0,11,0]]',
+        maskdecals: '[[125,0,36,0,64],[83,0,40,0,64],[170,0,43,0,64],[17,0,88,0,256],[103,0,1,0,320],[28,0,91,0,256]]',
+        connections: '["-1","14","-1","17"]',
+    }
 };

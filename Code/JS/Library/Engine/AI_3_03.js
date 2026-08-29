@@ -84,7 +84,7 @@ const AI = {
         //ARG not used
         const gridValue = GRID2D_SIDEVIEW.sum();         // 1D wanderer expects to be used only in 2D games
         const enemyGrid = this.getPosition(enemy);
-        const dir = enemy.parent.map.GA.continueOrFlip(enemy.moveState.dir, enemyGrid, gridValue);
+        const dir = enemy.parent.map.GA.continueOrFlip(enemy.moveState.dir, enemyGrid, gridValue, enemy.fly);
         return [dir];
     },
     immobile(enemy, wasWandering = false) {

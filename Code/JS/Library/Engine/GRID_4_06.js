@@ -1781,9 +1781,12 @@ class GridArray extends Classes([ArrayBasedDataStructure, GA_Dimension_Agnostic_
         }
         return false;
     }
-    continueOrFlip(dir, grid, value) {
-        let newGrid = grid.add(dir);
+    continueOrFlip(dir, grid, value, fly = false) {
+        const newGrid = grid.add(dir);
+        const bottomSupport = newGrid.add(DOWN);
+        const support = fly || this.check(bottomSupport, MAPDICT.WALL);
         if (this.isOutOfBounds(newGrid)) return dir.mirror();
+        if (!support) return dir.mirror();
         if (this.check(newGrid, value)) return dir.mirror();
         return dir;
     }
