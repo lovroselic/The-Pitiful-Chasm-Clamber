@@ -70,7 +70,7 @@ const INI = {
  */
 
 const PRG = {
-    VERSION: "0.8.6",
+    VERSION: "0.8.7",
     NAME: "The Pitiful Chasm Clamber",
     YEAR: "2026",
     SG: "ThePitifulChasmClamber",
@@ -302,7 +302,7 @@ const HERO = {
         if (this.mode === "jumping") this.player.collisionToCarrier();
         if (this.mode === "gripping") this.player.transferCarryierMovement(lapsedTime);
 
-        //update animations even if not moving for selected modes
+        // update animations even if not moving for selected modes
         // modes not updated: climbing,
         if (["idle", "ducking"].includes(this.mode)) this.player.sprite.updateAnimation(lapsedTime);
 

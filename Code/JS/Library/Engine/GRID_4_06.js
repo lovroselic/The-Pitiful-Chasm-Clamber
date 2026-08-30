@@ -1137,6 +1137,7 @@ const ITEM_DROP_EXCLUSION = [MAPDICT.WALL, MAPDICT.BLOCKWALL, MAPDICT.PILLAR];
 const JUMP_MOVE = [MAPDICT.EMPTY, MAPDICT.HOLE, ...STAIRCASE_GRIDS];
 const PATH_GRIDS = [MAPDICT.EMPTY, ...STAIRCASE_GRIDS];
 const GRID2D_SIDEVIEW = [MAPDICT.WALL];
+const GRID2D_FLOOR_SUPPORT = [MAPDICT.WALL, MAPDICT.STAIR];
 
 class ArrayBasedDataStructure {
     constructor() { }
@@ -1784,7 +1785,7 @@ class GridArray extends Classes([ArrayBasedDataStructure, GA_Dimension_Agnostic_
     continueOrFlip(dir, grid, value, fly = false) {
         const newGrid = grid.add(dir);
         const bottomSupport = newGrid.add(DOWN);
-        const support = fly || this.check(bottomSupport, MAPDICT.WALL);
+        const support = fly || this.check(bottomSupport, GRID2D_FLOOR_SUPPORT.sum());
         if (this.isOutOfBounds(newGrid)) return dir.mirror();
         if (!support) return dir.mirror();
         if (this.check(newGrid, value)) return dir.mirror();
