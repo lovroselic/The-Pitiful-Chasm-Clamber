@@ -25,6 +25,7 @@ DEBUG._2D_display = false;
 DEBUG.pos_display = true;
 DEBUG.BB_display = true;
 DEBUG.INVINCIBLE = false;
+DEBUG.INF_LIVES = true;
 DEBUG.keys = false;
 DEBUG.max17 = false;
 
@@ -275,7 +276,7 @@ const HERO = {
     },
     async death() {
         ENGINE.GAME.ANIMATION.stop();
-        GAME.lives--;
+        if (!DEBUG.INF_LIVES) GAME.lives--;
         if (DEBUG.VERBOSE) console.red(`HERO.death, lives: ${GAME.lives}`);
         await AUDIO_TOOLS.playAndWait(AUDIO.Chew);
         await AUDIO_TOOLS.playAndWait(AUDIO.Death);
@@ -686,7 +687,7 @@ const GAME = {
         ENGINE.GAME.setGameLoop(GAME.run);
         ENGINE.GAME.start(16);
         GAME.extraLife = SCORE.extraLife.clone();
-        GAME.level = 15; //1
+        GAME.level = 24; //1
         GAME.lives = 3; //3
         GAME.score = 0;
         GAME.goldCount = GAME.countGold();

@@ -212,6 +212,7 @@ const SWINGING_ROPE_TYPE = {
         constructor: $2D_Traveller,
         behaviourArguments: [Infinity, ["wanderer1D"], 10000, ["wanderer1D"]],
         speed: 2.0 * 64,
+        fly: true,
     }
 };
 

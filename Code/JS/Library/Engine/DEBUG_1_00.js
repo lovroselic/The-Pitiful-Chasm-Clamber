@@ -13,6 +13,7 @@ const DEBUG = {
     pos_display: false,
     BB_display: false,
     INVINCIBLE: false,
+    INF_LIVES: false,
     keys: false,
     max17: false,
     VERSION: "1.0",
@@ -38,7 +39,7 @@ const DEBUG = {
     },
     displayGridBoundaries(grid, layer = "fill") {
         const area = grid.toArea();
-         ENGINE.drawArea(LAYER[layer], area, "#2e15c0");
+        ENGINE.drawArea(LAYER[layer], area, "#2e15c0");
     },
     halt(message = "HERE") {
         ENGINE.GAME.stopAnimation = true;
