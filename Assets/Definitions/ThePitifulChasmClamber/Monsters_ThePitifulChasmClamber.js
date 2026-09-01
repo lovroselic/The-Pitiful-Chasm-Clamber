@@ -185,6 +185,24 @@ const MONSTER_TYPE = {
         preventRotation: true,
         fly: false,
     },
+    Dragon: {
+        name: "Dragon",
+        category: "enemy",
+        assetName: "Dragon",
+        w: 64,
+        h: 64,
+        innerH: 32,
+        innerW: 63,
+        dirRef: RIGHT,
+        animate: true,
+        fps: 60,
+        speed: 3.0 * 64,
+        behaviourArguments: [Infinity, ["wanderer1D"], 10000, ["wanderer1D"]],
+        preventRotation: true,
+        fly: true,
+        flyOffsetY: 44,
+        centerOffsetY: 22,
+    },
 };
 
 const SWINGING_ROPE_TYPE = {

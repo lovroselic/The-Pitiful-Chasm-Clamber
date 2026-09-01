@@ -26,7 +26,7 @@ DEBUG.pos_display = true;
 DEBUG.BB_display = true;
 DEBUG.INVINCIBLE = false;
 DEBUG.INF_LIVES = true;
-DEBUG.keys = false;
+DEBUG.keys = true;
 DEBUG.max17 = false;
 
 const INI = {
@@ -71,7 +71,7 @@ const INI = {
  */
 
 const PRG = {
-    VERSION: "0.8.8",
+    VERSION: "0.8.9",
     NAME: "The Pitiful Chasm Clamber",
     YEAR: "2026",
     SG: "ThePitifulChasmClamber",
@@ -474,7 +474,7 @@ const HERO = {
         this.startWalking(dir);
     },
     handleSwimming(dir) {
-        console.warn("handleSwimming", dir, "this.player.motion", this.player.motion, "this.facingDir", this.facingDir);
+        //console.warn("handleSwimming", dir, "this.player.motion", this.player.motion, "this.facingDir", this.facingDir);
         const mode = "swimming";
         if (dir.x !== 0) this.facingDir = dir.x < 0 ? LEFT : RIGHT;
         //console.info("this.facingDir", this.facingDir);
@@ -687,7 +687,7 @@ const GAME = {
         ENGINE.GAME.setGameLoop(GAME.run);
         ENGINE.GAME.start(16);
         GAME.extraLife = SCORE.extraLife.clone();
-        GAME.level = 22; //1
+        GAME.level = 24; //1
         GAME.lives = 3; //3
         GAME.score = 0;
         GAME.goldCount = GAME.countGold();
@@ -901,6 +901,8 @@ const GAME = {
 
             console.log("\nDEBUG:");
             console.log("#######################################################");
+
+            DEBUG.killAll();
 
             console.log("#######################################################");
         }

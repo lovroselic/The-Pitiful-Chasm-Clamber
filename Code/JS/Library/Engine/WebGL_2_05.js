@@ -2727,6 +2727,8 @@ class $2D_Sprite {
         this.fly = false;
         this.flyOffsetY = 0;                                       // default
         this.flyOffsetX = 0;
+        this.centerOffsetX = 0;
+        this.centerOffsetY = 0;
         ImportTypeToConstructor(this, type);
         this.flyOffset();
         this.tint = tint;
@@ -2798,10 +2800,10 @@ class $2D_Sprite {
     getArea() {
         //rotation is ignored ... fuck it
         this.topLeft = this.pos.toTopLeft();
-        let offsetH = (ENGINE.INI.GRIDPIX - this.innerH);
+        let offsetH = (ENGINE.INI.GRIDPIX - this.innerH) + this.centerOffsetY;
         if (this.fly) offsetH >>>= 1;
         this.area = new RectArea(Math.round(
-            this.topLeft.x + ((ENGINE.INI.GRIDPIX - this.innerW) >>> 1)),
+            this.topLeft.x + ((ENGINE.INI.GRIDPIX - this.innerW) >>> 1)) + this.centerOffsetX,
             Math.round(this.topLeft.y + offsetH),
             this.innerW || this.w,
             this.innerH || this.h
@@ -2877,6 +2879,10 @@ class $2D_Static_Sprite {
         this.w = w;
         this.h = h;
         this.fly = false;
+        this.flyOffsetY = 0;                                       // default
+        this.flyOffsetX = 0;
+        this.centerOffsetX = 0;
+        this.centerOffsetY = 0;
         this.dir = NOWAY;                                           // for scaling purpose in model matrix
         this.rotation = 0;                                          // for model matrix
         this.show = $2D_Sprite.prototype.show;

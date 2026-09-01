@@ -45,6 +45,11 @@ const DEBUG = {
         ENGINE.GAME.stopAnimation = true;
         throw new Error(message);
     },
+    killAll() {
+        console.note("Killing all enemies.");
+        ENEMY2D.POOL.clear();
+        ENTITY3D.POOL.clear();
+    },
 };
 
 Object.seal(DEBUG);
