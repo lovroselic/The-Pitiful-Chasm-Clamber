@@ -3147,6 +3147,7 @@ class $2D_player extends $2D_Entity {
         sprite.setDir(dir);
         sprite.updateAnimation(lapsedTime);
         sprite.updateModelMatrix(this.useViewport);
+        sprite.getArea();
         this.moveState.reset(sprite.pos.toGrid());
         ENGINE.VIEWPORT.alignToPosition(this.actor.pos, this.actor.vPos);
         //console.error("transferCarryierMovement", sprite.pos, "HG", this.moveState.homeGrid, "this.carrier", this.carrier);
