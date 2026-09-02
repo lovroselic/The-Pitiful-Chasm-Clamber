@@ -6,9 +6,6 @@
 "use strict";
 
 
-
-/** END */
-
 LoadSheetSequences = [
     { srcName: "Princess.png", count: 26, name: "PrincessWalking", trim: false },
     { srcName: "PrincessIdle.png", count: 11, name: "PrincessIdle", trim: false },
@@ -27,6 +24,10 @@ LoadSheetSequences = [
     { srcName: "Basilisk.png", count: 47, name: "Basilisk", trim: false },
     { srcName: "Wolf.png", count: 6, name: "Wolf", trim: false },
     { srcName: "Dragon.png", count: 20, name: "Dragon", trim: false },
+    { srcName: "Rex.png", count: 23, name: "Rex", trim: false },
+    { srcName: "Raptor.png", count: 19, name: "Raptor", trim: false },
+    { srcName: "Goblin.png", count: 16, name: "Goblin", trim: false },
+    { srcName: "Cock.png", count: 16, name: "Cock", trim: false },
 
     //borders
     { srcName: "MossyBorders.png", count: 5, name: "MossyBorders", trim: false },
@@ -38,7 +39,7 @@ LoadFonts = [
     { srcName: "Chasm.ttf", name: "Chasm" },
 ];
 
-const MAX_LEVEL = 25;
+const MAX_LEVEL = 28;
 
 LoadTextures = [
     { srcName: "Title/PCC_title_768.webp", name: "Title" },

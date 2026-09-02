@@ -83,7 +83,7 @@ const $MAP = {
 };
 
 const PRG = {
-    VERSION: "0.22.5",
+    VERSION: "0.22.6",
     NAME: "MapEditor",
     YEAR: "2026",
     CSS: "color: #239AFF;",
@@ -2150,6 +2150,11 @@ const GAME = {
                 GAME.ensureTerrain();
                 NOISE_FUNCTION.generate_terrain();
             }
+
+            $("#connection_north").html("-1");
+            $("#connection_east").html("-1");
+            $("#connection_south").html("-1");
+            $("#connection_west").html("-1");
 
             GAME.createMask();
             console.log("GAME.init ->map:", $MAP.map);
