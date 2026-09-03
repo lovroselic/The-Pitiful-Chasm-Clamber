@@ -64,7 +64,15 @@ const MASK_DECALS = [
     "Amphor1", "Amphor2", "Amphor3", "Fern1", "Fern2", "Flowers21", "Flowers22", "Log1", "Log13", "Log2", "Log4", "OldSkull",
     "Palm1", "Palm2", "Palm3", "Palm4", "Pot1", "Pot2", "Pot3", "Rock1", "Rock2", "ScaryTree1", "ScaryTree18", "ScaryTree2",
     "ScaryTree3", "ScaryTree4", "ScaryTree5", "ScaryTree6", "ScaryTree7", "SpiderWeb1", "SpiderWeb2", "Stalac1", "Stalac2", "Stalac3", "Trunk1", "Trunk2",
-    "Trunk3", "Trunk4", "Vines1", "Vines2", "Vines3", "Vines4", "Vines5", "Vines6"
+    "Trunk3", "Trunk4", "Vines1", "Vines2", "Vines3", "Vines4", "Vines5", "Vines6",
+    "Lamp_352", "Lamp_353", "Lamp_354", "Tombstone_337", "Tombstone_338", "Tombstone_339", "Tombstone_340", "Tombstone_341", "Tombstone_342", "Tombstone_343", "Totem_344", "Totem_345",
+    "Totem_346", "Totem_347", "Totem_348", "Totem_349", "Totem_350", "Totem_351",
+    "Altair_363", "Altair_364", "Altair_365", "Altair_366", "Altair_367", "Altair_368", "Altair_369", "BigAmanita_405", "BigAmanita_406", "ScaryIdolTree_395", "ScaryIdolTree_396", "ScaryIdolTree_397",
+    "ScaryRottenlTree_398", "ScaryRottenlTree_399", "ScaryRottenlTree_400", "ScaryRottenlTree_401", "ScaryRottenlTree_402", "ScaryRottenlTree_403", "ScaryRottenlTree_404", "ScarySplitTree_387", "ScarySplitTree_388", "ScarySplitTree_389", "ScarySplitTree_390", "ScarySplitTree_391",
+    "ScarySplitTree_392", "ScarySplitTree_393", "ScarySplitTree_394", "ScarySpruceTree_379", "ScarySpruceTree_380", "ScarySpruceTree_381", "ScarySpruceTree_382", "ScarySpruceTree_383", "ScarySpruceTree_384", "ScarySpruceTree_385", "ScarySpruceTree_386", "ScaryTree_370",
+    "ScaryTree_371", "ScaryTree_372", "ScaryTree_373", "ScaryTree_374", "ScaryTree_375", "ScaryTree_376", "ScaryTree_377", "ScaryTree_378",
+    "Mushroom_407", "Mushroom_408", "Mushroom_409", "Mushroom_410", "Mushroom_411", "Mushroom_412", "Mushroom_413", "Mushroom_414", "Mushroom_415", "Mushroom_416", "Mushroom_417", "Mushroom_418",
+    "Mushroom_419", "Mushroom_420", "Mushroom_421", "Mushroom_422", "Mushroom_423", "Mushroom_424", "Mushroom_425", "Mushroom_426", "Mushroom_427", "TopChains_428", "TopChains_429", "TopChains_430",
 
 ];
 
