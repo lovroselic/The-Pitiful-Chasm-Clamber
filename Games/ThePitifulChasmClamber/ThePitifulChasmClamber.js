@@ -71,7 +71,7 @@ const INI = {
  */
 
 const PRG = {
-    VERSION: "0.8.11",
+    VERSION: "0.9.0",
     NAME: "The Pitiful Chasm Clamber",
     YEAR: "2026",
     SG: "ThePitifulChasmClamber",
@@ -687,7 +687,7 @@ const GAME = {
         ENGINE.GAME.setGameLoop(GAME.run);
         ENGINE.GAME.start(16);
         GAME.extraLife = SCORE.extraLife.clone();
-        GAME.level = 29; //1
+        GAME.level = 32; //1
         GAME.lives = 3; //3
         GAME.score = 0;
         GAME.goldCount = GAME.countGold();
