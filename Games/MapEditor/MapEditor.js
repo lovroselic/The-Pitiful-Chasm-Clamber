@@ -1547,6 +1547,7 @@ const GAME = {
                 switch (currentValue) {
                     case MAPDICT.EMPTY:
                     case MAPDICT.WATER:
+                    case MAPDICT.MASK:
                         let goldValue = $("#gold_type")[0].value;
                         $MAP.map.gold.push(Array(gridIndex, goldValue));
                         break;
