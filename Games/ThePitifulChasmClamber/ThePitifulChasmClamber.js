@@ -19,11 +19,11 @@ retests:
  */
 ////////////////////////////////////////////////////
 
-DEBUG.FPS = true;
-DEBUG.VERBOSE = true;
+DEBUG.FPS = false;
+DEBUG.VERBOSE = false;
 DEBUG._2D_display = false;
-DEBUG.pos_display = true;
-DEBUG.BB_display = true;
+DEBUG.pos_display = false;
+DEBUG.BB_display = false;
 DEBUG.INVINCIBLE = false;
 DEBUG.INF_LIVES = true;
 DEBUG.keys = true;
@@ -687,8 +687,8 @@ const GAME = {
         ENGINE.GAME.setGameLoop(GAME.run);
         ENGINE.GAME.start(16);
         GAME.extraLife = SCORE.extraLife.clone();
-        GAME.level = 3; //1
-        GAME.lives = 3; //3
+        GAME.level = 1; //1
+        GAME.lives = 5; //3
         GAME.score = 0;
         GAME.goldCount = GAME.countGold();
         GAME.complete = false;
@@ -1299,7 +1299,7 @@ $(() => {
     PRG.setup();
     ENGINE.LOAD.preload();
     UNIFORM.setup();
-    SCORE.init("SC", "PCC", 10, 1000);
+    SCORE.init("SC", "PCC", 15, 50);
     SCORE.loadHS();
     SCORE.hiScore();
     SCORE.extraLife = [Infinity];

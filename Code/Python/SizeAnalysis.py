@@ -33,7 +33,7 @@ def count_lines(filepath):
 start_time = time.time()
 ## project_dir = 'C:/Users/Uporabnik/Documents/JS/CastleHaunt2/'
 ## project_dir = 'C:/Users/Uporabnik/Documents/JS/CurseOfTheCastleCreep/'
-project_dir = 'C:/Users/Uporabnik/Documents/JS/DownHeel/'
+project_dir = 'C:/Users/Uporabnik/Documents/JS/The Pitiful Chasm Clamber/'
 extensions = ['*.*']
 code_files = ['.js', '.glsl', '.html', '.css']
 data = []
