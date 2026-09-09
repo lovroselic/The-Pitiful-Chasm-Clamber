@@ -25,9 +25,10 @@ DEBUG._2D_display = false;
 DEBUG.pos_display = false;
 DEBUG.BB_display = false;
 DEBUG.INVINCIBLE = false;
-DEBUG.INF_LIVES = true;
+DEBUG.INF_LIVES = false;
 DEBUG.keys = true;
 DEBUG.max17 = false;
+DEBUG.STAY_ALIVE = true;
 
 const INI = {
     SCREEN_BORDER: 64,
@@ -71,7 +72,7 @@ const INI = {
  */
 
 const PRG = {
-    VERSION: "0.10.0",
+    VERSION: "0.10.1",
     NAME: "The Pitiful Chasm Clamber",
     YEAR: "2026",
     SG: "ThePitifulChasmClamber",
@@ -277,6 +278,7 @@ const HERO = {
     async death() {
         ENGINE.GAME.ANIMATION.stop();
         if (!DEBUG.INF_LIVES) GAME.lives--;
+        GAME.lives = Math.max(GAME.lives, 0);                               // STAY_ALIVE support
         if (DEBUG.VERBOSE) console.red(`HERO.death, lives: ${GAME.lives}`);
         await AUDIO_TOOLS.playAndWait(AUDIO.Chew);
         await AUDIO_TOOLS.playAndWait(AUDIO.Death);
@@ -286,7 +288,7 @@ const HERO = {
     },
     finalDeath() {
         if (DEBUG.VERBOSE) console.red("HERO.finalDeath");
-        if (GAME.lives > 0) return GAME.continueLevel(GAME.level);
+        if (GAME.lives > 0 || DEBUG.STAY_ALIVE) return GAME.continueLevel(GAME.level);
         GAME.checkScore();
         TITLE.hiscore();
         ENGINE.TEXT.centeredText("Rest In Peace", ENGINE.gameWIDTH, ENGINE.gameHEIGHT / 2);
@@ -739,7 +741,6 @@ const GAME = {
         SPAWN_TOOLS_2D.spawn(level);
         HERO.dead = false;
         HERO.killedBy = null;
-        //HERO.setMode("idle", RIGHT);                                //moved to level start ?? in construct
         HERO.playerSetUp();
         GAME.setCameraView();
         GAME.setWorld();
@@ -760,7 +761,7 @@ const GAME = {
         ENGINE.VIEWPORT.reset();
         ENGINE.VIEWPORT.check(HERO.player.actor.pos);
         ENGINE.VIEWPORT.alignToPosition(HERO.player.actor.pos, HERO.player.actor.vPos);
-        GAME.time = new CountDown("main", INI.LEVEL_TIME, GAME.completedTime, true);
+        if (!GAME.time) GAME.time = new CountDown("main", INI.LEVEL_TIME, GAME.completedTime, true);
         GAME.drawFirstFrame(GAME.level);
         ENGINE.GAME.resume();
     },
@@ -1194,7 +1195,7 @@ const TITLE = {
         CTX.shadowOffsetX = 1;
         CTX.shadowOffsetY = 1;
         CTX.shadowBlur = 1;
-        CTX.fillText(`Score: ${GAME.score.toString().padStart(5, "0")}`, x, y);
+        CTX.fillText(`Score: ${GAME.score.toString().padStart(3, "0")}`, x, y);
         if (GAME.score >= GAME.extraLife[0]) {
             GAME.lives++;
             GAME.extraLife.shift();
@@ -1237,7 +1238,7 @@ const TITLE = {
         } else {
             HS = SCORE.SCORE.name[0];
         }
-        const text = "HISCORE: " + SCORE.SCORE.value[0].toString().padStart(5, "0") + " by " + HS;
+        const text = "HISCORE: " + SCORE.SCORE.value[0].toString().padStart(3, "0") + " by " + HS;
         CTX.fillText(text, x, y);
     },
     lives() {
@@ -1302,5 +1303,5 @@ $(() => {
     SCORE.init("SC", "PCC", 15, 50);
     SCORE.loadHS();
     SCORE.hiScore();
-    SCORE.extraLife = [Infinity];
+    SCORE.extraLife = [10, 20, 50, 100, 150, 200, 500, Infinity];
 });

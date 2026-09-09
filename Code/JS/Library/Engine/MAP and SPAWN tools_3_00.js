@@ -501,20 +501,15 @@ const SPAWN_TOOLS_2D = {
             const entity = new $2D_Entity(grid, dir, type, GA, useVieport);
             ENEMY2D.add(entity);
         }
-        console.log("ENEMY2D", ENEMY2D);
     },
     carriers(map, GA, useVieport) {
         for (const C of map.carriers) {
             const grid = GA.indexToGrid(C[0]);
             const type = SWINGING_ROPE_TYPE[C[1]];
             const dir = Vector.fromInt(C[2]);
-            console.log("dir", dir);
             const carrier = new type.constructor(grid, type, dir, GA, useVieport);
-            console.warn("carrier", carrier);
             CARRIER2D.add(carrier);
         }
-        console.log("CARRIER2D", CARRIER2D);
-        //DEBUG.halt();
     },
     gold(map, GA, useVieport) {
         for (const G of map.gold) {
@@ -522,7 +517,6 @@ const SPAWN_TOOLS_2D = {
             const item = new FloorItem2D(grid, GOLD_ITEM_TYPE[G[1]], useVieport);
             FLOOR_OBJECT.add(item);
         }
-        console.error("FLOOR_OBJECT gold", FLOOR_OBJECT, FLOOR_OBJECT.POOL.length);
     },
     items(map, GA, useVieport) {
         for (const G of map.items) {
@@ -530,7 +524,6 @@ const SPAWN_TOOLS_2D = {
             const item = new FloorItem2D(grid, eval(G[1]), useVieport);
             FLOOR_OBJECT.add(item);
         }
-        console.error("FLOOR_OBJECT item", FLOOR_OBJECT, FLOOR_OBJECT.POOL.length);
     },
 
     /**

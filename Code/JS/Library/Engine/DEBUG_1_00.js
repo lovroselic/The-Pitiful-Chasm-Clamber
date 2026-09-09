@@ -14,6 +14,7 @@ const DEBUG = {
     BB_display: false,
     INVINCIBLE: false,
     INF_LIVES: false,
+    STAY_ALIVE: false,                     // stay alive after lives == 0
     keys: false,
     max17: false,
     VERSION: "1.0",

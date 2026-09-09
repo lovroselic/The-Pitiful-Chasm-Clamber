@@ -175,7 +175,7 @@ const MONSTER_TYPE = {
         assetName: "Wolf",
         w: 64,
         h: 64,
-        innerH: 34,
+        innerH: 32,
         innerW: 60,
         dirRef: RIGHT,
         animate: true,
