@@ -72,7 +72,7 @@ const INI = {
  */
 
 const PRG = {
-    VERSION: "0.10.1",
+    VERSION: "0.10.2",
     NAME: "The Pitiful Chasm Clamber",
     YEAR: "2026",
     SG: "ThePitifulChasmClamber",
@@ -437,6 +437,7 @@ const HERO = {
         //console.error(" new pos:  this.player.sprite.pos", this.player.sprite.pos, "grid", this.player.sprite.pos.toGrid());
 
         GAME.drawFirstFrame(level);
+        GAME.resetToInitial();
         return { finished: false, pos: this.player.sprite.pos };
     },
     handleCarry(entity) {
@@ -732,9 +733,10 @@ const GAME = {
         await GAME.initLevel(level);
         GAME.continueLevel(level);
     },
-    continueLoadedLevel(level) {
+    /* continueLoadedLevel(level) {
         if (DEBUG.VERBOSE) console.log("Continue LOADED level", level);
-    },
+        GAME.resetToInitial();
+    }, */
     continueLevel(level) {
         if (DEBUG.VERBOSE) console.log("Continue level", level);
         GAME.resetToInitial();
