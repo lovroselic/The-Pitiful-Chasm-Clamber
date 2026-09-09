@@ -38,12 +38,13 @@ const INI = {
     RELEASE_JUMP_SPEED: 64 * 2.0, //2.0
     TEXT_SIZE: 13,
     JUMP_SPEED: 64 * 4.0,                       // converts charged power into pixels/second
-    JUMP_X_SPEED: 64 * 4.0 * Math.SQRT1_2,      // 181.02 px/s — unchanged
-    JUMP_Y_SPEED: 276,                          // 265 gives approximately 48 px height, 276 -> 50px
+    JUMP_X_SPEED: 186.541,                      // 135 px
+    JUMP_Y_SPEED: 298.087,                      // 54 px
+    JUMP_GRAVITY: 822.979,                      // 0.72441 s
     LADDER_EXIT: 64 * 2.0,                      // converts charged power into pixels/second
     SIDE_DRIFT: 64 * 0.25,
     GRAVITY: 500,                               // pixels/second² 500
-    JUMP_GRAVITY: 762,                          // preserves existing airtime/range: 732 for 48px, 762 for 50px
+
 };
 
 /*
@@ -72,7 +73,7 @@ const INI = {
  */
 
 const PRG = {
-    VERSION: "0.10.2",
+    VERSION: "0.10.3",
     NAME: "The Pitiful Chasm Clamber",
     YEAR: "2026",
     SG: "ThePitifulChasmClamber",
@@ -690,10 +691,11 @@ const GAME = {
         ENGINE.GAME.setGameLoop(GAME.run);
         ENGINE.GAME.start(16);
         GAME.extraLife = SCORE.extraLife.clone();
-        GAME.level = 1; //1
-        GAME.lives = 5; //3
-        GAME.score = 0;
+        GAME.level = 32; //1
+        GAME.lives = 3; //3
+        GAME.score = 584; // 0
         GAME.goldCount = GAME.countGold();
+        GAME.goldCount = 58; //debug
         GAME.complete = false;
 
         const storeList = ["ENEMY2D", "CARRIER2D", "FLOOR_OBJECT"];
@@ -1305,5 +1307,5 @@ $(() => {
     SCORE.init("SC", "PCC", 15, 50);
     SCORE.loadHS();
     SCORE.hiScore();
-    SCORE.extraLife = [10, 20, 50, 100, 150, 200, 500, Infinity];
+    SCORE.extraLife = [50, 100, 200, 300, 500, 1000, Infinity];
 });

@@ -458,7 +458,7 @@ class Enemy2D extends IAM {
     }
     resetToInitial() {
         for (const entity of this.POOL) {
-            if (entity) entity.resetToInitial();[];
+            if (entity) entity.resetToInitial();
         }
     }
 }
