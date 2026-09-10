@@ -73,7 +73,7 @@ const INI = {
  */
 
 const PRG = {
-    VERSION: "0.10.4",
+    VERSION: "0.80.0",
     NAME: "The Pitiful Chasm Clamber",
     YEAR: "2026",
     SG: "ThePitifulChasmClamber",
@@ -695,7 +695,7 @@ const GAME = {
         GAME.lives = 3; //3
         GAME.score = 0; // 0
         GAME.goldCount = GAME.countGold();
-        //GAME.goldCount = 35; //debug
+        //GAME.goldCount = 1; //debug
         GAME.complete = false;
 
         const storeList = ["ENEMY2D", "CARRIER2D", "FLOOR_OBJECT"];
@@ -735,10 +735,6 @@ const GAME = {
         await GAME.initLevel(level);
         GAME.continueLevel(level);
     },
-    /* continueLoadedLevel(level) {
-        if (DEBUG.VERBOSE) console.log("Continue LOADED level", level);
-        GAME.resetToInitial();
-    }, */
     continueLevel(level) {
         if (DEBUG.VERBOSE) console.log("Continue level", level);
         GAME.resetToInitial();
@@ -931,17 +927,6 @@ const GAME = {
         let fps = 1000 / lapsedTime || 0;
         GAME.fps.update(fps);
         CTX.fillText(GAME.fps.getFps(), 5, 10);
-    },
-    gameOverRun(lapsedTime) {
-        if (ENGINE.GAME.stopAnimation) return;
-        if (ENGINE.GAME.keymap[ENGINE.KEY.map.enter]) {
-            ENGINE.GAME.ANIMATION.waitThen(TITLE.startTitle);
-        }
-        const date = Date.now();
-        WebGL.GAME.setThirdPerson();
-        EXPLOSION3D.manage(date);
-        ENTITY3D.manage(lapsedTime, date, [HERO.invisible, HERO.dead]);
-        GAME.lifeLostFrameDraw(lapsedTime);
     },
     addScore(score) {
         GAME.score += score;
@@ -1258,20 +1243,26 @@ const TITLE = {
     },
     setEndingCreditsScroll() {
         const text = this.generateEndingCredits();
-        const RD = new RenderData("Chasm", 28, "#DAA520", "text", "#c69b2d", 2, 2, 1);
+        const RD = new RenderData("Chasm", 28, "#e3ce9a", "text", "#0e0e0e", 2, 2, 1);
         GAME.endingCreditText = new VerticalScrollingText(text, 1, RD);
     },
     generateEndingCredits() {
-        const text = `Congratulations!
 
-        You have completed 
+    const text = `Congratulations!
+
+        You have completed
         ${PRG.NAME}
         in ${GAME.time.timeString()}.
 
-        ...blah ... blah ... blah
+        The Princess' coffers once more
+        overflow with gold and gems.
+        She can fund another adventure
+        but never replace
+        that old sexy outfit.
 
         CREDITS:
-        Code and direction, Lovro Selic
+
+        Code and direction: Lovro Selic
         Written in JavaScript and GLSL
 
         jQuery: John Resig et al
@@ -1280,22 +1271,27 @@ const TITLE = {
 
         Graphics from free sources,
         plus PiskelApp and Blender
-        Textures and images by AI:
-        Stable Diffusion, Ideogram,
-        Flux.1D, Flux.2D and Klein,
 
-        Supplementary tools,
+        AI textures and imagery:
+        Stable Diffusion, Ideogram,
+        FLUX.1D, FLUX.2D and Klein
+
+        Additional tools:
         JavaScript, Python, C++
 
-        Music, 'Arise'
-        written and performed 
-        by LaughingSkull,
+        Music: 'Arise'
+        written and performed
+        by LaughingSkull
         (C) 2007 Lovro Selic
 
-        Thanks for sticking it out
-        ....`;
-        return text;
-    },
+        Thanks for clambering on
+        until the end.
+        At least she had fun.
+        `;
+
+    return text;
+
+},
 };
 
 // -- main --
