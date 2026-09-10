@@ -1,0 +1,205 @@
+<!-- copy start-->
+    <div id="preload" class="hidden"></div>
+    <div class="container my-5 p-5 cool_page">
+        <div id="setup">
+            <div id="load"></div>
+            <div class="row win">
+                <div class="col-12 col-lg-8 my-2">
+                    <h1 id="title" class="PCC"></h1>
+                    <p>
+                        Have you ever wondered why the Princess is so rich? It is not inherited wealth,
+                        favourable taxation or suspiciously creative royal accounting. Well, not entirely.
+                        Her true secret is a proven business model: from time to time, she clambers down into
+                        the nearby chasm—in a suspiciously Pac-Man-like fashion—and collects every gold bar,
+                        precious gem and priceless statue of herself she can find. Every last one. The Princess
+                        does not believe in the vulgar little concept known as “enough.”
+                    </p>
+                    <p>
+                        Fortunately for you, the Princess is remarkably robust, as princesses tend to be
+                        whenever the plot requires it, and can survive falls from frankly unreasonable heights.
+                        Unless, of course, she lands on a cat—or one of the chasm's other disagreeable pets.
+                        Gravity can be negotiated with. Cats cannot. In this game, they have simply stopped
+                        pretending to be friendly.
+                    </p>
+                    <p>
+                        To remove any lingering uncertainty: the game is completed only when every last gem,
+                        gold bar and royal objet d'art is safely tucked into her <em>pocketsess</em>. Leaving
+                        so much as one shiny trinket behind would be fiscally irresponsible—and, more
+                        importantly, completely out of character.
+                    </p>
+                </div>
+                <div class="col-12 col-lg-4 my-2 white_text d-flex justify-content-center" id="SC"></div>
+            </div>
+
+        </div>
+
+        <div class="row my-5">
+            <div id="debug" class="section">
+                <fieldset>
+                    <legend>
+                        Engine versions:
+                    </legend>
+                    <p>My custom game engine ENGINE is made from following sub-modules:</p>
+                    ENGINE: <span id="engine_version"></span><br>
+                    GRID: <span id="grid_version"></span><br>
+                    MAZE: <span id="maze_version"></span><br>
+                    IAM: <span id="iam_version"></span><br>
+                    Prototype LIB: <span id="lib_version"></span><br>
+                    WebGL: <span id="webgl_version"></span><br>
+                    MAP Tools: <span id="maptools_version"></span><br>
+                    <br>
+                    <p id="speech_sources"></p>
+                </fieldset>
+            </div>
+        </div>
+
+
+        <div>
+            <p id="buttons">
+            <div>
+                <input type='button' id='pause' value='Pause Game [F4]' disabled="disabled">
+                <input type='button' id='toggleHelp' value='Show/Hide Instructions'>
+                <input type='button' id='toggleAbout' value='About'>
+                <input type='button' id='toggleVersion' value='Version'>
+            </div>
+            </p>
+        </div>
+
+        <div id="help" class="section">
+            <fieldset>
+                <legend>Help:</legend>
+
+
+                <div class="row">
+                    <div class="col-12">
+                        <ul>
+                            <li>
+                                Avoid nasty pets by jumping over them, ducking beneath them or, if you are
+                                particularly clever, arranging to be on an entirely different floor.
+                            </li>
+                            <li>Close encounter with a pet is deadly for both.</li>
+                            <li>
+                                If you cannot swim faster than a shark, do not compete in the shark's
+                                preferred discipline.
+                            </li>
+                            <li>
+                                You can collect an extra life: the <em>Princess: Standard Edition</em>.
+                                Royal continuity is important.
+                            </li>
+                            <li>
+                                Sometimes it may seem that there is no way back. There is. It is merely a
+                                very long one, because the chasm was not designed with your convenience
+                                in mind.
+                            </li>
+                            <li>
+                                Falling is faster than climbing.
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="row my-3">
+                    <div class="col-12">
+                        <p><strong>KEYS:</strong></p>
+
+                        <p>
+                            <kbd>LEFT</kbd> / <kbd>RIGHT</kbd> — walk or choose the horizontal direction
+                            of a jump.
+                        </p>
+                        <p>
+                            <kbd>UP</kbd> / <kbd>DOWN</kbd> — climb ladders.
+                        </p>
+                        <p>
+                            <kbd>CTRL</kbd> + <kbd>LEFT</kbd>, <kbd>RIGHT</kbd> or <kbd>UP</kbd> — jump
+                            in the chosen direction.
+                        </p>
+                        <p>
+                            <kbd>CTRL</kbd> + <kbd>DOWN</kbd> — duck. Heroism occasionally means making
+                            yourself smaller.
+                        </p>
+                        <p>
+                            <kbd>F4</kbd> — pause or resume the game and briefly reconsider the chain of
+                            decisions that brought you here.
+                        </p>
+                        <p>
+                            To leave a ladder, press <kbd>LEFT</kbd> or <kbd>RIGHT</kbd> for a small
+                            dismount, or use <kbd>CTRL</kbd> with a direction key for a proper jump.
+                        </p>
+                        <p>
+                            The same applies when leaving a rope, because the Princess respects
+                            consistency even when physics does not.
+                        </p>
+                        <p>To leave water swim to the edge and top.</p>
+                    </div>
+                </div>
+            </fieldset>
+
+
+        </div>
+
+
+        <div id="about" class="section">
+            <fieldset>
+                <legend>
+                    About:
+                </legend>
+                <div class="row">
+                    <div class="col-12 col-lg-3 my-2 d-flex align-items-center justify-content-center">
+                        <img src="/Images/Pitfall.webp" alt="Pitfall (C64)" class="img-fluid border-dark rounded-2"
+                            title="Pitfall (C64)">
+                    </div>
+
+
+                    <div class="col-12 col-lg-6 my-2">
+                        <p>
+                            As the <em>Pitiful</em> part of the title rather subtly hints,
+                            <em>The Pitiful Chasm Clamber</em> draws inspiration from the legendary
+                            <a href="https://www.c64-wiki.com/wiki/Pitfall" target="_blank">Pitfall</a>
+                            and, even more heavily, from
+                            <a href="https://www.c64-wiki.com/wiki/Pitfall_II" target="_blank">Pitfall II</a>,
+                            both created by
+                            <a href="https://en.wikipedia.org/wiki/David_Crane_(programmer)" target="_blank">
+                                David Crane</a>.
+                            Let us call it <em>loosely inspired</em>, since I took considerable liberties
+                            with the formula and set out to develop a classic snakes-and-ladders arcade game.
+                            Along the way, it also borrowed a few ideas from
+                            <a href="https://www.c64-wiki.com/wiki/Hunchback" target="_blank">Hunchback</a>
+                            and
+                            <a href="https://en.wikipedia.org/wiki/Lode_Runner" target="_blank">Lode Runner</a>,
+                            because no respectable act of inspiration should stop at a single source.
+                        </p>
+
+
+                        <p>
+                            What emerged is less snakes and ladders than <em>cats, dinosaurs and ladders</em>:
+                            45 levels' worth, plus the occasional shark whenever the local wildlife budget
+                            permitted. All of it also serves a more serious purpose—preparing the ENGINE for
+                            the next 3D Princess game by first solving the comparatively modest problem of
+                            keeping her safe in two dimensions. Once that works, we can add a third direction
+                            from which trouble may arrive.
+                        </p>
+
+
+                    </div>
+
+
+                    <div class="col-12 col-lg-3 my-2 d-flex align-items-center justify-content-center">
+                        <img src="/Images/Pitfall2.webp" alt="Pitfall II (C64)" class="img-fluid border-dark rounded-2"
+                            title="Pitfall II (C64)">
+                    </div>
+
+
+            </fieldset>
+        </div>
+
+        <p class="version terminal" id="version"></p>
+        <p id="conv" class="warning">Loading ... </p>
+    </div>
+
+    <div class="container">
+        <div id="game" class="winTrans"></div>
+        <div id="bottom" class="cb" style="margin-top: 1024px"></div>
+        <div id="temp" class="hidden"></div>
+        <div id="temp2" class="hidden"></div>
+    </div>
+    <!-- COPY END -->
