@@ -450,7 +450,6 @@ const GRID = {
      * - `contact`: the tested position at which the collision occurred.
      */
     checkWallCollision(entity, candidatePos) {
-        //console.info("--> checkWallCollision", candidatePos, "entity.mode", entity.parent.mode, "; level", GAME.level);
         const GA = entity.GA;
         const gs2 = (ENGINE.INI.GRIDPIX >>> 1) * GRID.SETTING.WALL_COLLISION_TOLERANCE;                         // slight tolerance. 
         const gs = (ENGINE.INI.GRIDPIX >>> 1) * GRID.SETTING.WALL_COLLISTION_OVERKILL;                          // underfeet check

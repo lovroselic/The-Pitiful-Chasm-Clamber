@@ -26,9 +26,9 @@ DEBUG.pos_display = false;
 DEBUG.BB_display = false;
 DEBUG.INVINCIBLE = false;
 DEBUG.INF_LIVES = false;
-DEBUG.keys = true;
+DEBUG.keys = false;
 DEBUG.max17 = false;
-DEBUG.STAY_ALIVE = true;
+DEBUG.STAY_ALIVE = false;
 
 const INI = {
     SCREEN_BORDER: 64,
@@ -73,7 +73,7 @@ const INI = {
  */
 
 const PRG = {
-    VERSION: "0.80.0",
+    VERSION: "0.80.1",
     NAME: "The Pitiful Chasm Clamber",
     YEAR: "2026",
     SG: "ThePitifulChasmClamber",
@@ -125,7 +125,6 @@ const PRG = {
         ENGINE.bottomWIDTH = ENGINE.titleWIDTH;
         MAP_TOOLS.INI.FOG = false;
         GRID.SETTING.COLLISION_STEP = 16;
-        //GRID.WALL_COLLISION_TOLERANCE = 1.01
 
         $("#bottom").css("margin-top", ENGINE.gameHEIGHT + ENGINE.titleHEIGHT + ENGINE.bottomHEIGHT);
         $(ENGINE.gameWindowId).width(ENGINE.gameWIDTH + 2 * ENGINE.sideWIDTH + 4);
@@ -176,7 +175,6 @@ const HERO = {
          * falling, idle but straight
          */
 
-        //DEBUG.calledStack();
         if (mode === this.mode) return;
         this.mode = mode;
         if (this.player) this.player.sprite.fly = false;
@@ -279,12 +277,12 @@ const HERO = {
     async death() {
         ENGINE.GAME.ANIMATION.stop();
         if (!DEBUG.INF_LIVES) GAME.lives--;
-        GAME.lives = Math.max(GAME.lives, 0);                               // STAY_ALIVE support
+        GAME.lives = Math.max(GAME.lives, 0);                                   // STAY_ALIVE support
         if (DEBUG.VERBOSE) console.red(`HERO.death, lives: ${GAME.lives}`);
         await AUDIO_TOOLS.playAndWait(AUDIO.Chew);
         await AUDIO_TOOLS.playAndWait(AUDIO.Death);
         if (DEBUG.VERBOSE) console.log("HERO killed by", HERO.killedBy);
-        HERO.killedBy.IAM.remove(HERO.killedBy.id);                         // get rid of the murderous bastard
+        HERO.killedBy.IAM.remove(HERO.killedBy.id);                             // get rid of the murderous bastard
         HERO.finalDeath();
     },
     finalDeath() {
@@ -299,7 +297,6 @@ const HERO = {
         GAME.restarted = true;
     },
     async manage(lapsedTime) {
-        //console.warn("manage", lapsedTime);
         await GRID.translateSpritePosition(HERO.player, lapsedTime, HERO.handleFinishedJump, true, false);
         this.player.collisionToEntity();
 
@@ -313,7 +310,6 @@ const HERO = {
         //item picking
         const picked = FLOOR_OBJECT.checkCollisionToHero();
         if (picked) {
-            console.warn("picked", picked);
             const category = picked.category;
             switch (category) {
                 case "gold":
@@ -382,11 +378,11 @@ const HERO = {
         ENGINE.GAME.ANIMATION.next(GAME.goalReachedRun);
     },
     async handleOutOfBounds(context) {
-        console.warn("handleOutOfBounds", context);
+        //console.warn("handleOutOfBounds", context);
         let map = MAP[GAME.level].map;
         const pos = this.player.sprite.pos;
         let grid = GRID.pointToGrid(pos);
-        console.log("handleOutOfBounds grid", grid, "pos", pos);
+        //console.log("handleOutOfBounds grid", grid, "pos", pos);
 
         let connectionIndex;
         if (grid.x === 0) connectionIndex = 3;                              //west
@@ -395,24 +391,22 @@ const HERO = {
         else if (grid.y === map.height - 1) connectionIndex = 2;            // south
 
         const nextLevel = parseInt(MAP[GAME.level].connections[connectionIndex], 10);
-        //if (nextLevel <= 0) throw new Error(`wrong or not existing connection ${nextLevel}`);
         if (nextLevel <= 0) DEBUG.halt(`wrong or not existing connection ${nextLevel}`);
 
         GAME.STORE.storeIAM(MAP[GAME.level].map);                           // store old map
         GAME.level = nextLevel;
         const level = GAME.level;
 
-
         // prepare new map 
         if (!MAP[level].map) {
-            console.log("preparing new map");
+            //console.log("preparing new map");
             GAME.STORE.clearPools();
             await GAME.loadNewLevel(level);
             GAME.STORE.linkMap(MAP[level].map);
             SPAWN_TOOLS_2D.spawn(level);
         } else {
             await GAME.createBitmaps(level);
-            console.log("reloading map");
+            //console.log("reloading map");
             GAME.reloadIAM(level);                                  // or reload stored IAM
         }
 
@@ -502,7 +496,6 @@ const HERO = {
             return this.player.motion.activate();
         }
 
-
         //
         const pos = this.player.sprite.pos;
         let grid = GRID.pointToGrid(pos);
@@ -518,11 +511,9 @@ const HERO = {
             this.player.sprite.pos = GRID.centerPointToGrid(this.player.sprite.pos);    //to grid center
         }
 
-        console.info(".. where we are", grid, "is stair", GA.isStair(grid));
         this.startClimbing(dir);
     },
     startClimbing(dir) {
-        //this.player.sprite.setDir(dir);
         this.player.sprite.update(dir);
         const speed = INI.CLIMBING_SPEED;
         const mode = "climbing";
@@ -533,8 +524,6 @@ const HERO = {
         this.player.motion.activate();
     },
     startWalking(dir) {
-        //console.info("startWalking", this.player.sprite.pos);
-        //this.player.sprite.setDir(dir);
         this.player.sprite.update(dir);
         const speed = INI.WALKING_SPEED;
         const mode = "walking";
@@ -545,7 +534,6 @@ const HERO = {
         this.player.motion.activate();
     },
     releaaseRope(dir) {
-        console.warn("releasing rope", dir);
         const sprite = this.player.sprite;
         const mode = "releasing";
         const carrierGripVelocity = this.player.carrier.gripVelocity;
@@ -574,7 +562,7 @@ const HERO = {
         this.player.motion.activate();
     },
     handlePositionCollision(context) {
-        console.error("handlePositionCollision", context);
+        //console.error("handlePositionCollision", context);
         const entity = context.entity;
         const motion = entity.motion;
         let contact = Point.rounded(context.collision.contact);
@@ -718,7 +706,6 @@ const GAME = {
             }
         }
 
-        console.info("counting gold", goldCount);
         return goldCount;
     },
     WebGL_settings() {
@@ -785,7 +772,6 @@ const GAME = {
     buildWorld(level) {
         if (DEBUG.VERBOSE) console.info(" ******** building world, room/dungeon/level:", level);
         WebGL.init_required_IAM(MAP[level].map, HERO);
-        //SPAWN_TOOLS_2D.spawn(level);
     },
     newDungeon(level) {
         MAP_TOOLS.unpack(level);
@@ -845,7 +831,6 @@ const GAME = {
     async run(lapsedTime) {
         if (ENGINE.GAME.stopAnimation) return;
         if (GAME.complete) return;
-        const date = Date.now();
         GAME.respond(lapsedTime);
         ENGINE.TIMERS.update();
         await HERO.manage(lapsedTime);
@@ -977,7 +962,7 @@ const GAME = {
 const TITLE = {
     startTitle() {
         if (DEBUG.VERBOSE) console.log("TITLE started");
-        //if (AUDIO.Title) AUDIO.Title.play(); //dev
+        if (AUDIO.Title) AUDIO.Title.play(); //dev
 
         ENGINE.GAME.pauseBlock();
         TITLE.clearAllLayers();
@@ -1026,7 +1011,6 @@ const TITLE = {
         const f1 = -0.0010;
         const f2 = 0.00015;
         const grad = CTX.createLinearGradient(x, y, x * f1 + w, y * f2 + h);
-        //const grad = CTX.createLinearGradient(x, y, w, h);
 
         grad.addColorStop(0.000, "#c25c28");
         grad.addColorStop(0.025, "#b03519");
@@ -1146,8 +1130,6 @@ const TITLE = {
         TITLE.stage();
         TITLE.hiscore();
         TITLE.lives();
-        //TITLE.time();
-        //TITLE.jumpPower();
         TITLE.smalTitle();
     },
     music() {
@@ -1156,7 +1138,7 @@ const TITLE = {
     time() {
         const CTX = LAYER.time;
         ENGINE.clearLayer("time");
-        const x = 400 + 32;
+        const x = 400 + 32 + 96;
         const fs = INI.TEXT_SIZE;
         const y = ENGINE.titleHEIGHT / 2 + fs / 4;
         CTX.font = fs + "px Chasm";
@@ -1233,7 +1215,6 @@ const TITLE = {
     lives() {
         ENGINE.clearLayer("lives");
         if (GAME.lives < 1) return;
-        const CTX = LAYER.lives;
         const cX = ENGINE.bottomWIDTH / 2;
         const y = ENGINE.bottomHEIGHT / 2;
         const spread = ENGINE.spreadAroundCenter(GAME.lives - 1, cX, 72);
